@@ -1,0 +1,9 @@
+.settings
+.coverage
+.metadata
+.project
+.pydevproject
+*.pyc
+*~
+__rsl_lextab.py
+__rsl_parsetab.py
