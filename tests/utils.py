@@ -1,9 +1,10 @@
 # encoding: utf-8
-# Copyright (C) 2014 John Törnblom
+# Copyright (C) 2015 John Törnblom
 
 import unittest
 import xtuml.model
 import rsl
+
 
 class RSLTestCase(unittest.TestCase):
 

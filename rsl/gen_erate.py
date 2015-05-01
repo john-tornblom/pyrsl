@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 # encoding: utf-8
-# Copyright (C) 2014 John Törnblom
+# Copyright (C) 2015 John Törnblom
+'''
+Main script for the rule-specification language (RSL) interpreter.
+'''
+
 
 import optparse
 import logging
@@ -9,14 +13,21 @@ import sys
 import xtuml
 import rsl
 
+
 current_id = 0
 def next_id():
+    '''
+    Use integers as unique_id
+    '''
     global current_id
     current_id += 1
     return current_id
     
     
 def main():
+    '''
+    Parse command line options and launch the RSL interpreter.
+    '''
     parser = optparse.OptionParser(usage="%prog [options] script.arc", version=rsl.version.complete_string, formatter=optparse.TitledHelpFormatter())
     parser.add_option("-i", "--import", dest="imports", metavar="PATH", help="import model information from PATH", action="append", default=[])
     parser.add_option("-I", "--include", dest="includes", metavar="PATH", help="add PATH to list of dirs to search for include files", action="append", default=['./'])
@@ -24,7 +35,6 @@ def main():
     parser.add_option("-f", "--force", dest='force', action="store_true", help="make read-only emit files writable", default=False)
     parser.add_option("-d", "--diff", dest='diff', metavar="PATH", action="store", help="save a diff of all emits to PATH", default=None)
     parser.add_option("-v", "--verbosity", dest='verbosity', action="count", help="increase debug logging level", default=1)
-    
     
     (opts, args) = parser.parse_args()
     if len(args) == 0:
@@ -57,6 +67,8 @@ def main():
     for filename in args:
         ast = rsl.parse_file(filename)
         rsl.evaluate(rt, ast, opts.includes)
-    
+
+
 if __name__ == '__main__':
     main()
+

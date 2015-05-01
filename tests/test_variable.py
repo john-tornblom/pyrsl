@@ -1,5 +1,5 @@
 # encoding: utf-8
-# Copyright (C) 2014 John Törnblom
+# Copyright (C) 2015 John Törnblom
 
 from utils import RSLTestCase
 from utils import evaluate

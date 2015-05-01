@@ -1,11 +1,13 @@
 # encoding: utf-8
-# Copyright (C) 2014 John Törnblom
+# Copyright (C) 2015 John Törnblom
 '''
 Parser for the rule-specification language (RSL). 
 Heavily inspired by: 
    - https://github.com/xtuml/bposs/blob/master/mc/mcmc/arlan/arlan.l
    - https://github.com/xtuml/bposs/blob/master/mc/mcmc/arlan/arlan.y
 '''
+
+
 import os
 import logging
 

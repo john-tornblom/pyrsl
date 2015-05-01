@@ -1,9 +1,10 @@
 # encoding: utf-8
-# Copyright (C) 2014 John Törnblom
+# Copyright (C) 2015 John Törnblom
 '''
 High-level runtime behavior for the RSL language, e.g. builtin functions and 
 helper functions like 'emit to file'.
 '''
+
 
 import sys
 import os
@@ -16,6 +17,7 @@ import difflib
 
 import rsl.version
 import xtuml.model
+
 
 try:
     from future_builtins import filter

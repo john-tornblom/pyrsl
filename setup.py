@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
 # Copyright (C) 2015 John Törnblom
+
 import logging
 import unittest
 import sys
@@ -44,16 +45,22 @@ class TestCommand(Command):
         exit_code = not runner.run(suite).wasSuccessful()
         sys.exit(exit_code)
 
-long_desc = "pyrsl is an interpreter for the Rule Specification Language (RSL)"
 
 setup(name='pyrsl',
       version=rsl.version.release,
-      description='pyrsl',
-      long_description=long_desc,
+      description='Interpreter for the Rule Specification Language (RSL)',
       author='John Törnblom',
       author_email='john.tornblom@gmail.com',
       url='https://github.com/john-tornblom/pyrsl',
       license='GPLv3',
+      classifiers=[
+          'Development Status :: 4 - Beta',
+          'Intended Audience :: Developers',
+          'Topic :: Software Development :: Interpreters'
+          'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
+          'Programming Language :: Python :: 2.7',
+          'Programming Language :: Python :: 3.4'],
+      keywords='rsl xtuml bridgepoint',
       platforms=["Linux"],
       packages=['rsl'],
       requires=['ply', 'xtuml'],
