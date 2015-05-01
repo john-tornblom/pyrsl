@@ -6,9 +6,7 @@ import optparse
 import logging
 import sys
 
-from xtuml import model
-from xtuml import io
-
+import xtuml
 import rsl
 
 current_id = 0
@@ -41,13 +39,13 @@ def main():
     }
     logging.basicConfig(level=levels.get(opts.verbosity, logging.DEBUG))
     
-    loader = io.load.ModelLoader()
+    loader = xtuml.load.ModelLoader()
     loader.build_parser()
 
     for filename in opts.imports:
         loader.filename_input(filename)
 
-    id_generator = model.IdGenerator(next_id)
+    id_generator = xtuml.IdGenerator(next_id)
     metamodel = loader.build_metamodel(id_generator)
     
     if opts.diff:
