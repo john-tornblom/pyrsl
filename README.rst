@@ -12,6 +12,24 @@ Dependencies
 pyrsl depend on pyxtuml, see its `github page
 <https://github.com/john-tornblom/pyxtuml>`__ for install instructions.
 
+Installation
+~~~~~~~~~~~~
+
+One the dependencies have been met, 
+
+::
+
+    $ git clone https://github.com/john-tornblom/pyrsl.git
+    $ cd pyrsl
+    $ python setup.py prepare
+    $ python setup.py install
+   
+Optionally, you can also execute a test suite:
+
+::
+
+    $ python setup.py test
+
 Usage
 ~~~~~
 The command line usage is as follows:
