@@ -278,10 +278,12 @@ class Runtime(object):
             f.write(''.join(diff))
 
     def emit_buffer(self, filename):
-        filename = os.path.normpath(filename)
-        buf = self.clear_buffer()
-        
         org = ''
+        buf = self.clear_buffer()
+        if buf and not buf.endswith('\n'):
+            buf += '\n'
+            
+        filename = os.path.normpath(filename)
         if os.path.exists(filename):
             with open(filename, 'rU') as f:
                 org = f.read()

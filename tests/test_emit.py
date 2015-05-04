@@ -17,13 +17,13 @@ class TestEmit(RSLTestCase):
         
 
     def testEmitWithoutLinebreak_Case1(self):
-        text = 'Hello world' + '\\' + '\n' 
+        text = 'Hello ' + '\\' + '\n' + 'world' + '\n' 
         text+= '.emit to file "/tmp/RSLTestCase"' 
         
         self.eval_text(text)
         
         with open("/tmp/RSLTestCase") as f:
-            self.assertEqual(f.read(), "Hello world")
+            self.assertEqual(f.read(), "Hello world\n")
             
             
     def testEmitWithoutLinebreak_Case2(self):
@@ -33,7 +33,7 @@ class TestEmit(RSLTestCase):
         self.eval_text(text)
         
         with open("/tmp/RSLTestCase") as f:
-            self.assertEqual(f.read(), "Hello world\\")
+            self.assertEqual(f.read(), "Hello world\\\n")
     
     def testEmitEscapedBackslash(self):
         text = 'Hello world' + '\\' + '\\' + '\n' 
