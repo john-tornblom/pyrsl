@@ -42,7 +42,7 @@ The command line usage is as follows:
 
 ::
    
-    gen_erate.py [options] script.arc
+    $ python -m rsl.gen_erate [options] script.arc
 
 
 where script.arc is an RSL template, also known as a archetype. [options]
