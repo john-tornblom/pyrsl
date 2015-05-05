@@ -15,7 +15,13 @@ pyrsl depend on pyxtuml, see its `github page
 Installation
 ~~~~~~~~~~~~
 
-One the dependencies have been met, 
+Install from pypi:
+
+::
+
+    $ python -m pip install pyrsl
+
+Or fetch the source from github:
 
 ::
 
