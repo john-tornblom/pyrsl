@@ -326,7 +326,7 @@ class Runtime(object):
         return self.metamodel.new(key_letter)
     
     def chain(self, inst):
-        return self.metamodel.navigate_many(inst)
+        return xtuml.navigate_many(inst)
     
     def select_any_from(self, key_letter, where_cond):
         return self.metamodel.select_any(key_letter, where_cond)
