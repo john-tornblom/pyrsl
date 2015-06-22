@@ -11,8 +11,7 @@ import logging
 
 import xtuml
 
-import version
-import rsl
+import rsl.version
 
 
 current_id = 0
@@ -157,7 +156,7 @@ def main():
             dbfilename = sys.argv[i]
             
         elif sys.argv[i] == '-version':
-            print(version.complete_string)
+            print(rsl.version.complete_string)
             sys.exit(0)
             
         elif sys.argv[i] == '-h':
