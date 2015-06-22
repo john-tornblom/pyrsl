@@ -127,7 +127,7 @@ def main():
     archetypes = list()
     imports = list()
     persist = True
-    loglevel = 1
+    loglevel = 2
     log_to_file = False
     dbfilename = 'mcdbms.gen'
     
@@ -147,7 +147,7 @@ def main():
             loglevel = max(loglevel, 3)
 
         elif sys.argv[i] == '-v':
-            loglevel = max(loglevel, 2)
+            loglevel = max(loglevel, 3)
                 
         elif sys.argv[i] == '-l':
             log_to_file = True
