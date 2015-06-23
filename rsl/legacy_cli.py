@@ -122,14 +122,11 @@ For complete USAGE and HELP type:
 '''
 
 def main():
-    i = 1
     archetypes = list()
     imports = list()
-    persist = True
     loglevel = 2
-    log_to_file = False
-    dbfilename = 'mcdbms.gen'
     
+    i = 1
     while i < len(sys.argv):
         if sys.argv[i] == '-arch':
             i += 1
@@ -139,21 +136,11 @@ def main():
             i += 1
             imports.append(sys.argv[i])
 
-        elif sys.argv[i] == '-nopersist':
-            persist = False
-
-        elif sys.argv[i] == '-t':
-            loglevel = max(loglevel, 3)
-
         elif sys.argv[i] == '-v':
             loglevel = max(loglevel, 3)
-                
-        elif sys.argv[i] == '-l':
-            log_to_file = True
                     
         elif sys.argv[i] == '-f':
             i += 1
-            dbfilename = sys.argv[i]
             
         elif sys.argv[i] == '-version':
             print(rsl.version.complete_string)
@@ -168,7 +155,8 @@ def main():
             
         # ignore these options
         elif sys.argv[i] in ['-d', '-priority', '-lVHs', '-lSCs', '-l2b',
-                             '-l2s', '-l3b', '-l3s', '-e', '-q', '-#']:
+                             '-l2s', '-l3b', '-l3s', '-e', '-q', '-#', '-t',
+                             '-l','-nopersist', ]:
             i += 1
 
         else:
@@ -189,19 +177,11 @@ def main():
               2: logging.INFO,
               3: logging.DEBUG,
     }
-    loglevel = levels.get(loglevel, logging.DEBUG)
-    
-    if log_to_file:
-        logging.basicConfig(filename='%s_log' % dbfilename, level=loglevel)
-    else:
-        logging.basicConfig(stream=sys.stdout, level=loglevel)
+    logging.basicConfig(stream=sys.stdout, level=levels.get(loglevel, logging.DEBUG))
     
     loader = xtuml.load.ModelLoader()
     loader.build_parser()
 
-    if os.path.exists(dbfilename):
-        loader.filename_input(dbfilename)
-        
     for filename in imports:
         loader.filename_input(filename)
 
@@ -212,9 +192,6 @@ def main():
     for archetype in archetypes:
         ast = rsl.parse_file(archetype)
         rsl.evaluate(rt, ast, ['.'])
-
-    if persist:
-        xtuml.persist_metamodel(metamodel, dbfilename)
         
 
 if __name__ == '__main__':
