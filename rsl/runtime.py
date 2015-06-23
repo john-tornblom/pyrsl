@@ -226,7 +226,7 @@ class Runtime(object):
         return Fragment(**return_values)
     
     def invoke_print(self, value):
-        sys.stdout.write("%s: %d:  INFO:  %s\n" % (self.info.arch_file_name,
+        sys.stdout.write("%s: %d:  INFO:  %s\n" % (os.path.basename(self.info.arch_file_name),
                                                    self.info.arch_file_line,
                                                    value))
     
