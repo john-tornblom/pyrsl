@@ -225,9 +225,10 @@ class Runtime(object):
         
         return Fragment(**return_values)
     
-    @staticmethod
-    def invoke_print(value):
-        sys.stderr.write("%s\n" % value)
+    def invoke_print(self, value):
+        sys.stderr.write("%s: %d:  INFO:  %s\n" % (self.info.arch_file_name,
+                                                   self.info.arch_file_line,
+                                                   value))
     
     @staticmethod
     def invoke_exit(exit_code):
@@ -310,9 +311,9 @@ class Runtime(object):
                 os.makedirs(dirname)
 
             if os.path.exists(filename):
-                logger.info("File '%s' REPLACED" % filename)
+                self.invoke_print("File '%s' REPLACED" % filename)
             else:
-                logger.info("File '%s' CREATED" % filename)
+                self.invoke_print("File '%s' CREATED" % filename)
 
             with open(filename, 'w+') as f:
                 f.write(buf)
