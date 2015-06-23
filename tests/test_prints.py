@@ -14,8 +14,8 @@ class TestIfStatements(RSLTestCase):
         '''
         .print "Hello world!"
         '''
-        output = sys.stderr.getvalue().strip()
-        self.assertEquals(output, "Hello world!")
+        output = sys.stdout.getvalue().strip()
+        self.assertEquals(output, "test_prints.testPrintString: 2:  INFO:  Hello world!")
         
     @evaluate
     def testPrintSubstitusionVariable(self, rc):
@@ -23,8 +23,8 @@ class TestIfStatements(RSLTestCase):
         .assign s = "world"
         .print "Hello ${s}!"
         '''
-        output = sys.stderr.getvalue().strip()
-        self.assertEquals(output, "Hello world!")
+        output = sys.stdout.getvalue().strip()
+        self.assertEquals(output, "test_prints.testPrintSubstitusionVariable: 3:  INFO:  Hello world!")
         
     @evaluate
     def testPrintDoubleDollar(self, rc):
@@ -32,8 +32,8 @@ class TestIfStatements(RSLTestCase):
         .assign s = "$$world"
         .print "Hello ${s}!"
         '''
-        output = sys.stderr.getvalue().strip()
-        self.assertEquals(output, "Hello $world!")
+        output = sys.stdout.getvalue().strip()
+        self.assertEquals(output, "test_prints.testPrintDoubleDollar: 3:  INFO:  Hello $world!")
         
         
         
