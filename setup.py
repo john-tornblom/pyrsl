@@ -8,6 +8,7 @@ import sys
 
 from distutils.core import setup
 from distutils.core import Command
+from distutils.command.install import install
 
 import rsl
 
@@ -15,20 +16,13 @@ import rsl
 logging.basicConfig(level=logging.DEBUG)
 
 
-class PrepareCommand(Command):
-    description = "Prepare the source code by generating lexers and parsers"
-    user_options = []
-
-    def initialize_options(self):
-        pass
+class InstallCommand(install):
     
-    def finalize_options(self):
-        pass
-
     def run(self):
         rsl.parse_text('', '')
+        install.run(self)
 
-
+        
 class TestCommand(Command):
     description = "Execute unit tests"
     user_options = []
@@ -64,6 +58,6 @@ setup(name='pyrsl',
       platforms=["Linux"],
       packages=['rsl'],
       requires=['ply', 'xtuml'],
-      cmdclass={'prepare': PrepareCommand, 'test': TestCommand}
+      cmdclass={'install': InstallCommand, 'test': TestCommand}
       )
 
