@@ -27,7 +27,6 @@ Or fetch the source from github:
 
     $ git clone https://github.com/john-tornblom/pyrsl.git
     $ cd pyrsl
-    $ python setup.py prepare
     $ python setup.py install
    
 Optionally, you can also execute a test suite:
