@@ -100,8 +100,8 @@ class TestSelect(RSLTestCase):
     def testSelectOneNavigation(self):
         self.metamodel.define_class('A', [('Id', 'unique_id'), ('B_Id', 'unique_id')])
         self.metamodel.define_class('B', [('Id', 'unique_id'), ('A_Id', 'unique_id')])
-        a_endpint = xtuml.model.SingleEndPoint('A')
-        b_endpint = xtuml.model.SingleEndPoint('B')
+        a_endpint = xtuml.model.SingleAssociationLink('A')
+        b_endpint = xtuml.model.SingleAssociationLink('B')
         
         self.metamodel.define_relation('R1', a_endpint, b_endpint)
         
@@ -122,8 +122,8 @@ class TestSelect(RSLTestCase):
     def testSelectAnyNavigation(self):
         self.metamodel.define_class('A', [('Id', 'unique_id')])
         self.metamodel.define_class('B', [('Id', 'unique_id'), ('A_Id', 'unique_id')])
-        a_endpint = xtuml.model.SingleEndPoint('A')
-        b_endpint = xtuml.model.ManyEndPoint('B')
+        a_endpint = xtuml.model.SingleAssociationLink('A')
+        b_endpint = xtuml.model.ManyAssociationLink('B')
         
         self.metamodel.define_relation('R1', a_endpint, b_endpint)
         
@@ -142,8 +142,8 @@ class TestSelect(RSLTestCase):
     def testSelectManyNavigation(self):
         self.metamodel.define_class('A', [('Id', 'unique_id')])
         self.metamodel.define_class('B', [('Id', 'unique_id'), ('A_Id', 'unique_id')])
-        a_endpint = xtuml.model.SingleEndPoint('A')
-        b_endpint = xtuml.model.ManyEndPoint('B')
+        a_endpint = xtuml.model.SingleAssociationLink('A')
+        b_endpint = xtuml.model.ManyAssociationLink('B')
         
         self.metamodel.define_relation('R1', a_endpint, b_endpint)
         
@@ -167,12 +167,12 @@ class TestSelect(RSLTestCase):
                                           ('Prev_Id', 'unique_id'),
                                           ('Name', 'string')])
         
-        endpint1 = xtuml.model.SingleEndPoint('A', ids=['Id'], phrase='next')
-        endpint2 = xtuml.model.SingleEndPoint('A', ids=['Next_Id'], phrase='next')
+        endpint1 = xtuml.model.SingleAssociationLink('A', ids=['Id'], phrase='next')
+        endpint2 = xtuml.model.SingleAssociationLink('A', ids=['Next_Id'], phrase='next')
         self.metamodel.define_relation('R1', endpint1, endpint2)
         
-        endpint1 = xtuml.model.SingleEndPoint('A', ids=['Id'], phrase='prev')
-        endpint2 = xtuml.model.SingleEndPoint('A', ids=['Prev_Id'], phrase='prev')
+        endpint1 = xtuml.model.SingleAssociationLink('A', ids=['Id'], phrase='prev')
+        endpint2 = xtuml.model.SingleAssociationLink('A', ids=['Prev_Id'], phrase='prev')
         self.metamodel.define_relation('R1', endpint1, endpint2)
         
         first = self.metamodel.new('A', Id=uuid.uuid4(), Name="First")
@@ -202,8 +202,8 @@ class TestSelect(RSLTestCase):
     def testSelectAnySubstituionNavigation(self):
         self.metamodel.define_class('A', [('Id', 'unique_id')])
         self.metamodel.define_class('B', [('Id', 'unique_id'), ('A_Id', 'unique_id'), ('Name', 'string')])
-        a_endpint = xtuml.model.SingleEndPoint('A')
-        b_endpint = xtuml.model.ManyEndPoint('B')
+        a_endpint = xtuml.model.SingleAssociationLink('A')
+        b_endpint = xtuml.model.ManyAssociationLink('B')
         
         self.metamodel.define_relation('R1', a_endpint, b_endpint)
         
