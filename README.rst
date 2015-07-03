@@ -60,7 +60,10 @@ may be a combination of the following:
     --diff=PATH, -d PATH    save a diff of all emits to PATH
     --verbosity, -v         increase debug logging level
 
-    
+Language Reference
+~~~~~~~~~~~~~~~~~~
+See the BridgePoint manual, https://cdn.rawgit.com/john-tornblom/pyrsl/master/doc/rsl_language_reference.html
+
 Reporting bugs
 ~~~~~~~~~~~~~~
 If you encounter problems with pyrsl, please `file a github
