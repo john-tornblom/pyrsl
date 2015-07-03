@@ -62,7 +62,7 @@ may be a combination of the following:
 
 Language Reference
 ~~~~~~~~~~~~~~~~~~
-See the BridgePoint manual, https://cdn.rawgit.com/john-tornblom/pyrsl/master/doc/rsl_language_reference.html
+See `BridgePoint UML Suite Rule Specification Language <https://cdn.rawgit.com/john-tornblom/pyrsl/master/doc/rsl_language_reference.html>`__.
 
 Reporting bugs
 ~~~~~~~~~~~~~~
