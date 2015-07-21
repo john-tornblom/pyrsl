@@ -9,11 +9,11 @@ import sys
 try:
     from setuptools import setup
     from setuptools import Command
-    from setuptools.command.install import install
+    from setuptools.command.build_py import build_py
 except ImportError:
     from distutils.core import setup
-    from distutils.core import Command
-    from distutils.command.install import install
+    from distutils.core  import Command
+    from distutils.command.build_py import build_py
 
 import rsl
 
@@ -21,13 +21,13 @@ import rsl
 logging.basicConfig(level=logging.DEBUG)
 
 
-class InstallCommand(install):
+class BuildCommand(build_py):
     
     def run(self):
         rsl.parse_text('', '')
-        install.run(self)
+        build_py.run(self)
 
-        
+
 class TestCommand(Command):
     description = "Execute unit tests"
     user_options = []
@@ -63,6 +63,7 @@ setup(name='pyrsl',
       platforms=["Linux"],
       packages=['rsl'],
       requires=['ply', 'xtuml'],
-      cmdclass={'install': InstallCommand, 'test': TestCommand}
+      cmdclass={'build_py': BuildCommand,
+                'test': TestCommand}
       )
 
