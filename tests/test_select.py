@@ -1,7 +1,6 @@
 # encoding: utf-8
 # Copyright (C) 2015 John Törnblom
 
-import uuid
 import xtuml.model
 
 from utils import RSLTestCase
@@ -105,11 +104,9 @@ class TestSelect(RSLTestCase):
         
         self.metamodel.define_relation('R1', a_endpint, b_endpint)
         
-        a = self.metamodel.new('A', Id=uuid.uuid4())
-        b = self.metamodel.new('B', Id=uuid.uuid4())
-
-        a.B_Id = b.Id
-        b.A_Id = a.Id
+        a = self.metamodel.new('A')
+        b = self.metamodel.new('B')
+        xtuml.relate(a, b, 1)
 
         text = '''
         .select any a from instances of A
@@ -127,9 +124,10 @@ class TestSelect(RSLTestCase):
         
         self.metamodel.define_relation('R1', a_endpint, b_endpint)
         
-        a = self.metamodel.new('A', Id=uuid.uuid4())
-        b = self.metamodel.new('B', Id=uuid.uuid4(), A_Id=a.Id)
-
+        a = self.metamodel.new('A')
+        b = self.metamodel.new('B')
+        xtuml.relate(a, b, 1)
+        
         text = '''
         .select any a from instances of A
         .select any b related by a->B[R1]
@@ -147,10 +145,10 @@ class TestSelect(RSLTestCase):
         
         self.metamodel.define_relation('R1', a_endpint, b_endpint)
         
-        a = self.metamodel.new('A', Id=uuid.uuid4())
-        self.metamodel.new('B', Id=uuid.uuid4(), A_Id=a.Id)
-        self.metamodel.new('B', Id=uuid.uuid4(), A_Id=a.Id)
-        self.metamodel.new('B', Id=uuid.uuid4(), A_Id=a.Id)
+        a = self.metamodel.new('A')
+        xtuml.relate(a, self.metamodel.new('B'), 1)
+        xtuml.relate(a, self.metamodel.new('B'), 1)
+        xtuml.relate(a, self.metamodel.new('B'), 1)
 
         text = '''
         .select any a from instances of A
@@ -164,22 +162,15 @@ class TestSelect(RSLTestCase):
     def testSelectOneReflexiveNavigation(self):
         self.metamodel.define_class('A', [('Id', 'unique_id'),
                                           ('Next_Id', 'unique_id'),
-                                          ('Prev_Id', 'unique_id'),
                                           ('Name', 'string')])
         
-        endpint1 = xtuml.model.SingleAssociationLink('A', ids=['Id'], phrase='next')
+        endpint1 = xtuml.model.SingleAssociationLink('A', ids=['Id'], phrase='prev')
         endpint2 = xtuml.model.SingleAssociationLink('A', ids=['Next_Id'], phrase='next')
         self.metamodel.define_relation('R1', endpint1, endpint2)
-        
-        endpint1 = xtuml.model.SingleAssociationLink('A', ids=['Id'], phrase='prev')
-        endpint2 = xtuml.model.SingleAssociationLink('A', ids=['Prev_Id'], phrase='prev')
-        self.metamodel.define_relation('R1', endpint1, endpint2)
-        
-        first = self.metamodel.new('A', Id=uuid.uuid4(), Name="First")
-        second = self.metamodel.new('A', Id=uuid.uuid4(), Name="Second")
 
-        first.Next_Id = second.Id
-        second.Prev_Id = first.Id
+        first = self.metamodel.new('A', Name="First")
+        second = self.metamodel.new('A', Name="Second")
+        xtuml.relate(first, second, 1, 'prev')
         
         text = '''
         .select any first_inst from instances of A where (selected.Name == "First")
@@ -188,7 +179,6 @@ class TestSelect(RSLTestCase):
         '''
         rc = self.eval_text(text)
         self.assertEqual(second.Name, rc)
-
 
         text = '''
         .select any second_inst from instances of A where (selected.Name == "Second")
@@ -207,9 +197,10 @@ class TestSelect(RSLTestCase):
         
         self.metamodel.define_relation('R1', a_endpint, b_endpint)
         
-        a = self.metamodel.new('A', Id=uuid.uuid4())
-        _ = self.metamodel.new('B', Id=uuid.uuid4(), A_Id=a.Id, Name='Test')
-
+        a = self.metamodel.new('A')
+        b = self.metamodel.new('B', Name='Test')
+        xtuml.relate(a, b, 1)
+        
         text = '''
         .select any a from instances of A where ("${selected->B[R1].name}" == "Test")
         .exit a.Id

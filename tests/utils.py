@@ -8,14 +8,8 @@ import rsl
 
 class RSLTestCase(unittest.TestCase):
 
-    def next_id(self):
-        self.current_id += 1
-        return self.current_id
-    
     def setUp(self):
-        self.current_id = 0
-
-        id_generator = xtuml.model.IdGenerator(readfunc=self.next_id)
+        id_generator = xtuml.model.IntegerGenerator()
         self.metamodel = xtuml.model.MetaModel(id_generator)
         self.runtime = rsl.runtime.Runtime(self.metamodel)
         self.includes = ['./']

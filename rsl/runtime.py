@@ -338,7 +338,7 @@ class Runtime(object):
     @staticmethod
     def select_many_in(inst_set, where_cond):
         s = filter(where_cond, inst_set)
-        return xtuml.model.QuerySet(s)
+        return xtuml.QuerySet(s)
 
     @staticmethod
     def select_any_in(inst_set, where_cond):
@@ -348,47 +348,57 @@ class Runtime(object):
 
     @staticmethod
     def select_one_in(inst_set, where_cond):
-        cardinality = xtuml.model.MetaModel.cardinality(inst_set)
+        cardinality = Runtime.cardinality(inst_set)
         if cardinality > 1:
             raise RuntimeException('select one from a set with cardinality %d' % cardinality)
         
         return Runtime.select_any_in(inst_set, where_cond)
                 
     @staticmethod
-    def cardinality(inst_set):
-        return xtuml.model.MetaModel.cardinality(inst_set)
+    def cardinality(arg):
+        if Runtime.is_set(arg): 
+            return len(arg) 
+        
+        if Runtime.is_instance(arg): 
+            return 1
+        
+        return 0
     
     @staticmethod
-    def empty(inst_set):
-        return xtuml.model.MetaModel.empty(inst_set)
+    def empty(arg):
+        return Runtime.cardinality(arg) == 0
     
     @staticmethod
-    def not_empty(inst_set):
-        return xtuml.model.MetaModel.not_empty(inst_set)
+    def not_empty(arg):
+        return Runtime.cardinality(arg) != 0
     
     @staticmethod
     def first(inst, inst_set):
-        return xtuml.model.MetaModel.first(inst, inst_set)
+        if Runtime.is_instance(inst) and Runtime.is_set(inst_set):
+            return inst == inst_set.first
     
     @staticmethod
     def not_first(inst, inst_set):
-        return xtuml.model.MetaModel.not_first(inst, inst_set)
+        if Runtime.is_instance(inst) and Runtime.is_set(inst_set):
+            return inst != inst_set.first
     
     @staticmethod
     def last(inst, inst_set):
-        return xtuml.model.MetaModel.last(inst, inst_set)
+        if Runtime.is_instance(inst) and Runtime.is_set(inst_set):
+            return inst == inst_set.last
     
     @staticmethod
     def not_last(inst, inst_set):
-        return xtuml.model.MetaModel.not_last(inst, inst_set)
+        if Runtime.is_instance(inst) and Runtime.is_set(inst_set):
+            return inst != inst_set.last
     
     @staticmethod
     def is_set(inst):
-        return xtuml.model.MetaModel.is_set(inst)
+        return isinstance(inst, xtuml.QuerySet)
 
     @staticmethod
     def is_instance(inst):
-        return xtuml.model.MetaModel.is_instance(inst)
+        return isinstance(inst, xtuml.BaseObject)
 
     def assert_type(self, exptected_type, value):
         value_type = self.type_name(type(value))
@@ -396,10 +406,16 @@ class Runtime(object):
             raise RuntimeException('expected type %s, not %s' % (exptected_type, value_type))
         
     def type_name(self, ty):
-        if issubclass(ty, Fragment):
-            return 'frag_ref'
-        else: 
-            return self.metamodel.type_name(ty)
+        if   issubclass(ty, bool): return 'boolean'
+        elif issubclass(ty, int): return 'integer'
+        elif issubclass(ty, float): return 'real'
+        elif issubclass(ty, str): return 'string'
+        elif issubclass(ty, xtuml.BaseObject): return 'inst_ref'
+        elif issubclass(ty, type(None)): return 'inst_ref'
+        elif issubclass(ty, xtuml.QuerySet): return 'inst_ref_set'
+        elif issubclass(ty, type(self.metamodel.id_generator.peek())): return 'unique_id'
+        elif issubclass(ty, Fragment): return 'frag_ref'
+        else: raise RuntimeException("Unknown type '%s'" % ty.__name__)
     
     def named_type(self, name):
         if name == 'frag_ref':
