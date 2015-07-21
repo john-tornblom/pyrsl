@@ -6,23 +6,12 @@ Legacy cli option parser from old gen_erate.exe
 '''
 
 import sys
-import os
 import logging
 
 import xtuml
 
 import rsl.version
-
-
-current_id = 0
-def next_id():
-    '''
-    Use integers as unique_id
-    '''
-    global current_id
-    current_id += 1
-    return current_id
-    
+ 
 
 complete_usage = '''
 USAGE: 
@@ -185,7 +174,7 @@ def main():
     for filename in imports:
         loader.filename_input(filename)
 
-    id_generator = xtuml.IdGenerator(next_id)
+    id_generator = xtuml.IntegerGenerator()
     metamodel = loader.build_metamodel(id_generator)
     
     rt = rsl.Runtime(metamodel, emit='change')

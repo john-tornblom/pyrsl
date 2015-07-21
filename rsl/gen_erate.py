@@ -13,16 +13,6 @@ import sys
 import xtuml
 import rsl
 
-
-current_id = 0
-def next_id():
-    '''
-    Use integers as unique_id
-    '''
-    global current_id
-    current_id += 1
-    return current_id
-    
     
 def main():
     '''
@@ -55,7 +45,7 @@ def main():
     for filename in opts.imports:
         loader.filename_input(filename)
 
-    id_generator = xtuml.IdGenerator(next_id)
+    id_generator = xtuml.IntegerGenerator()
     metamodel = loader.build_metamodel(id_generator)
     
     if opts.diff:
