@@ -410,11 +410,11 @@ class Runtime(object):
         elif issubclass(ty, int): return 'integer'
         elif issubclass(ty, float): return 'real'
         elif issubclass(ty, str): return 'string'
+        elif issubclass(ty, Fragment): return 'frag_ref'
         elif issubclass(ty, xtuml.BaseObject): return 'inst_ref'
         elif issubclass(ty, type(None)): return 'inst_ref'
         elif issubclass(ty, xtuml.QuerySet): return 'inst_ref_set'
         elif issubclass(ty, type(self.metamodel.id_generator.peek())): return 'unique_id'
-        elif issubclass(ty, Fragment): return 'frag_ref'
         else: raise RuntimeException("Unknown type '%s'" % ty.__name__)
     
     def named_type(self, name):
