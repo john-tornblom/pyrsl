@@ -6,7 +6,7 @@ Keep version info in one single place
 
 
 name = 'pyrsl'
-date = '2015-07-21'
-release = '0.3.5'
+date = '2015-09-08'
+release = '0.3.6'
 
 complete_string = '%s v%s (%s)' % (name, release, date)
