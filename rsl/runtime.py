@@ -77,6 +77,8 @@ class Fragment(xtuml.model.BaseObject):
 
 class Runtime(object):
 
+    bridges = dict()
+    
     def __init__(self, metamodel, emit=None, force=False, diff=None):
         self.metamodel = metamodel
         self.emit = emit
@@ -86,82 +88,6 @@ class Runtime(object):
         self.buffer = ''
         self.include_cache = dict()
         self.info = Info(metamodel)
-            
-        self.define_function('GET_ENV_VAR', self.get_env_var)
-        self.define_function('PUT_ENV_VAR', self.put_env_var)
-        self.define_function('SHELL_COMMAND', self.shell_command)
-        self.define_function('FILE_READ', self.file_read)
-        self.define_function('FILE_WRITE', self.file_write)
-        self.define_function('STRING_TO_INTEGER', self.string_to_integer)
-        self.define_function('STRING_TO_REAL', self.string_to_real)
-        self.define_function('INTEGER_TO_STRING', self.integer_to_string)
-        self.define_function('REAL_TO_STRING', self.real_to_string)
-        self.define_function('BOOLEAN_TO_STRING', self.boolean_to_string)
-        
-    @staticmethod        
-    def get_env_var(name):
-        if name in os.environ:
-            result = os.environ[name]
-            success = True
-        else:
-            result = ''
-            success = False
-        
-        return {'attr_success': success,
-                'attr_result': result}
-    
-    @staticmethod
-    def put_env_var(value, name):
-        os.environ[name] = value
-        return {'attr_success': name in os.environ}
-    
-    @staticmethod
-    def shell_command(cmd):
-        return {'attr_result': subprocess.call(cmd, shell=True)}
-    
-    @staticmethod
-    def file_read(filename):
-        try:
-            with open(filename, 'r') as f:
-                result = f.read()
-                success = True
-        except:
-            success = False
-            result = ''
-            
-        return {'attr_success': success,
-                'attr_result': result}
-    
-    @staticmethod
-    def file_write(contents, filename):
-        try:
-            with open(filename, 'w') as f:
-                f.write('%s\n' % contents)
-                success = True
-        except:
-            success = False
-        
-        return {'attr_success': success}
-        
-    @staticmethod
-    def string_to_integer(value):
-        return {'attr_result': int(value)}
-    
-    @staticmethod
-    def string_to_real(value):
-        return {'attr_result': float(value)}
-        
-    @staticmethod
-    def integer_to_string(value):
-        return {'attr_result': str(value)}
-        
-    @staticmethod
-    def real_to_string(value):
-        return {'attr_result': str(value)}
-        
-    @staticmethod
-    def boolean_to_string(value):
-        return {'attr_result': str(value).upper()}    
         
     @staticmethod
     def format_string(expr, fmt):
@@ -207,12 +133,14 @@ class Runtime(object):
         self.functions[name] = fn
         
     def invoke_function(self, name, args):
-        if name not in self.functions:
+        if name in self.functions:
+            fn = self.functions[name]
+        elif name in self.bridges:
+            fn = self.bridges[name]
+        else:
             raise RuntimeException("Function '%s' is undefined" % name)
         
         buf = self.clear_buffer()
-        
-        fn = self.functions[name]
         d = fn(*args)
         
         return_values = dict({'body': self.clear_buffer()})
@@ -423,3 +351,94 @@ class Runtime(object):
         else: 
             return self.metamodel.named_type(name)
         
+
+class bridge(object):
+    cls = None
+    
+    def __init__(self, name, cls=None):
+        self.name = name
+        self.cls = cls
+        
+    def __call__(self, f):
+        cls = self.cls or Runtime
+        name = self.name or f.__name__
+        
+        cls.bridges[name] = f
+        
+        return f
+    
+    
+@bridge('GET_ENV_VAR')
+def get_env_var(name):
+    if name in os.environ:
+        result = os.environ[name]
+        success = True
+    else:
+        result = ''
+        success = False
+        
+    return {'attr_success': success,
+            'attr_result': result}
+
+
+@bridge('PUT_ENV_VAR')
+def put_env_var(value, name):
+    os.environ[name] = value
+    return {'attr_success': name in os.environ}
+
+
+@bridge('SHELL_COMMAND')
+def shell_command(cmd):
+    return {'attr_result': subprocess.call(cmd, shell=True)}
+
+
+@bridge('FILE_READ')
+def file_read(filename):
+    try:
+        with open(filename, 'r') as f:
+            result = f.read()
+            success = True
+    except:
+        success = False
+        result = ''
+            
+    return {'attr_success': success,
+            'attr_result': result}
+
+
+@bridge('FILE_WRITE')
+def file_write(contents, filename):
+    try:
+        with open(filename, 'w') as f:
+            f.write('%s\n' % contents)
+            success = True
+    except:
+        success = False
+        
+    return {'attr_success': success}
+
+
+@bridge('STRING_TO_INTEGER')
+def string_to_integer(value):
+    return {'attr_result': int(value)}
+
+
+@bridge('STRING_TO_REAL')
+def string_to_real(value):
+    return {'attr_result': float(value)}
+
+
+@bridge('INTEGER_TO_STRING')
+def integer_to_string(value):
+    return {'attr_result': str(value)}
+
+
+@bridge('REAL_TO_STRING')
+def real_to_string(value):
+    return {'attr_result': str(value)}
+
+
+@bridge('BOOLEAN_TO_STRING')
+def boolean_to_string(value):
+    return {'attr_result': str(value).upper()}  
+
