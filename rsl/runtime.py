@@ -363,7 +363,14 @@ class bridge(object):
         cls = self.cls or Runtime
         name = self.name or f.__name__
         
-        cls.bridges[name] = f
+        def wrapper(*args):
+            res = {}
+            rc = f(*args) or {}
+            for key, value in rc.items():
+                res['attr_%s' % key] = value
+            return res
+        
+        cls.bridges[name] = wrapper
         
         return f
     
@@ -377,19 +384,19 @@ def get_env_var(name):
         result = ''
         success = False
         
-    return {'attr_success': success,
-            'attr_result': result}
+    return {'success': success,
+            'result': result}
 
 
 @bridge('PUT_ENV_VAR')
 def put_env_var(value, name):
     os.environ[name] = value
-    return {'attr_success': name in os.environ}
+    return {'success': name in os.environ}
 
 
 @bridge('SHELL_COMMAND')
 def shell_command(cmd):
-    return {'attr_result': subprocess.call(cmd, shell=True)}
+    return {'result': subprocess.call(cmd, shell=True)}
 
 
 @bridge('FILE_READ')
@@ -402,8 +409,8 @@ def file_read(filename):
         success = False
         result = ''
             
-    return {'attr_success': success,
-            'attr_result': result}
+    return {'success': success,
+            'result': result}
 
 
 @bridge('FILE_WRITE')
@@ -415,30 +422,30 @@ def file_write(contents, filename):
     except:
         success = False
         
-    return {'attr_success': success}
+    return {'success': success}
 
 
 @bridge('STRING_TO_INTEGER')
 def string_to_integer(value):
-    return {'attr_result': int(value)}
+    return {'result': int(value)}
 
 
 @bridge('STRING_TO_REAL')
 def string_to_real(value):
-    return {'attr_result': float(value)}
+    return {'result': float(value)}
 
 
 @bridge('INTEGER_TO_STRING')
 def integer_to_string(value):
-    return {'attr_result': str(value)}
+    return {'result': str(value)}
 
 
 @bridge('REAL_TO_STRING')
 def real_to_string(value):
-    return {'attr_result': str(value)}
+    return {'result': str(value)}
 
 
 @bridge('BOOLEAN_TO_STRING')
 def boolean_to_string(value):
-    return {'attr_result': str(value).upper()}  
+    return {'result': str(value).upper()}  
 
