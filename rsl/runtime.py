@@ -354,6 +354,7 @@ class Runtime(object):
 
 class bridge(object):
     cls = None
+    name = None
     
     def __init__(self, name, cls=None):
         self.name = name
