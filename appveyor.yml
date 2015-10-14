@@ -1,0 +1,26 @@
+build: off
+
+environment:
+  matrix:
+    - PYTHON: "C:\\Python34"
+      PYTHON_VERSION: "3.4.x"
+      PYTHON_ARCH: "32"
+
+init:
+  - "%PYTHON%/python --version"
+
+install:
+  - "%PYTHON%/python -m pip install ply"
+  - "%PYTHON%/python -m pip install pyxtuml"
+  - "%PYTHON%/python -m pip install py2exe"
+  
+test_script:
+  - "%PYTHON%/python setup.py test"
+
+after_test:
+  - "%PYTHON%/python setup.py py2exe -O2 -c -b1"
+  
+artifacts:
+  - path: dist\*
+
+
