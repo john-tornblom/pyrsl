@@ -70,6 +70,7 @@ opts = dict(name='pyrsl',
 try:
     import py2exe
     opts['console'] = ['rsl/gen_erate.py', 'rsl/legacy_cli.py']
+    opts['zipfile'] = None
 except:
     pass
 
