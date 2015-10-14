@@ -35,6 +35,13 @@ Optionally, you can also execute a test suite:
 
     $ python setup.py test
 
+Windows EXEs
+~~~~~~~~~~~~
+Windows users may obtain `self-contained EXEs from appveyor <https://ci.appveyor.com/project/john-tornblom/pyrsl/build/artifacts>`__:
+
+- legacy_cli.exe - legacy command line interface.
+- gen_erate.exe - pythonic command line interface with a few additional features.
+
 Usage
 ~~~~~
 The command line usage is as follows:
