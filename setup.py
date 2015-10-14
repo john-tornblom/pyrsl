@@ -45,25 +45,33 @@ class TestCommand(Command):
         sys.exit(exit_code)
 
 
-setup(name='pyrsl',
-      version=rsl.version.release,
-      description='Interpreter for the Rule Specification Language (RSL)',
-      author='John Törnblom',
-      author_email='john.tornblom@gmail.com',
-      url='https://github.com/john-tornblom/pyrsl',
-      license='GPLv3',
-      classifiers=[
-          'Development Status :: 4 - Beta',
-          'Intended Audience :: Developers',
-          'Topic :: Software Development :: Interpreters',
-          'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
-          'Programming Language :: Python :: 2.7',
-          'Programming Language :: Python :: 3.4'],
-      keywords='rsl xtuml bridgepoint',
-      platforms=["Linux"],
-      packages=['rsl'],
-      requires=['ply', 'xtuml'],
-      cmdclass={'build_py': BuildCommand,
-                'test': TestCommand}
-      )
+opts = dict(name='pyrsl',
+            version=rsl.version.release,
+            description='Interpreter for the Rule Specification Language (RSL)',
+            author='John Törnblom',
+            author_email='john.tornblom@gmail.com',
+            url='https://github.com/john-tornblom/pyrsl',
+            license='GPLv3',
+            classifiers=[
+                'Development Status :: 4 - Beta',
+                'Intended Audience :: Developers',
+                'Topic :: Software Development :: Interpreters',
+                'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
+                'Programming Language :: Python :: 2.7',
+                'Programming Language :: Python :: 3.4'],
+            keywords='rsl xtuml bridgepoint',
+            platforms=["Linux"],
+            packages=['rsl'],
+            requires=['ply', 'xtuml'],
+            cmdclass={'build_py': BuildCommand,
+                      'test': TestCommand})
 
+
+try:
+    import py2exe
+    opts['console'] = ['rsl/gen_erate.py', 'rsl/legacy_cli.py']
+except:
+    pass
+
+
+setup(**opts)
