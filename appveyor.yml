@@ -13,7 +13,10 @@ install:
   - "%PYTHON%/python -m pip install ply"
   - "%PYTHON%/python -m pip install pyxtuml"
   - "%PYTHON%/python -m pip install py2exe"
-  
+
+before_test:
+  - "%PYTHON%/python setup.py build"
+
 test_script:
   - "%PYTHON%/python setup.py test"
 
@@ -22,5 +25,4 @@ after_test:
   
 artifacts:
   - path: dist\*
-
 
