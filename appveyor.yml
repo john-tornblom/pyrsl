@@ -21,7 +21,7 @@ test_script:
   - "%PYTHON%/python setup.py test"
 
 after_test:
-  - "%PYTHON%/python setup.py py2exe -O2 -c -b1, -p xtuml,rsl"
+  - "%PYTHON%/python setup.py py2exe -O2 -c -b1 -p xtuml,rsl"
   
 artifacts:
   - path: dist\*
