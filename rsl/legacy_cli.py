@@ -127,9 +127,6 @@ def main():
 
         elif sys.argv[i] == '-v':
             loglevel = max(loglevel, 3)
-                    
-        elif sys.argv[i] == '-f':
-            i += 1
             
         elif sys.argv[i] == '-version':
             print(rsl.version.complete_string)
@@ -141,13 +138,16 @@ def main():
             
         elif sys.argv[i] in ['//', '-ignore_rest']:
             break
-            
-        # ignore these options
-        elif sys.argv[i] in ['-d', '-priority', '-lVHs', '-lSCs', '-l2b',
-                             '-l2s', '-l3b', '-l3s', '-e', '-q', '-#', '-t',
-                             '-l','-nopersist', ]:
-            i += 1
 
+        # ignore these options
+        elif sys.argv[i] in ['-lVHs', '-lSCs', '-l2b', '-l2s', '-l3b', '-l3s',
+                             '-nopersist', '-q', '-l']:
+            pass
+            
+        # ignore these options (which expects a following value)
+        elif sys.argv[i] in ['-d', '-priority', '-e', '-t', '-t', '-f', '#']:
+            i += 1
+            
         else:
             print("PARSE ERROR: Argument: %s" % sys.argv[i])
             print("Couldn't find match for argument")
