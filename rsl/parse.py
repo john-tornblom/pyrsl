@@ -168,11 +168,13 @@ class RSLParser(object):
     
     def t_pc(self, t):
         r"(?m)^[\s]*(?=[\.])"
+        t.lexer.lineno += t.value.count('\n')
         t.lexer.begin('pc')
     
     def t_LITERAL_2(self, t):
         r"(?m)^[\s]*(?=[^\.\n])"
         t.lexer.begin('literal')
+        t.lexer.lineno += t.value.count('\n')
         t.type = 'LITERAL'
         return t
     
