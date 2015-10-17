@@ -330,7 +330,7 @@ class Runtime(object):
 
     def assert_type(self, exptected_type, value):
         value_type = self.type_name(type(value))
-        if exptected_type != value_type:
+        if exptected_type.upper() != value_type.upper():
             raise RuntimeException('expected type %s, not %s' % (exptected_type, value_type))
         
     def type_name(self, ty):
