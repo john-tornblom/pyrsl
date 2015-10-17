@@ -344,12 +344,6 @@ class Runtime(object):
         elif issubclass(ty, xtuml.QuerySet): return 'inst_ref_set'
         elif issubclass(ty, type(self.metamodel.id_generator.peek())): return 'unique_id'
         else: raise RuntimeException("Unknown type '%s'" % ty.__name__)
-    
-    def named_type(self, name):
-        if name == 'frag_ref':
-            return Fragment
-        else: 
-            return self.metamodel.named_type(name)
         
 
 class bridge(object):
