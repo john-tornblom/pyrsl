@@ -1278,17 +1278,10 @@ class RSLParser(object):
         p[0].lineno = p.lineno(0)
         
     def p_stringbody_2(self, p):
-        """stringbody : stringbody TEXT"""
-        s = ast.StringValueNode(p[2])
-        s.filename = self.filename
-        s.lineno = p.lineno(2)
-        p[0] = p[1]
-        p[0].values.append(s)
-        p[0].filename = self.filename
-        p[0].lineno = p[1].lineno
-        
-    def p_stringbody_3(self, p):
-        """stringbody : stringbody WORD"""
+        """
+        stringbody : stringbody TEXT
+                   | stringbody WORD
+        """
         s = ast.StringValueNode(p[2])
         s.filename = self.filename
         s.lineno = p.lineno(2)
