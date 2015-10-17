@@ -678,6 +678,12 @@ class RSLParser(object):
     def p_commentbody_2(self, p):
         """commentbody : commentbody TEXT"""
     
+    def p_linebreak_1(self, p):
+        """lineabreak : NEWLINE"""
+    
+    def p_linebreak_2(self, p):
+        """lineabreak : comment"""
+        
     def p_archetypebody_1(self, p):
         """archetypebody : code"""
         p[0] = ast.BodyNode(p[1])
@@ -705,123 +711,105 @@ class RSLParser(object):
         p[0].statements.append(p[2])
         
     def p_statement_1(self, p):
-        """statement : selectstatement NEWLINE"""
+        """statement : selectstatement lineabreak"""
         p[0] = p[1]
     
     def p_statement_2(self, p):
-        """statement : IF condition NEWLINE code elifclause elseclause endiffer"""
+        """statement : IF condition lineabreak code elifclause elseclause endiffer"""
         p[0] = ast.IfNode(p[2], p[4], p[5], p[6])
         p[0].filename = self.filename
         p[0].lineno = p.lineno(0)
     
     def p_statement_3(self, p):
-        """statement : FUNCTION function_identifier NEWLINE fparameters fbody ENDFUNCTION NEWLINE"""
-        p[0] = ast.FunctionNode(p[2], p[4], p[5])
-        p[0].filename = self.filename
-        p[0].lineno = p.lineno(0)
-    
-    def p_statement_3_1(self, p):
-        """statement : FUNCTION function_identifier comment fparameters fbody ENDFUNCTION NEWLINE"""
+        """statement : FUNCTION function_identifier lineabreak fparameters fbody ENDFUNCTION lineabreak"""
         p[0] = ast.FunctionNode(p[2], p[4], p[5])
         p[0].filename = self.filename
         p[0].lineno = p.lineno(0)
         
     def p_statement_4(self, p):
-        """statement : FOR inst_ref_var IN inst_ref_set_var NEWLINE code endforrer"""
+        """statement : FOR inst_ref_var IN inst_ref_set_var lineabreak code endforrer"""
         p[0] = ast.ForNode(p[2], p[4], p[6])
         p[0].filename = self.filename
         p[0].lineno = p.lineno(0)
     
     def p_statement_5(self, p):
-        """statement : BREAKFOR NEWLINE"""
+        """statement : BREAKFOR lineabreak"""
         p[0] = ast.BreakNode()
         p[0].filename = self.filename
         p[0].lineno = p.lineno(0)
     
-    def p_statement_6(self, p):
-        """statement : BREAKFOR comment"""
-        p[0] = ast.BreakNode()
-        p[0].filename = self.filename
-        p[0].lineno = p.lineno(0)
-        
     def p_statement_7(self, p):
-        """statement : BREAKWHILE NEWLINE"""
+        """statement : BREAKWHILE lineabreak"""
         p[0] = ast.BreakNode()
         p[0].filename = self.filename
         p[0].lineno = p.lineno(0)
         
     def p_statement_8(self, p):
-        """statement : WHILE condition NEWLINE code endwhiler"""
+        """statement : WHILE condition lineabreak code endwhiler"""
         p[0] = ast.WhileNode(p[2], p[4])
         p[0].filename = self.filename
         p[0].lineno = p.lineno(0)
         
     def p_statement_9(self, p):
-        """statement : CLEARTOK NEWLINE"""
+        """statement : CLEARTOK lineabreak"""
         p[0] = ast.ClearNode()
         p[0].filename = self.filename
         p[0].lineno = p.lineno(0)
         
     def p_statement_10(self, p):
-        """statement : INCLUDE string NEWLINE"""
+        """statement : INCLUDE string lineabreak"""
         p[0] = ast.IncludeNode(p[2])
         p[0].filename = self.filename
         p[0].lineno = p.lineno(0)
     
     def p_statement_11(self, p):
-        """statement : PRINTTOK string NEWLINE"""
+        """statement : PRINTTOK string lineabreak"""
         p[0] = ast.PrintNode(p[2])
         p[0].filename = self.filename
         p[0].lineno = p.lineno(0)
     
     def p_statement_12(self, p):
-        """statement : EXITTOK sexpr NEWLINE"""
+        """statement : EXITTOK sexpr lineabreak"""
         p[0] = ast.ExitNode(p[2])
         p[0].filename = self.filename
         p[0].lineno = p.lineno(0)
     
     def p_statement_13(self, p):
-        """statement : EMIT string NEWLINE"""
+        """statement : EMIT string lineabreak"""
         p[0] = ast.EmitNode(p[2])
         p[0].filename = self.filename
         p[0].lineno = p.lineno(0)
     
     def p_statement_14(self, p):
-        """statement : ASSIGN variable EQ expr NEWLINE"""
-        p[0] = ast.AssignNode(p[2], p[4])
-        p[0].filename = self.filename
-        p[0].lineno = p.lineno(0)
-    
-    def p_statement_14_1(self, p):
-        """statement : ASSIGN variable EQ expr comment"""
+        """statement : ASSIGN variable EQ expr lineabreak"""
         p[0] = ast.AssignNode(p[2], p[4])
         p[0].filename = self.filename
         p[0].lineno = p.lineno(0)
         
     def p_statement_15(self, p):
-        """statement : INVOKE function_identifier LPAREN aparameters RPAREN NEWLINE"""
+        """statement : INVOKE function_identifier LPAREN aparameters RPAREN lineabreak"""
         p[0] = ast.InvokeNode(p[2], p[4])
         p[0].filename = self.filename
         p[0].lineno = p.lineno(0)
     
     def p_statement_16(self, p):
-        """statement : INVOKE frag_ref_var EQ function_identifier LPAREN aparameters RPAREN NEWLINE"""
+        """statement : INVOKE frag_ref_var EQ function_identifier LPAREN aparameters RPAREN lineabreak"""
         p[0] = ast.InvokeNode(p[4], p[6], p[2])
         p[0].filename = self.filename
         p[0].lineno = p.lineno(0)
     
     def p_statement_17(self, p):
-        """statement : ALXLATE activity_type inst_ref_var NEWLINE"""
+        """statement : ALXLATE activity_type inst_ref_var lineabreak"""
         p[0] = ast.AlXlateNode(p[2], p[3])
         p[0].filename = self.filename
         p[0].lineno = p.lineno(0)
         
     def p_statement_18(self, p):
-        """statement : SPECIALWHERE WORD WORD NEWLINE"""
+        """statement : SPECIALWHERE WORD WORD lineabreak"""
         # TODO: p_statement_18
     
     def p_statement_19(self, p):
-        """statement : CREATEOBJ inst_ref_var OF obj_keyletters NEWLINE"""
+        """statement : CREATEOBJ inst_ref_var OF obj_keyletters lineabreak"""
         p[0] = ast.CreateNode(p[2], p[4])
         p[0].filename = self.filename
         p[0].lineno = p.lineno(0)
@@ -873,32 +861,24 @@ class RSLParser(object):
         p[0] = ast.ParameterListNode()
         p[0].filename = self.filename
         p[0].lineno = p.lineno(0)
-        
-    def p_fparameters_2(self, p):
-        """fparameters : fparameters PARAM TYPE param_name comment"""
-        p[0] = p[1]
-        param = ast.ParameterNode(p[3], p[4])
-        param.filename = self.filename
-        param.lineno = p.lineno(2)
-        p[0].parameters.append(param)
     
     def p_fparameters_3(self, p):
-        """fparameters : fparameters PARAM TYPE param_name NEWLINE"""
+        """fparameters : fparameters PARAM TYPE param_name lineabreak"""
         p[0] = p[1]
         param = ast.ParameterNode(p[3], p[4])
         param.filename = self.filename
         param.lineno = p.lineno(2)
         p[0].parameters.append(param)
     
-    def p_fparameters_4(self, p):
-        """fparameters : fparameters comment"""
-        p[0] = p[1]
-    
-    def p_fbody_1(self, p):
+    def p_fbody_0(self, p):
         """fbody : """
         p[0] = ast.StatementListNode()
         p[0].filename = self.filename
         p[0].lineno = p.lineno(0)
+        
+    def p_fbody_1(self, p):
+        """fbody : comment code"""
+        p[0] = p[2]
         
     def p_fbody_2(self, p):
         """fbody : statement code"""
@@ -933,7 +913,7 @@ class RSLParser(object):
         p[0].lineno = p.lineno(0)
         
     def p_elifclause_2(self, p):
-        """elifclause : elifclause ELIF condition NEWLINE code"""
+        """elifclause : elifclause ELIF condition lineabreak code"""
         p[0] = p[1]
         
         el = ast.ElIfNode(p[3], p[5])
@@ -948,26 +928,20 @@ class RSLParser(object):
         p[0].lineno = p.lineno(0)
         
     def p_elseclause_2(self, p):
-        """elseclause : ELSE NEWLINE code"""
+        """elseclause : ELSE lineabreak code"""
         p[0] = p[3]
     
     def p_endiffer_1(self, p):
-        """endiffer : ENDIF NEWLINE"""
+        """endiffer : ENDIF lineabreak"""
     
-    def p_endiffer_2(self, p):
-        """endiffer : ENDIF comment"""
     
     def p_endwhiler_1(self, p):
-        """endwhiler : ENDWHILE NEWLINE"""
+        """endwhiler : ENDWHILE lineabreak"""
     
-    def p_endwhiler_2(self, p):
-        """endwhiler : ENDWHILE comment"""
     
     def p_endforrer_1(self, p):
-        """endforrer : ENDFOR NEWLINE"""
+        """endforrer : ENDFOR lineabreak"""
     
-    def p_endforrer_2(self, p):
-        """endforrer : ENDFOR comment"""
     
     def p_condition_1(self, p):
         """condition : LPAREN expr RPAREN"""
