@@ -93,7 +93,9 @@ class Runtime(object):
     def format_string(expr, fmt):
         whitespace_regexp = re.compile(r'\s+')
         nonword_regexp = re.compile(r'[^\w]')
-            
+        front_chain_regexp = re.compile(r"(\s*->\s*([\w]+)\[[Rr](\d+)(?:\.\'([^\']+)\')?\]\s*)")
+        back_chain_regexp  = re.compile(r"(\s*->\s*([\w]+)\[[Rr](\d+)(?:\.\'([^\']+)\')?\]\s*)$")
+        
         def o(value):
             value = value.replace('_', ' ')
             value = value.title()
@@ -110,7 +112,15 @@ class Runtime(object):
                 '_' : lambda value: re.sub(whitespace_regexp, '_', value),
                 'r' : lambda value: re.sub(whitespace_regexp, '', value),
                 't' : lambda value: value,
-                'o' : o
+                'o' : o,
+                'cf_kl':     lambda value: front_chain_regexp.search(value).group(2),
+                'cf_rel':    lambda value: front_chain_regexp.search(value).group(3),
+                'cf_phrase': lambda value: front_chain_regexp.search(value).group(4) or '',
+                'cb_kl':     lambda value: back_chain_regexp.search(value).group(2),
+                'cb_rel':    lambda value: back_chain_regexp.search(value).group(3),
+                'cb_phrase': lambda value: back_chain_regexp.search(value).group(4) or '',
+                'cf_rest':   lambda value: value[front_chain_regexp.search(value).end():],
+                'cb_rest':   lambda value: value[:back_chain_regexp.search(value).start(1)],
         }
         
         s = '%s' % expr
