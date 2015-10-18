@@ -96,6 +96,9 @@ class Runtime(object):
         front_chain_regexp = re.compile(r"(\s*->\s*([\w]+)\[[Rr](\d+)(?:\.\'([^\']+)\')?\]\s*)")
         back_chain_regexp  = re.compile(r"(\s*->\s*([\w]+)\[[Rr](\d+)(?:\.\'([^\']+)\')?\]\s*)$")
         
+        def not_implemented(value):
+            raise RuntimeException('Not implemented')
+        
         def o(value):
             value = value.replace('_', ' ')
             value = value.title()
@@ -106,21 +109,30 @@ class Runtime(object):
             return value
             
         ops = {
-                'u' : lambda value: value.upper(),
-                'c' : lambda value: value.title(),
-                'l' : lambda value: value.lower(),
-                '_' : lambda value: re.sub(whitespace_regexp, '_', value),
-                'r' : lambda value: re.sub(whitespace_regexp, '', value),
-                't' : lambda value: value,
-                'o' : o,
-                'cf_kl':     lambda value: front_chain_regexp.search(value).group(2),
-                'cf_rel':    lambda value: front_chain_regexp.search(value).group(3),
-                'cf_phrase': lambda value: front_chain_regexp.search(value).group(4) or '',
-                'cb_kl':     lambda value: back_chain_regexp.search(value).group(2),
-                'cb_rel':    lambda value: back_chain_regexp.search(value).group(3),
-                'cb_phrase': lambda value: back_chain_regexp.search(value).group(4) or '',
-                'cf_rest':   lambda value: value[front_chain_regexp.search(value).end():],
-                'cb_rest':   lambda value: value[:back_chain_regexp.search(value).start(1)],
+                'u':          lambda value: value.upper(),
+                'c':          lambda value: value.title(),
+                'l':          lambda value: value.lower(),
+                '_':          lambda value: re.sub(whitespace_regexp, '_', value),
+                'r':          lambda value: re.sub(whitespace_regexp, '', value),
+                'o':          o,
+                'tnosplat':   lambda value: value.replace('*', ''),
+                'tstrsep_':   lambda value: next(value.split('_', 1)),
+                't_strsep':   not_implemented,
+                't2tick':     lambda value: value.replace('\\', '\\\\'),
+                'tnonl':      lambda value: value.replace('\n', ' '),
+                'txmlclean':  not_implemented,
+                'txmlquot':   not_implemented,
+                'txmlname':   not_implemented,
+                'tu2d':       not_implemented,
+                'td2u':       not_implemented,
+                'tcf_kl':     lambda value: front_chain_regexp.search(value).group(2),
+                'tcf_rel':    lambda value: front_chain_regexp.search(value).group(3),
+                'tcf_phrase': lambda value: front_chain_regexp.search(value).group(4) or '',
+                'tcb_kl':     lambda value: back_chain_regexp.search(value).group(2),
+                'tcb_rel':    lambda value: back_chain_regexp.search(value).group(3),
+                'tcb_phrase': lambda value: back_chain_regexp.search(value).group(4) or '',
+                'tcf_rest':   lambda value: value[front_chain_regexp.search(value).end():],
+                'tcb_rest':   lambda value: value[:back_chain_regexp.search(value).start(1)],
         }
         
         s = '%s' % expr
