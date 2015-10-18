@@ -1128,6 +1128,10 @@ class RSLParser(object):
         """inst_ref_var : WORD"""
         p[0] = p[1]
         
+    def p_inst_ref_var_2(self, p):
+        """inst_ref_var : TYPE"""
+        p[0] = p[1]
+        
     def p_inst_ref_set_var_1(self, p):
         """inst_ref_set_var : WORD"""
         p[0] = p[1]

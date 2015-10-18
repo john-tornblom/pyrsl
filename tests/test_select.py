@@ -220,3 +220,12 @@ class TestSelect(RSLTestCase):
         
         self.eval_text(text)
 
+
+    def testSelectWithTypeName(self):
+        self.metamodel.define_class('A', [])
+
+        text = '''
+        .select any string from instances of A
+        '''
+        
+        self.eval_text(text)
