@@ -444,12 +444,12 @@ def file_write(contents, filename):
 
 @bridge('STRING_TO_INTEGER')
 def string_to_integer(value):
-    return {'result': int(value)}
+    return {'result': int(value.strip())}
 
 
 @bridge('STRING_TO_REAL')
 def string_to_real(value):
-    return {'result': float(value)}
+    return {'result': float(value.strip())}
 
 
 @bridge('INTEGER_TO_STRING')
