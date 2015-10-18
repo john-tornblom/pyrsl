@@ -24,6 +24,11 @@ try:
 except ImportError:
     pass
 
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
+
 
 logger = logging.getLogger(__name__)
 
@@ -85,7 +90,7 @@ class Runtime(object):
         self.force_emit = force
         self.diff = diff
         self.functions = dict()
-        self.buffer = ''
+        self.buffer = StringIO()
         self.include_cache = dict()
         self.info = Info(metamodel)
         
@@ -162,16 +167,20 @@ class Runtime(object):
         else:
             raise RuntimeException("Function '%s' is undefined" % name)
         
-        buf = self.clear_buffer()
+        previous_buffer = self.buffer
+        current_buffer = self.buffer = StringIO()
+        
         d = fn(*args)
         
-        return_values = dict({'body': self.clear_buffer()})
+        return_values = dict({'body': current_buffer.getvalue()})
+        current_buffer.close()
+        
+        self.buffer = previous_buffer
+        
         for key, value in d.items():
             if key.lower().startswith("attr_"):
                 key = key.split("_", 1)[1]
                 return_values[key] = value
-    
-        self.buffer = buf
         
         return Fragment(**return_values)
     
@@ -191,22 +200,23 @@ class Runtime(object):
         else:
             return value
         
-        
     def buffer_literal(self, literal):
         if   literal.endswith('\\' * 3):
-            self.buffer += literal[:-2]
+            self.buffer.write(literal[:-2])
         
         elif literal.endswith('\\' * 2):
-            self.buffer += literal[:-1] + '\n'
+            self.buffer.write(literal[:-1])
+            self.buffer.write('\n')
             
         elif literal.endswith('\\'):
-            self.buffer += literal[:-1]
+            self.buffer.write(literal[:-1])
             
         elif literal.endswith('\n'):
-            self.buffer += literal
+            self.buffer.write(literal)
             
         else:
-            self.buffer += literal + '\n'
+            self.buffer.write(literal)
+            self.buffer.write('\n')
     
     def append_diff(self, filename, org, buf):
         org = org.splitlines(1)
@@ -230,7 +240,10 @@ class Runtime(object):
 
     def emit_buffer(self, filename):
         org = ''
-        buf = self.clear_buffer()
+        buf = self.buffer.getvalue()
+        
+        self.clear_buffer()
+        
         if buf and not buf.endswith('\n'):
             buf += '\n'
             
@@ -267,12 +280,11 @@ class Runtime(object):
 
             with open(filename, 'w+') as f:
                 f.write(buf)
-
-    def clear_buffer(self):
-        b = self.buffer
-        self.buffer = ''
-        return b
     
+    def clear_buffer(self):
+        self.buffer.close()
+        self.buffer = StringIO()
+
     def new(self, key_letter):
         return self.metamodel.new(key_letter)
     
