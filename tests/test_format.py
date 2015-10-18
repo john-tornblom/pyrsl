@@ -15,7 +15,6 @@ class TestConstLiterals(RSLTestCase):
         '''
         self.assertEqual("HELLO", rc)
 
-
     @evaluate
     def testLowerCase(self, rc):
         '''
@@ -23,7 +22,6 @@ class TestConstLiterals(RSLTestCase):
         .exit "$L{x}"
         '''
         self.assertEqual("hello", rc)
-
 
     @evaluate
     def testCapitalize(self, rc):
@@ -33,7 +31,6 @@ class TestConstLiterals(RSLTestCase):
         '''
         self.assertEqual("Hello", rc)
 
-
     @evaluate
     def testUnderscore(self, rc):
         '''
@@ -41,7 +38,6 @@ class TestConstLiterals(RSLTestCase):
         .exit "$_{x}"
         '''
         self.assertEqual("hello_world", rc)
-
 
     @evaluate
     def testcOrba(self, rc):
@@ -51,7 +47,6 @@ class TestConstLiterals(RSLTestCase):
         '''
         self.assertEqual("helloWorld", rc)
 
-
     @evaluate
     def testcOrbaWithUnderline(self, rc):
         '''
@@ -59,7 +54,6 @@ class TestConstLiterals(RSLTestCase):
         .exit "$o{x}"
         '''
         self.assertEqual("helloWorld", rc)
-        
         
     @evaluate
     def testcOrbaWithEmptyString(self, rc):
@@ -69,8 +63,6 @@ class TestConstLiterals(RSLTestCase):
         '''
         self.assertEqual("", rc)
         
-        
-                
     @evaluate
     def testExampleU(self, rc):
         '''
@@ -78,7 +70,6 @@ class TestConstLiterals(RSLTestCase):
         .exit "$u{x}"
         '''
         self.assertEqual("EXAMPLE TEXT", rc)
-        
         
     @evaluate
     def testExampleU_(self, rc):
@@ -88,7 +79,6 @@ class TestConstLiterals(RSLTestCase):
         '''
         self.assertEqual("EXAMPLE_TEXT", rc)
 
-        
     @evaluate
     def testExampleUR(self, rc):
         '''
@@ -96,7 +86,6 @@ class TestConstLiterals(RSLTestCase):
         .exit "$ur{x}"
         '''
         self.assertEqual("EXAMPLETEXT", rc)
-
 
     @evaluate
     def testExampleC(self, rc):
@@ -106,7 +95,6 @@ class TestConstLiterals(RSLTestCase):
         '''
         self.assertEqual("Example Text", rc)
         
-
     @evaluate
     def testExampleC_(self, rc):
         '''
@@ -114,7 +102,6 @@ class TestConstLiterals(RSLTestCase):
         .exit "$c_{x}"
         '''
         self.assertEqual("Example_Text", rc)
-        
         
     @evaluate
     def testExampleCR(self, rc):
@@ -124,7 +111,6 @@ class TestConstLiterals(RSLTestCase):
         '''
         self.assertEqual("ExampleText", rc)
         
-        
     @evaluate
     def testExampleL(self, rc):
         '''
@@ -132,7 +118,6 @@ class TestConstLiterals(RSLTestCase):
         .exit "$l{x}"
         '''
         self.assertEqual("example text", rc)
-        
         
     @evaluate
     def testExampleL_(self, rc):
@@ -142,7 +127,6 @@ class TestConstLiterals(RSLTestCase):
         '''
         self.assertEqual("example_text", rc)
         
-        
     @evaluate
     def testExampleLR(self, rc):
         '''
@@ -150,7 +134,6 @@ class TestConstLiterals(RSLTestCase):
         .exit "$lr{x}"
         '''
         self.assertEqual("exampletext", rc)
-        
         
     @evaluate
     def testExampleO(self, rc):
