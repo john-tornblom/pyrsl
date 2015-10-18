@@ -402,12 +402,12 @@ class RSLParser(object):
         return t
     
     def t_control_AND(self, t):
-        r"(?i)and(?=\s)"
+        r"(?i)and(?=[\s\(])"
         t.endlexpos = t.lexpos + len(t.value)
         return t
     
     def t_control_OR(self, t):
-        r"(?i)or(?=\s)"
+        r"(?i)or(?=[\s\(])"
         t.endlexpos = t.lexpos + len(t.value)
         return t
     

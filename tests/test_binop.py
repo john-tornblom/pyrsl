@@ -130,6 +130,22 @@ class TestBinOp(RSLTestCase):
         self.assertTrue(rc)
         
     @evaluate
+    def testOrBinOpWithoutSpaces(self, rc):
+        '''
+        .assign x = (True)or(False)
+        .exit x
+        '''
+        self.assertTrue(rc)
+        
+    @evaluate
+    def testAndBinOpWithoutSpaces(self, rc):
+        '''
+        .assign x = (True)AND(True)
+        .exit x
+        '''
+        self.assertTrue(rc)
+        
+    @evaluate
     def testOrBinOpFalse(self, rc):
         '''
         .exit False or False
