@@ -379,7 +379,7 @@ class BinaryOpNode(Node):
     right = None
     
     def __init__(self, left, sign, right):
-        self.sign = sign
+        self.sign = sign.lower()
         self.left = left
         self.right = right
     
@@ -392,7 +392,7 @@ class UnaryOpNode(Node):
     value = None
     
     def __init__(self, sign, value):
-        self.sign = sign
+        self.sign = sign.lower()
         self.value = value
         
     def __str__(self):
