@@ -7,7 +7,7 @@ Legacy cli option parser from old gen_erate.exe
 
 import sys
 import logging
-
+import os
 import xtuml
 
 import rsl.version
@@ -110,21 +110,30 @@ For complete USAGE and HELP type:
    %s -h
 '''
 
+
 def main():
-    archetypes = list()
-    imports = list()
     loglevel = 2
+    database_filename = 'mcdbms.gen'
+    enable_persistance = True
+    inputs = list()
     
     i = 1
     while i < len(sys.argv):
         if sys.argv[i] == '-arch':
             i += 1
-            archetypes.append(sys.argv[i])
+            inputs.append((sys.argv[i], 'arc'))
 
         elif sys.argv[i] == '-import':
             i += 1
-            imports.append(sys.argv[i])
+            inputs.append((sys.argv[i], 'sql'))
 
+        elif sys.argv[i] == '-f':
+            i += 1
+            database_filename = sys.argv[i]
+            
+        elif sys.argv[i] == '-nopersist':
+            enable_persistance = False
+            
         elif sys.argv[i] == '-v':
             loglevel = max(loglevel, 3)
             
@@ -155,10 +164,6 @@ def main():
             sys.exit(1)
             
         i += 1
-
-    if len(archetypes) == 0:
-        print(complete_usage % sys.argv[0])
-        sys.exit(1)
         
     levels = {
               0: logging.ERROR,
@@ -168,20 +173,32 @@ def main():
     }
     logging.basicConfig(stream=sys.stdout, level=levels.get(loglevel, logging.DEBUG))
     
-    loader = xtuml.load.ModelLoader()
-    loader.build_parser()
-
-    for filename in imports:
-        loader.filename_input(filename)
-
     id_generator = xtuml.IntegerGenerator()
-    metamodel = loader.build_metamodel(id_generator)
+    metamodel = xtuml.MetaModel(id_generator)
     
-    rt = rsl.Runtime(metamodel, emit='change')
-    for archetype in archetypes:
-        ast = rsl.parse_file(archetype)
-        rsl.evaluate(rt, ast, ['.'])
+    if enable_persistance and os.path.isfile(database_filename):
+        loader = xtuml.ModelLoader()
+        loader.filename_input(database_filename)
+        loader.populate(metamodel)
         
+    for filename, kind in inputs:
+        if kind == 'sql':
+            loader = xtuml.ModelLoader()
+            loader.filename_input(filename)
+            loader.populate(metamodel)
+        
+        elif kind == 'arc':
+            rt = rsl.Runtime(metamodel, emit='change')
+            ast = rsl.parse_file(filename)
+            rsl.evaluate(rt, ast, ['.'])
+            
+        else:
+            #should not happen
+            print("Unknown %s is of unknown kind '%s', skipping it" % (filename, kind))
+        
+    if enable_persistance:
+        xtuml.persist_database(metamodel, database_filename)
+
 
 if __name__ == '__main__':
     main()
