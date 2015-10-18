@@ -210,3 +210,13 @@ class TestSelect(RSLTestCase):
         self.assertEqual(a.Id, rc)
         
         
+    def testSelectWithManySpaces(self):
+        self.metamodel.define_class('A', [])
+
+        text = '''
+        .select       any        a       from          instances       of      A
+        .select       many       a_set   from          instances       of      A
+        '''
+        
+        self.eval_text(text)
+

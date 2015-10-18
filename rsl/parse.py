@@ -222,7 +222,7 @@ class RSLParser(object):
         return t
     
     def t_pc_ENDFUNCTION(self, t):
-        r"(?i)\.end\ function"
+        r"(?i)\.end[\s]+function"
         t.endlexpos = t.lexpos + len(t.value)
         t.lexer.begin('pc')
         return t
@@ -240,19 +240,19 @@ class RSLParser(object):
         return t
     
     def t_pc_SELECTONE(self, t):
-        r"(?i)\.select\ one"
+        r"(?i)\.select[\s]+one"
         t.endlexpos = t.lexpos + len(t.value)
         t.lexer.begin('control')
         return t
     
     def t_pc_SELECTANY(self, t):
-        r"(?i)\.select\ any"
+        r"(?i)\.select[\s]+any"
         t.endlexpos = t.lexpos + len(t.value)
         t.lexer.begin('control')
         return t
     
     def t_pc_SELECTMANY(self, t):
-        r"(?i)\.select\ many"
+        r"(?i)\.select[\s]+many"
         t.endlexpos = t.lexpos + len(t.value)
         t.lexer.begin('control')
         return t
@@ -276,25 +276,25 @@ class RSLParser(object):
         return t
     
     def t_pc_ENDIF(self, t):
-        r"(?i)\.end\ if"
+        r"(?i)\.end[\s]+if"
         t.endlexpos = t.lexpos + len(t.value)
         t.lexer.begin('pc')
         return t
     
     def t_pc_FOR(self, t):
-        r"(?i)\.for\ each"
+        r"(?i)\.for[\s]+each"
         t.endlexpos = t.lexpos + len(t.value)
         t.lexer.begin('control')
         return t
     
     def t_pc_BREAKFOR(self, t):
-        r"(?i)\.break\ for"
+        r"(?i)\.break[\s]+for"
         t.endlexpos = t.lexpos + len(t.value)
         t.lexer.begin('pc')
         return t
     
     def t_pc_ENDFOR(self, t):
-        r"(?i)\.end\ for"
+        r"(?i)\.end[\s]+for"
         t.endlexpos = t.lexpos + len(t.value)
         t.lexer.begin('pc')
         return t
@@ -306,13 +306,13 @@ class RSLParser(object):
         return t
     
     def t_pc_BREAKWHILE(self, t):
-        r"(?i)\.break\ while"
+        r"(?i)\.break[\s]+while"
         t.endlexpos = t.lexpos + len(t.value)
         t.lexer.begin('pc')
         return t
     
     def t_pc_ENDWHILE(self, t):
-        r"(?i)\.end\ while"
+        r"(?i)\.end[\s]+while"
         t.endlexpos = t.lexpos + len(t.value)
         t.lexer.begin('pc')
         return t
@@ -342,7 +342,7 @@ class RSLParser(object):
         return t
     
     def t_pc_EMIT(self, t):
-        r"(?i)\.emit\ to\ file"
+        r"(?i)\.emit[\s]+to[\s]+file"
         t.endlexpos = t.lexpos + len(t.value)
         t.lexer.begin('control')
         return t
@@ -360,7 +360,7 @@ class RSLParser(object):
         return t
     
     def t_pc_CREATEOBJ(self, t):
-        r"(?i)\.create\ object\ instance"
+        r"(?i)\.create[\s]+object[\s]+instance"
         t.endlexpos = t.lexpos + len(t.value)
         t.lexer.begin('control')
         return t
@@ -377,12 +377,12 @@ class RSLParser(object):
         return t
 
     def t_control_RELATEDBY(self, t):
-        r"(?i)related\ by(?=\s)"
+        r"(?i)related[\s]+by(?=\s)"
         t.endlexpos = t.lexpos + len(t.value)
         return t
     
     def t_control_FROMINSTOF(self, t):
-        r"(?i)from\ instances\ of(?=\s)"
+        r"(?i)from[\s]+instances[\s]+of(?=\s)"
         t.endlexpos = t.lexpos + len(t.value)
         return t
     
