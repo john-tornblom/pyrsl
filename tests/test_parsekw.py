@@ -7,7 +7,6 @@ from utils import evaluate
 
 class TestParseKeywords(RSLTestCase):
 
-
     @evaluate
     def testSimpleKeyword(self, rc):
         '''
@@ -15,7 +14,6 @@ class TestParseKeywords(RSLTestCase):
         .exit "${s:TEST}"
         '''
         self.assertEqual("Hello world!", rc)
-
 
     @evaluate
     def testKeywordAsVariable(self, rc):
@@ -26,7 +24,6 @@ class TestParseKeywords(RSLTestCase):
         '''
         self.assertEqual("Hello!", rc)
 
-
     @evaluate
     def testKeywordMissmatch(self, rc):
         '''
@@ -34,3 +31,13 @@ class TestParseKeywords(RSLTestCase):
         .exit "${s:test}"
         '''
         self.assertEqual("", rc)
+        
+    @evaluate
+    def testKeywordWithSpaces(self, rc):
+        '''
+        .assign kw = "KEYWORD"
+        .assign s = "KEYWORD: Hello!   "
+        .exit "${s:${kw}}"
+        '''
+        self.assertEqual("Hello!", rc)
+        

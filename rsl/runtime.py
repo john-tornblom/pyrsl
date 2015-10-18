@@ -147,7 +147,7 @@ class Runtime(object):
         result = regexp.search(expr)
         
         if result:
-            return result.groups()[0]
+            return result.groups()[0].strip()
         else:
             return ''
     
