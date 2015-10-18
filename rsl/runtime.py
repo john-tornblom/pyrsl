@@ -167,8 +167,8 @@ class Runtime(object):
         
         return_values = dict({'body': self.clear_buffer()})
         for key, value in d.items():
-            if key.startswith("attr_"):
-                key = key.split("attr_")[1]
+            if key.lower().startswith("attr_"):
+                key = key.split("_", 1)[1]
                 return_values[key] = value
     
         self.buffer = buf
