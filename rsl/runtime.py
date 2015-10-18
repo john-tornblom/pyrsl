@@ -18,6 +18,7 @@ import difflib
 import rsl.version
 import xtuml.model
 
+from functools import partial
 
 try:
     from future_builtins import filter
@@ -98,12 +99,32 @@ class Runtime(object):
     def format_string(expr, fmt):
         whitespace_regexp = re.compile(r'\s+')
         nonword_regexp = re.compile(r'[^\w]')
-        front_chain_regexp = re.compile(r"(\s*->\s*([\w]+)\[[Rr](\d+)(?:\.\'([^\']+)\')?\]\s*)")
-        back_chain_regexp  = re.compile(r"(\s*->\s*([\w]+)\[[Rr](\d+)(?:\.\'([^\']+)\')?\]\s*)$")
-        
+
         def not_implemented(value):
             raise RuntimeException('Not implemented')
         
+        def chain_item(direction, item, value):
+            regexp = {
+                'back': re.compile(r"(\s*->\s*([\w]+)\[[Rr](\d+)(?:\.\'([^\']+)\')?\]\s*)$"),
+                'front': re.compile(r"(\s*->\s*([\w]+)\[[Rr](\d+)(?:\.\'([^\']+)\')?\]\s*)")
+            }
+            group_num = {
+                'kl': 2,
+                'rel': 3,
+                'phrase': 4
+            }
+            result = regexp[direction].search(value)
+            if not result:
+                return ''
+            
+            if direction == 'front' and item == 'rest':
+                return value[result.end():]
+            
+            elif direction == 'back' and item == 'rest':
+                return value[:result.start(1)]
+            else:
+                return result.group(group_num[item]) or ''
+
         def o(value):
             value = value.replace('_', ' ')
             value = value.title()
@@ -130,14 +151,14 @@ class Runtime(object):
                 'txmlname':   not_implemented,
                 'tu2d':       not_implemented,
                 'td2u':       not_implemented,
-                'tcf_kl':     lambda value: front_chain_regexp.search(value).group(2),
-                'tcf_rel':    lambda value: front_chain_regexp.search(value).group(3),
-                'tcf_phrase': lambda value: front_chain_regexp.search(value).group(4) or '',
-                'tcb_kl':     lambda value: back_chain_regexp.search(value).group(2),
-                'tcb_rel':    lambda value: back_chain_regexp.search(value).group(3),
-                'tcb_phrase': lambda value: back_chain_regexp.search(value).group(4) or '',
-                'tcf_rest':   lambda value: value[front_chain_regexp.search(value).end():],
-                'tcb_rest':   lambda value: value[:back_chain_regexp.search(value).start(1)],
+                'tcf_kl':     partial(chain_item, 'front', 'kl'),
+                'tcf_rel':    partial(chain_item, 'front', 'rel'),
+                'tcf_phrase': partial(chain_item, 'front', 'phrase'),
+                'tcf_rest':   partial(chain_item, 'front', 'rest'),
+                'tcb_kl':     partial(chain_item, 'back', 'kl'),
+                'tcb_rel':    partial(chain_item, 'back', 'rel'),
+                'tcb_phrase': partial(chain_item, 'back', 'phrase'),
+                'tcb_rest':   partial(chain_item, 'back', 'rest')
         }
         
         s = '%s' % expr
