@@ -1306,6 +1306,7 @@ class RSLParser(object):
             
 def parse_file(filename):
     parser = RSLParser()
+    filename = os.path.abspath(filename)
     return parser.filename_input(filename)
 
 
