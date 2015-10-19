@@ -189,13 +189,12 @@ class Runtime(object):
             raise RuntimeException("Function '%s' is undefined" % name)
         
         previous_buffer = self.buffer
-        current_buffer = self.buffer = StringIO()
+        self.buffer = StringIO()
         
         d = fn(*args)
+        return_values = dict({'body': self.buffer.getvalue()})
         
-        return_values = dict({'body': current_buffer.getvalue()})
-        current_buffer.close()
-        
+        self.buffer.close()
         self.buffer = previous_buffer
         
         for key, value in d.items():
