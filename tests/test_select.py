@@ -188,7 +188,6 @@ class TestSelect(RSLTestCase):
         rc = self.eval_text(text)
         self.assertEqual(first.Name, rc)
         
-    
     def testSelectAnySubstituionNavigation(self):
         self.metamodel.define_class('A', [('Id', 'unique_id')])
         self.metamodel.define_class('B', [('Id', 'unique_id'), ('A_Id', 'unique_id'), ('Name', 'string')])
@@ -209,7 +208,6 @@ class TestSelect(RSLTestCase):
         rc = self.eval_text(text)
         self.assertEqual(a.Id, rc)
         
-        
     def testSelectWithManySpaces(self):
         self.metamodel.define_class('A', [])
 
@@ -220,7 +218,6 @@ class TestSelect(RSLTestCase):
         
         self.eval_text(text)
 
-
     def testSelectWithTypeName(self):
         self.metamodel.define_class('A', [])
 
@@ -229,3 +226,4 @@ class TestSelect(RSLTestCase):
         '''
         
         self.eval_text(text)
+        

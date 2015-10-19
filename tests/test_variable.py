@@ -23,7 +23,6 @@ class TestVariables(RSLTestCase):
         '''
         self.assertEqual("1", rc)
 
-        
     @evaluate
     def testVariableWithKeywordName_In(self, rc):
         '''
@@ -31,8 +30,6 @@ class TestVariables(RSLTestCase):
         .exit "${in}"
         '''
         self.assertEqual("1", rc)
-
-
 
     @evaluate
     def testVariableWithTypeName(self, rc):
