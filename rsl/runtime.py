@@ -476,14 +476,20 @@ def file_write(contents, filename):
 
 @bridge('STRING_TO_INTEGER')
 def string_to_integer(value):
-    return {'result': int(value.strip())}
+    try:
+        return {'result': int(value.strip())}
+    except:
+        raise RuntimeException('Unable to convert the string "%s" to an integer' % value)
 
-
+    
 @bridge('STRING_TO_REAL')
 def string_to_real(value):
-    return {'result': float(value.strip())}
+    try:
+        return {'result': float(value.strip())}
+    except:
+        raise RuntimeException('Unable to convert the string "%s" to a real' % value)
 
-
+    
 @bridge('INTEGER_TO_STRING')
 def integer_to_string(value):
     return {'result': str(value)}

@@ -6,6 +6,8 @@ import os
 from utils import RSLTestCase
 from utils import evaluate
 
+from rsl.runtime import RuntimeException
+
 
 class TestIntrinsics(RSLTestCase):
 
@@ -116,6 +118,13 @@ class TestIntrinsics(RSLTestCase):
         self.assertEqual(1, rc)
         
     @evaluate
+    def test_STRING_TO_INTEGER_invalid(self, rc):
+        '''
+        .invoke rc = STRING_TO_INTEGER("test")
+        '''
+        self.assertIsInstance(rc, RuntimeException)
+        
+    @evaluate
     def test_STRING_TO_INTEGER_with_spaces(self, rc):
         '''
         .invoke rc = STRING_TO_INTEGER(" 1 ")
@@ -131,6 +140,13 @@ class TestIntrinsics(RSLTestCase):
         '''
         self.assertEqual(1.1, rc)
     
+    @evaluate
+    def test_STRING_TO_REAL_invalid(self, rc):
+        '''
+        .invoke rc = STRING_TO_REAL("test")
+        '''
+        self.assertIsInstance(rc, RuntimeException)
+        
     @evaluate
     def test_STRING_TO_REAL_with_spaces(self, rc):
         '''
