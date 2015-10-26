@@ -82,7 +82,6 @@ class TestBinOp(RSLTestCase):
         '.exit 1 == 1'
         self.assertTrue(rc)
         
-
     @evaluate
     def testGroupedBinOp(self, rc):
         '''
@@ -91,7 +90,6 @@ class TestBinOp(RSLTestCase):
         '''
         self.assertEqual(2, rc)
         
-
     @evaluate
     def testChainedBinOp(self, rc):
         '''
@@ -213,7 +211,6 @@ class TestBinOp(RSLTestCase):
         rc = self.eval_text(text)
         self.assertEqual(1, rc)
         
-
     def testInstancePlusInstance(self):
         self.metamodel.define_class('A', [('Name', 'string')])
 
