@@ -32,6 +32,20 @@ class TestConstLiterals(RSLTestCase):
         self.assertEqual(-1.1, rc)
 
     @evaluate
+    def testTrue(self, rc):
+        '''
+        .exit true
+        '''
+        self.assertEqual(True, rc)
+        
+    @evaluate
+    def testFalse(self, rc):
+        '''
+        .exit false
+        '''
+        self.assertEqual(False, rc)
+        
+    @evaluate
     def testString(self, rc):
         '.exit "Hello"'
         self.assertEqual("Hello", rc)
