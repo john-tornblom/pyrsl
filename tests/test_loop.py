@@ -70,7 +70,6 @@ class TestLoop(RSLTestCase):
         rc = self.eval_text(text)
         self.assertEqual(3, rc)
 
-
     def testFirstInLoop(self):
         self.metamodel.define_class('A', [])
 
@@ -90,7 +89,6 @@ class TestLoop(RSLTestCase):
             
         rc = self.eval_text(text)
         self.assertEqual(1, rc)
-
 
     def testNotFirstInLoop(self):
         self.metamodel.define_class('A', [])
@@ -112,7 +110,6 @@ class TestLoop(RSLTestCase):
         rc = self.eval_text(text)
         self.assertEqual(9, rc)
         
-        
     def testLastInLoop(self):
         self.metamodel.define_class('A', [])
 
@@ -133,7 +130,6 @@ class TestLoop(RSLTestCase):
         rc = self.eval_text(text)
         self.assertEqual(1, rc)
         
-
     def testNotLastInLoop(self):
         self.metamodel.define_class('A', [])
 
@@ -154,5 +150,3 @@ class TestLoop(RSLTestCase):
         rc = self.eval_text(text)
         self.assertEqual(9, rc)
         
-
-

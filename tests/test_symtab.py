@@ -23,7 +23,6 @@ class TestSymbolTable(unittest.TestCase):
         
         self.assertEqual(handle, value)
         
-        
     def testGlobalStore(self):
         symtab = rsl.symtab.SymbolTable()
 

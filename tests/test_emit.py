@@ -15,7 +15,6 @@ class TestEmit(RSLTestCase):
         with open("/tmp/RSLTestCase") as f:
             self.assertRegexpMatches(f.read(), "Hello world\n")
         
-
     def testEmitWithoutLinebreak_Case1(self):
         text = 'Hello ' + '\\' + '\n' + 'world' + '\n' 
         text+= '.emit to file "/tmp/RSLTestCase"' 
@@ -24,7 +23,6 @@ class TestEmit(RSLTestCase):
         
         with open("/tmp/RSLTestCase") as f:
             self.assertEqual(f.read(), "Hello world\n")
-            
             
     def testEmitWithoutLinebreak_Case2(self):
         text = 'Hello world' + '\\' + '\\' + '\\' + '\n' 
@@ -72,7 +70,6 @@ class TestEmit(RSLTestCase):
         '''
         self.assertEqual(1, rc)
             
-
     @evaluate
     def testEmitAfterClear(self, rc):
         '''

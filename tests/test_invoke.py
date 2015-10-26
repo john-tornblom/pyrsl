@@ -120,7 +120,6 @@ class TestInvoke(RSLTestCase):
         '''
         self.assertEqual(0, rc)
 
-
     @evaluate
     def testInvokeFromOtherBody(self, rc):
         '''
@@ -140,7 +139,6 @@ class TestInvoke(RSLTestCase):
         .exit 0
         '''
         self.assertEqual(0, rc)
-
 
     @evaluate
     def testInvokeUndefinedFunction(self, rc):

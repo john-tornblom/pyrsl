@@ -34,7 +34,6 @@ class TestTypeSys(RSLTestCase):
         self.assertIsInstance(f('string', 'true'), RuntimeException)
         self.assertIsInstance(f('frag_ref', '0'), RuntimeException)
 
-
     def testInvoke_FragmentParameter(self):
 
         def f(ty):

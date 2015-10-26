@@ -19,7 +19,6 @@ class TestIntrinsics(RSLTestCase):
         '''
         self.assertEqual(os.environ['PATH'], rc)
 
-
     @evaluate
     def test_GET_ENV_VAR_failure(self, rc):
         '''
@@ -51,7 +50,6 @@ class TestIntrinsics(RSLTestCase):
         .exit rc.result
         '''
         self.assertEqual(rc, "Hello world!\n")
-    
     
     @evaluate
     def test_FILE_READ_error(self, rc):
