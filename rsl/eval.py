@@ -47,6 +47,7 @@ class EvalWalker(xtuml.tools.Walker):
         except BreakException as e:
             raise e
         except Exception as e:
+            self.runtime.invoke_print(e, 'ERROR')
             print('Traceback  (most recent call last):')
             for n in self.callstack + [node]:
                 print('    File "%s", line %d' % (n.filename, n.lineno))
