@@ -28,18 +28,12 @@ class LiteralListNode(Node):
     def __init__(self):
         self.literals = list()
 
-    def __str__(self):
-        return 'LiteralList (%d)' % len(self.literals)
-
 
 class LiteralNode(Node):
     value = None
     
     def __init__(self, value):
         self.value = value
-    
-    def __str__(self):
-        return 'Literal (%s)' % repr(self.value)    
 
 
 class SubstitutionVariableNode(Node):
@@ -49,9 +43,6 @@ class SubstitutionVariableNode(Node):
     def __init__(self, fmt, expr):
         self.formats = fmt
         self.expr = expr
-
-    def __str__(self):
-        return 'SubstitutionVariable %s' % self.formats
 
 
 class SubstitutionNavigationNode(Node):
@@ -86,9 +77,6 @@ class FunctionNode(Node):
         self.parameter_list = params
         self.statement_list = body
 
-    def __str__(self):
-        return 'Function (%s)' % self.name
-
 
 class ParameterNode(Node):
     name = None
@@ -98,18 +86,12 @@ class ParameterNode(Node):
         self.name = name
         self.type = ty
 
-    def __str__(self):
-        return 'Parameter (%s : %s)' % (self.name, self.type)
-
 
 class ParameterListNode(Node):
     parameters = list()
     
     def __init__(self):
         self.parameters = list()
-
-    def __str__(self):
-        return 'ParameterList (%d)' % len(self.parameters)
 
 
 class ArgumentListNode(Node):
@@ -118,18 +100,12 @@ class ArgumentListNode(Node):
     def __init__(self):
         self.arguments = list()
 
-    def __str__(self):
-        return 'ArgumentList (%d)' % len(self.arguments)
-
 
 class StatementListNode(Node):
     statements = list()
     
     def __init__(self):
         self.statements = list()
-
-    def __str__(self):
-        return 'StatementList (%d)' % len(self.statements)
 
 
 #
@@ -189,9 +165,6 @@ class InvokeNode(Node):
         self.argument_list = args
         self.variable_name = variable_name
 
-    def __str__(self):
-        return 'Invoke (%s)' % self.function_name
-
 
 #
 # Meta model manipulation statements
@@ -205,9 +178,6 @@ class CreateNode(Node):
         self.variable_name = variable_name
         self.key_letter = key_letter
 
-    def __str__(self):
-        return 'Create (%s)' % self.key_letter
-
 
 class SelectNode(Node):
     variable_name = None
@@ -219,9 +189,6 @@ class SelectNode(Node):
         self.instance_chain = instance_chain
         self.where = where
         
-    def __str__(self):
-        return '%s (%s)' % (Node.__str__(self), self.variable_name)
-
 
 class SelectFromNode(Node):
     variable_name = None
@@ -277,9 +244,6 @@ class NavigationNode(Node):
     def __init__(self, key_letter, relation):
         self.key_letter = key_letter
         self.relation = relation
-        
-    def __str__(self):
-        return 'Navigation (%s)' % self.key_letter
 
 
 class RelationNode(Node):
@@ -289,9 +253,6 @@ class RelationNode(Node):
     def __init__(self, rel_id, phrase=''):
         self.rel_id = rel_id
         self.phrase = phrase
-        
-    def __str__(self):
-        return 'Relation (%s)' % self.rel_id
 
 
 class AlXlateNode(Node):
@@ -325,9 +286,6 @@ class ElIfListNode(Node):
     def __init__(self):
         self.elifs = list()
 
-    def __str__(self):
-        return 'ElIfList (%d)' % len(self.elifs)
-
 
 class ElIfNode(Node):
     cond = None
@@ -351,9 +309,6 @@ class ForNode(Node):
         self.variable_name = variable_name
         self.set_name = set_name
         self.statement_list = statement_list
-
-    def __str__(self):
-        return 'For (%s in %s)' % (self.variable_name, self.set_name)
 
 
 class WhileNode(Node):
@@ -383,9 +338,6 @@ class BinaryOpNode(Node):
         self.left = left
         self.right = right
     
-    def __str__(self):
-        return 'BinaryOp (%s)' % self.sign
-    
 
 class UnaryOpNode(Node):
     sign = None
@@ -394,9 +346,6 @@ class UnaryOpNode(Node):
     def __init__(self, sign, value):
         self.sign = sign.lower()
         self.value = value
-        
-    def __str__(self):
-        return 'UnaryOp (%s)' % self.sign
     
 
 class VariableAccessNode(Node):
@@ -404,9 +353,6 @@ class VariableAccessNode(Node):
     
     def __init__(self, name):
         self.name = name
-        
-    def __str__(self):
-        return 'VariableAccess (%s)' % self.name
 
 
 class FieldAccessNode(Node):
@@ -416,9 +362,6 @@ class FieldAccessNode(Node):
     def __init__(self, variable, field):
         self.variable = variable
         self.field = field
-        
-    def __str__(self):
-        return 'FieldAccess (%s)' % self.field
 
 
 class StringBodyNode(Node):
@@ -433,9 +376,6 @@ class StringValueNode(Node):
     
     def __init__(self, value):
         self.value = value
-        
-    def __str__(self):
-        return 'StringValue (%s)' % repr(self.value)
 
 
 class IntegerValueNode(Node):
@@ -443,9 +383,6 @@ class IntegerValueNode(Node):
     
     def __init__(self, value):
         self.value = value
-        
-    def __str__(self):
-        return 'IntegerValue (%s)' % repr(self.value)
 
 
 class RealValueNode(Node):
@@ -453,7 +390,4 @@ class RealValueNode(Node):
     
     def __init__(self, value):
         self.value = value
-        
-    def __str__(self):
-        return 'RealValue (%s)' % repr(self.value)
 
