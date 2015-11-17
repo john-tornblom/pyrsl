@@ -40,8 +40,6 @@ def main():
     logging.basicConfig(level=levels.get(opts.verbosity, logging.DEBUG))
     
     loader = xtuml.load.ModelLoader()
-    loader.build_parser()
-
     for filename in opts.imports:
         loader.filename_input(filename)
 

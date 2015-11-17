@@ -8,7 +8,6 @@ Evaluation of syntax trees constructed from the rule-specification language (RSL
 import sys
 import os
 import logging
-import traceback
 
 import xtuml.tools
 
