@@ -3,6 +3,10 @@
 
 from utils import RSLTestCase
 from utils import evaluate
+from utils import expect_exception
+
+
+from rsl.runtime import RuntimeException
 
 
 class TestConstLiterals(RSLTestCase):
@@ -215,6 +219,7 @@ class TestConstLiterals(RSLTestCase):
         .assign test_string1 = "->C[R3]->D[R4.'b1 phrase']"
         .assign test_string2 = "->E[R5.'a2 phrase']->F[R6]"
         .assign test_string3 = "->G[R7.'a3 phrase']->H[R8.'b3 phrase']"
+        .assign test_string4 = ""
         
         .invoke tcf_kl_test(test_string0, "A", 1)
         .invoke tcf_kl_test(test_string1, "C", 2)
@@ -252,10 +257,144 @@ class TestConstLiterals(RSLTestCase):
         .invoke tcb_phrase_test(test_string2, "", 31)
         .invoke tcb_phrase_test(test_string3, "b3 phrase", 32)
         
+
+        .invoke tcf_kl_test(test_string4, "", 33)
+        .invoke tcb_kl_test(test_string4, "", 34)
+
         .exit 0
         '''
         if rc:
             self.fail(rc)
 
-                
-        
+    
+    @evaluate
+    def testEmptyTSTRSEP_(self, rc):
+        '''
+        .assign x = ""
+        .exit "$tstrsep_{x}"
+        '''
+        self.assertEqual("",rc)
+
+    @evaluate
+    def testTSTRSEP_(self, rc):
+        '''
+        .assign x = "Hej_Hopp"
+        .exit "$tstrsep_{x}"
+        '''
+        self.assertEqual("Hej",rc)
+
+    @evaluate
+    def testNo_TSTRSEP_(self, rc):
+        '''
+        .assign x = "No"
+        .exit "$tstrsep_{x}"
+        '''
+        self.assertEqual("No",rc)
+
+    @evaluate
+    def testT_STRSEP(self, rc):
+        '''
+        .assign x = "Hej_Hopp"
+        .exit "$t_strsep{x}"
+        '''
+        self.assertEqual("Hopp",rc)
+
+    @evaluate
+    def testNo_T_STRSEP(self, rc):
+        '''
+        .assign x = "No"
+        .exit "$t_strsep{x}"
+        '''
+        self.assertEqual("",rc)
+
+    @evaluate
+    def testExampleTXMLCLEAN(self, rc):
+        '''
+        .assign x = "ExamplETExt"
+        .exit "$txmlclean{x}"
+        '''
+        self.assertEqual("ExamplETExt", rc)
+
+    @evaluate
+    def testXMLTXMLCLEAN(self, rc):
+        '''
+        .assign x = "&<>"
+        .exit "$txmlclean{x}"
+        '''
+        self.assertEqual("&amp;&lt;&gt;", rc)
+
+    @evaluate
+    def testTXMLQUOT(self, rc):
+        '''
+        .assign x = "B'"
+        .assign y = "C"
+        .exit "$txmlquot{x} $txmlquot{y}"
+        '''
+        self.assertEqual(""""B'" 'C'""",rc)
+
+    @evaluate
+    def testTXMLNAME(self, rc):
+        '''
+        .assign x1 = "B"
+        .assign x2 = "C.9"
+        .assign x3 = "D_9"
+        .assign x4 = "E-9"
+        .assign x5 = ".G"
+        .assign x6 = "-H"
+        .assign x7 = "_I"
+        .exit "$txmlname{x1} $txmlname{x2} $txmlname{x3} $txmlname{x4} $txmlname{x5} $txmlname{x6} $txmlname{x7}"
+        '''
+        self.assertEqual("B C.9 D_9 E-9 _G _H _I",rc)
+
+    @evaluate
+    def testTU2D(self, rc):
+        '''
+        .assign x = "-_"
+        .exit "$tu2d{x}"
+        '''
+        self.assertEqual("--", rc)
+
+    @evaluate
+    def testTD2U(self, rc):
+        '''
+        .assign x = "-_"
+        .exit "$td2u{x}"
+        '''
+        self.assertEqual("__", rc)
+
+    @evaluate
+    def testInvalidFormat(self,rc):
+        '''
+        .assign x = "-_"
+        .exit "$tsomethinginvalid{x}"
+        '''
+        self.assertIsInstance(rc, RuntimeException)
+
+
+    @evaluate
+    def testTInBody(self,rc):
+        '''
+        .function f
+          .param string s
+Hej $t{s}
+        .end function
+        .invoke rc = f("Hej!")
+        .exit "${rc.body}"
+        '''
+        self.assertEqual("Hej Hej!\n", rc)
+
+    @evaluate
+    def testDollarDollarInLiteral(self,rc):
+        '''
+        .exit "$${baff}"
+        '''
+        self.assertEqual("${baff}", rc)
+
+    @evaluate
+    def testSubstInSubst(self, rc):
+        '''
+        .assign a = "b"
+        .assign b = "Hej"
+        .exit "${${a}}"
+        '''
+        self.assertEqual("b", rc)

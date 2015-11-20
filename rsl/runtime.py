@@ -18,8 +18,6 @@ import difflib
 import rsl.version
 import xtuml.model
 
-from functools import partial
-
 try:
     from future_builtins import filter
 except ImportError:
@@ -84,6 +82,7 @@ class Fragment(xtuml.model.BaseObject):
 class Runtime(object):
 
     bridges = dict()
+    string_formatters = dict()
     
     def __init__(self, metamodel, emit=None, force=False, diff=None):
         self.metamodel = metamodel
@@ -95,75 +94,21 @@ class Runtime(object):
         self.include_cache = dict()
         self.info = Info(metamodel)
         
-    @staticmethod
-    def format_string(expr, fmt):
-        whitespace_regexp = re.compile(r'\s+')
-        nonword_regexp = re.compile(r'[^\w]')
+    def format_string(self, expr, fmt):
 
-        def not_implemented(value):
-            raise RuntimeException('Not implemented')
-        
-        def chain_item(direction, item, value):
-            regexp = {
-                'back': re.compile(r"(\s*->\s*([\w]+)\[[Rr](\d+)(?:\.\'([^\']+)\')?\]\s*)$"),
-                'front': re.compile(r"(\s*->\s*([\w]+)\[[Rr](\d+)(?:\.\'([^\']+)\')?\]\s*)")
-            }
-            group_num = {
-                'kl': 2,
-                'rel': 3,
-                'phrase': 4
-            }
-            result = regexp[direction].search(value)
-            if not result:
-                return ''
-            
-            if direction == 'front' and item == 'rest':
-                return value[result.end():]
-            
-            elif direction == 'back' and item == 'rest':
-                return value[:result.start(1)]
-            else:
-                return result.group(group_num[item]) or ''
+        def apply_formats(s, formats):
+            for formatter in formats:
+                try:
+                    f = self.string_formatters[formatter.lower()]
+                except KeyError:
+                    raise RuntimeException('Not implemented string format')
+                s = f(s)
+            return s
 
-        def o(value):
-            value = value.replace('_', ' ')
-            value = value.title()
-            value = re.sub(nonword_regexp, '', value)
-            value = re.sub(whitespace_regexp, '', value)
-            if value:
-                value = value[0].lower() + value[1:]
-            return value
-            
-        ops = {
-                'u':          lambda value: value.upper(),
-                'c':          lambda value: value.title(),
-                'l':          lambda value: value.lower(),
-                '_':          lambda value: re.sub(whitespace_regexp, '_', value),
-                'r':          lambda value: re.sub(whitespace_regexp, '', value),
-                'o':          o,
-                'tnosplat':   lambda value: value.replace('*', ''),
-                'tstrsep_':   lambda value: next(value.split('_', 1)),
-                't_strsep':   not_implemented,
-                't2tick':     lambda value: value.replace('\\', '\\\\'),
-                'tnonl':      lambda value: value.replace('\n', ' '),
-                'txmlclean':  not_implemented,
-                'txmlquot':   not_implemented,
-                'txmlname':   not_implemented,
-                'tu2d':       not_implemented,
-                'td2u':       not_implemented,
-                'tcf_kl':     partial(chain_item, 'front', 'kl'),
-                'tcf_rel':    partial(chain_item, 'front', 'rel'),
-                'tcf_phrase': partial(chain_item, 'front', 'phrase'),
-                'tcf_rest':   partial(chain_item, 'front', 'rest'),
-                'tcb_kl':     partial(chain_item, 'back', 'kl'),
-                'tcb_rel':    partial(chain_item, 'back', 'rel'),
-                'tcb_phrase': partial(chain_item, 'back', 'phrase'),
-                'tcb_rest':   partial(chain_item, 'back', 'rest')
-        }
-        
         s = '%s' % expr
-        for ch in fmt:
-            s = ops[ch.lower()](s)
+
+        s = apply_formats(s, [f for f in fmt if f[0] == 't'])
+        s = apply_formats(s, [f for f in fmt if f[0] != 't'])
     
         return s
     
@@ -504,4 +449,112 @@ def real_to_string(value):
 @bridge('BOOLEAN_TO_STRING')
 def boolean_to_string(value):
     return {'result': str(value).upper()}  
+
+class string_formatter(object):
+    cls = None
+    name = None
+    
+    def __init__(self, name, cls=None):
+        self.name = name
+        self.cls = cls
+        
+    def __call__(self, f):
+        cls = self.cls or Runtime
+        name = self.name or f.__name__
+
+        cls.string_formatters[name] = f
+        
+        return f
+
+def define_default_string_formatters():
+    whitespace_regexp = re.compile(r'\s+')
+    nonword_regexp = re.compile(r'[^\w]')
+    nonxmlname_regexp = re.compile(r'(^[^\w_])|[^\w_.-]')
+
+    @string_formatter('o')
+    def o(value):
+        value = value.replace('_', ' ')
+        value = value.title()
+        value = re.sub(nonword_regexp, '', value)
+        value = re.sub(whitespace_regexp, '', value)
+        if value:
+            value = value[0].lower() + value[1:]
+        return value
+        
+    string_formatter('t')(lambda value: value)
+    string_formatter('u')(lambda value: value.upper())
+    string_formatter('c')(lambda value: value.title())
+    string_formatter('l')(lambda value: value.lower())
+    string_formatter('_')(lambda value: re.sub(whitespace_regexp, '_', value))
+    string_formatter('r')(lambda value: re.sub(whitespace_regexp, '', value))
+    string_formatter('tnosplat')(lambda value: value.replace('*', ''))
+    string_formatter('tstrsep_')(lambda value: value.split('_', 1)[0])
+    string_formatter('t2tick')(lambda value: value.replace('\\', '\\\\'))
+    string_formatter('tnonl')(lambda value: value.replace('\n', ' '))
+
+    from functools import partial
+
+    def chain_item(direction, item, value):
+        regexp = {
+            'back': re.compile(r"(\s*->\s*([\w]+)\[[Rr](\d+)(?:\.\'([^\']+)\')?\]\s*)$"),
+            'front': re.compile(r"(\s*->\s*([\w]+)\[[Rr](\d+)(?:\.\'([^\']+)\')?\]\s*)")
+        }
+        group_num = {
+            'kl': 2,
+            'rel': 3,
+            'phrase': 4
+        }
+        result = regexp[direction].search(value)
+        if not result:
+            return ''
+            
+        if direction == 'front' and item == 'rest':
+            return value[result.end():]
+            
+        elif direction == 'back' and item == 'rest':
+            return value[:result.start(1)]
+        else:
+            return result.group(group_num[item]) or ''
+
+    string_formatter('tcf_kl')(partial(chain_item, 'front', 'kl'))
+    string_formatter('tcf_rel')(partial(chain_item, 'front', 'rel'))
+    string_formatter('tcf_phrase')(partial(chain_item, 'front', 'phrase'))
+    string_formatter('tcf_rest')(partial(chain_item, 'front', 'rest'))
+    string_formatter('tcb_kl')(partial(chain_item, 'back', 'kl'))
+    string_formatter('tcb_rel')(partial(chain_item, 'back', 'rel'))
+    string_formatter('tcb_phrase')(partial(chain_item, 'back', 'phrase'))
+    string_formatter('tcb_rest')(partial(chain_item, 'back', 'rest'))
+    
+    @string_formatter('t_strsep')
+    def t_strsep(s):
+        try:
+            return s.split('_',1)[1]
+        except IndexError:
+            return ''
+
+    @string_formatter('txmlclean')
+    def txmlclean(s):
+        return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+
+    @string_formatter('txmlquot')
+    def txmlquot(s):
+        if '\'' in s:
+            return '"%s"' % s
+        else:
+            return "'%s'" % s
+
+    @string_formatter('txmlname')
+    def txmlname(value):
+        return re.sub(nonxmlname_regexp, '_', value)
+    
+    @string_formatter('tu2d')
+    def tu2d(value):
+        return value.replace('_', '-')
+
+    @string_formatter('td2u')
+    def td2u(value):
+        return value.replace('-', '_')
+
+define_default_string_formatters()
+
 
