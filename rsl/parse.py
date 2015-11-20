@@ -469,7 +469,7 @@ class RSLParser(object):
         return t
     
     def t_psv_FORMAT(self, t):
-        r"(?i)(tcf_kl|tcf_rel|tcf_phrase|tcf_rest|tcb_kl|tcb_rel|tcb_phrase|tcb_rest|[oclru_])"
+        r"(?i)([oclru_]|t[^\{]*)"
         t.endlexpos = t.lexpos + len(t.value)
         return t
     
