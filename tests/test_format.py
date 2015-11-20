@@ -361,3 +361,40 @@ class TestConstLiterals(RSLTestCase):
         .exit "$td2u{x}"
         '''
         self.assertEqual("__", rc)
+
+    @evaluate
+    def testInvalidFormat(self,rc):
+        '''
+        .assign x = "-_"
+        .exit "$tsomethinginvalid{x}"
+        '''
+        self.assertIsInstance(rc, RuntimeException)
+
+
+    @evaluate
+    def testTInBody(self,rc):
+        '''
+        .function f
+          .param string s
+Hej $t{s}
+        .end function
+        .invoke rc = f("Hej!")
+        .exit "${rc.body}"
+        '''
+        self.assertEqual("Hej Hej!\n", rc)
+
+    @evaluate
+    def testDollarDollarInLiteral(self,rc):
+        '''
+        .exit "$${baff}"
+        '''
+        self.assertEqual("${baff}", rc)
+
+    @evaluate
+    def testSubstInSubst(self, rc):
+        '''
+        .assign a = "b"
+        .assign b = "Hej"
+        .exit "${${a}}"
+        '''
+        self.assertEqual("b", rc)
