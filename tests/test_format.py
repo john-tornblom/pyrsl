@@ -35,6 +35,14 @@ class TestConstLiterals(RSLTestCase):
         self.assertEqual("Hello", rc)
 
     @evaluate
+    def testRemoveSplat(self, rc):
+        '''
+        .assign x = "*splat*splat*"
+        .exit "$tnosplat{x}"
+        '''
+        self.assertEqual("splatsplat", rc)
+        
+    @evaluate
     def testEscapeSingleQuote(self, rc):
         '''
         .assign x = "'"
