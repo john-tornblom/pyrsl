@@ -347,6 +347,9 @@ class Runtime(object):
         
 
 class bridge(object):
+    '''
+    Decorator for adding bridges to the Runtime class.
+    '''
     cls = None
     name = None
     
@@ -450,7 +453,11 @@ def real_to_string(value):
 def boolean_to_string(value):
     return {'result': str(value).upper()}  
 
+
 class string_formatter(object):
+    '''
+    Decorator for adding string formatters to the Runtime class.
+    '''
     cls = None
     name = None
     
