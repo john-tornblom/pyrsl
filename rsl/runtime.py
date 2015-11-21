@@ -101,7 +101,7 @@ class Runtime(object):
                 try:
                     f = self.string_formatters[formatter.lower()]
                 except KeyError:
-                    raise RuntimeException('Not implemented string format')
+                    raise RuntimeException('%s is not a valid string formatter' % formatter)
                 s = f(s)
             return s
 
