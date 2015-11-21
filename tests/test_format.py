@@ -29,7 +29,7 @@ class TestConstLiterals(RSLTestCase):
     @evaluate
     def testCapitalize(self, rc):
         '''
-        .assign x = "hello"
+        .assign x = "heLLO"
         .exit "$C{x}"
         '''
         self.assertEqual("Hello", rc)
