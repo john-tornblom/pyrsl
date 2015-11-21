@@ -3,7 +3,6 @@
 
 from utils import RSLTestCase
 from utils import evaluate
-from utils import expect_exception
 
 
 from rsl.runtime import RuntimeException
