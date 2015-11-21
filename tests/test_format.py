@@ -35,6 +35,14 @@ class TestConstLiterals(RSLTestCase):
         self.assertEqual("Hello", rc)
 
     @evaluate
+    def testEscapeSingleQuote(self, rc):
+        '''
+        .assign x = "'"
+        .exit "$t2tick{x}"
+        '''
+        self.assertEqual("''", rc)
+        
+    @evaluate
     def testUnderscore(self, rc):
         '''
         .assign x = "hello world"

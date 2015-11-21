@@ -549,12 +549,9 @@ def remove_splat(value):
 
 
 @string_formatter('t2tick')
-def escape_backslash(value):
-    '''
-    Replace all occurrences of a backslash character with two backslash
-    character, i.e. \ --> \\
-    '''
-    return value.replace('\\', '\\\\')
+def escape_single_quote(value):
+    'Replace all occurrences of a single quote with two single quotes'
+    return value.replace("'", "''")
 
 
 @string_formatter('tnonl')
