@@ -14,6 +14,7 @@ import datetime
 import logging
 import re
 import difflib
+from functools import partial
 
 import rsl.version
 import xtuml.model
@@ -106,7 +107,7 @@ class Runtime(object):
             return s
 
         s = '%s' % expr
-
+        
         s = apply_formats(s, [f for f in fmt if f[0] == 't'])
         s = apply_formats(s, [f for f in fmt if f[0] != 't'])
     
@@ -473,95 +474,216 @@ class string_formatter(object):
         
         return f
 
-def define_default_string_formatters():
+
+@string_formatter('o')
+def camelcase(value):
+    '''
+    Make the first word all lower case, make the first character of each
+    following word capitalized and all other characters of the words lower
+    case. Characters other than a-Z a-z 0-9 are ignored.
+    '''
     whitespace_regexp = re.compile(r'\s+')
     nonword_regexp = re.compile(r'[^\w]')
-    nonxmlname_regexp = re.compile(r'(^[^\w_])|[^\w_.-]')
-
-    @string_formatter('o')
-    def o(value):
-        value = value.replace('_', ' ')
-        value = value.title()
-        value = re.sub(nonword_regexp, '', value)
-        value = re.sub(whitespace_regexp, '', value)
-        if value:
-            value = value[0].lower() + value[1:]
-        return value
+    
+    value = value.replace('_', ' ')
+    value = value.title()
+    value = re.sub(nonword_regexp, '', value)
+    value = re.sub(whitespace_regexp, '', value)
+    if value:
+        value = value[0].lower() + value[1:]
         
-    string_formatter('t')(lambda value: value)
-    string_formatter('u')(lambda value: value.upper())
-    string_formatter('c')(lambda value: value.title())
-    string_formatter('l')(lambda value: value.lower())
-    string_formatter('_')(lambda value: re.sub(whitespace_regexp, '_', value))
-    string_formatter('r')(lambda value: re.sub(whitespace_regexp, '', value))
-    string_formatter('tnosplat')(lambda value: value.replace('*', ''))
-    string_formatter('tstrsep_')(lambda value: value.split('_', 1)[0])
-    string_formatter('t2tick')(lambda value: value.replace('\\', '\\\\'))
-    string_formatter('tnonl')(lambda value: value.replace('\n', ' '))
+    return value
 
-    from functools import partial
 
-    def chain_item(direction, item, value):
-        regexp = {
-            'back': re.compile(r"(\s*->\s*([\w]+)\[[Rr](\d+)(?:\.\'([^\']+)\')?\]\s*)$"),
-            'front': re.compile(r"(\s*->\s*([\w]+)\[[Rr](\d+)(?:\.\'([^\']+)\')?\]\s*)")
-        }
-        group_num = {
-            'kl': 2,
-            'rel': 3,
-            'phrase': 4
-        }
-        result = regexp[direction].search(value)
-        if not result:
-            return ''
-            
-        if direction == 'front' and item == 'rest':
-            return value[result.end():]
-            
-        elif direction == 'back' and item == 'rest':
-            return value[:result.start(1)]
-        else:
-            return result.group(group_num[item]) or ''
+@string_formatter('u')
+def uppercase(value):
+    'Make all characters in value upper case'
+    return value.upper()
 
-    string_formatter('tcf_kl')(partial(chain_item, 'front', 'kl'))
-    string_formatter('tcf_rel')(partial(chain_item, 'front', 'rel'))
-    string_formatter('tcf_phrase')(partial(chain_item, 'front', 'phrase'))
-    string_formatter('tcf_rest')(partial(chain_item, 'front', 'rest'))
-    string_formatter('tcb_kl')(partial(chain_item, 'back', 'kl'))
-    string_formatter('tcb_rel')(partial(chain_item, 'back', 'rel'))
-    string_formatter('tcb_phrase')(partial(chain_item, 'back', 'phrase'))
-    string_formatter('tcb_rest')(partial(chain_item, 'back', 'rest'))
+
+@string_formatter('l')
+def lowercase(value):
+    'Make all characters in value lower case'
+    return value.lower()
+
+
+@string_formatter('c')
+def capitalize(value):
+    '''
+    Make the first character of each word in value capitalized and all other 
+    characters of a word lower case.
+    '''
+    return value.title()
+
+
+@string_formatter('_')
+def underscore(value):
+    'Change all white space characters in value to underscore characters'
+    regexp = re.compile(r'\s+')
+    return re.sub(regexp, '_', value)
+
+
+@string_formatter('r')
+def remove_whitespace(value):
+    'Remove all white space characters in value'
+    regexp = re.compile(r'\s+')
+    return re.sub(regexp, '', value)
+
+
+@string_formatter('t')
+def default_user_translator(value):
+    '''
+    Default user supplied translate format function. No translation is made.
+    Generally, this rule is overridden by a user.
+    '''
+    return value
+
+
+@string_formatter('tnosplat')
+def remove_splat(value):
+    '''
+    Removes *'s (splats). This can be used to remove the * character found
+    in polymorphic events expressed in the BridgePoint meta model.
+    '''
+    return value.replace('*', '')
+
+
+@string_formatter('t2tick')
+def escape_backslash(value):
+    '''
+    Replace all occurrences of a backslash character with two backslash
+    character, i.e. \ --> \\
+    '''
+    return value.replace('\\', '\\\\')
+
+
+@string_formatter('tnonl')
+def linebreak_to_space(value):
+    'Replace all occurrences of a line break with a white space'
+    return value.replace('\n', ' ')
+
+@string_formatter('tu2d')
+def underscore_to_dash(value):
+    'Replace all occurrences of an underscore with a dash'
+    return value.replace('_', '-')
+
+
+@string_formatter('td2u')
+def dash_to_underscore(value):
+    'Replace all occurrences of a dash with an underscore'
+    return value.replace('-', '_')
+
+@string_formatter('tstrsep_')
+def remove_underscore_suffix(value):
+    'Remove all characters following an underscore'
+    return value.split('_', 1)[0]
+
+
+@string_formatter('t_strsep')
+def remove_underscore_prefix(value):
+    'Remove all characters preceding an underscore'
+    try:
+        return value.split('_', 1)[1]
+    except IndexError:
+        return ''
+
+
+@string_formatter('txmlclean')
+def xml_clean(value):
+    'Replace reserved XML characters with XML entities'
+    return (value.replace("&", "&amp;")
+                 .replace("<", "&lt;")
+                 .replace(">", "&gt;"))
+
+
+@string_formatter('txmlquot')
+def xml_quot(value):
+    'Add quotes to a string intended to be used as an xml attribute'
+    if '\'' in value:
+        return '"%s"' % value
+    else:
+        return "'%s'" % value
+
+
+@string_formatter('txmlname')
+def xml_name(value):
+    'Replace illegal characters in an XML name with an underscore'
+    regexp = re.compile(r'(^[^\w_])|[^\w_.-]')
+    return re.sub(regexp, '_', value)
+
+
+class navigation_parser(string_formatter):
+    '''
+    Decorator for adding navigation formatters to the Runtime class.
+    '''
     
-    @string_formatter('t_strsep')
-    def t_strsep(s):
-        try:
-            return s.split('_',1)[1]
-        except IndexError:
-            return ''
-
-    @string_formatter('txmlclean')
-    def txmlclean(s):
-        return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-
-    @string_formatter('txmlquot')
-    def txmlquot(s):
-        if '\'' in s:
-            return '"%s"' % s
-        else:
-            return "'%s'" % s
-
-    @string_formatter('txmlname')
-    def txmlname(value):
-        return re.sub(nonxmlname_regexp, '_', value)
+    regexp = re.compile(r"(\s*->\s*([\w]+)\[[Rr](\d+)(?:\.\'([^\']+)\')?\]\s*)") 
     
-    @string_formatter('tu2d')
-    def tu2d(value):
-        return value.replace('_', '-')
+    def parse_string(self, f, value):
+        result = self.regexp.search(value)
+        if result:
+            return f(result) or ''
+        else:
+            return ''
+    
+    def __call__(self, f):
+        f = partial(self.parse_string, f)
+        return string_formatter.__call__(self, f)
 
-    @string_formatter('td2u')
-    def td2u(value):
-        return value.replace('-', '_')
 
-define_default_string_formatters()
+@navigation_parser('tcf_kl')
+def first_key_letter(result):
+    'Get the first key letter in a navigation'
+    return result.group(2)
+
+
+@navigation_parser('tcf_rel')
+def first_association_id(result):
+    'Get the first association id in a navigation'
+    return result.group(3)
+
+
+@navigation_parser('tcf_phrase')
+def first_phrase(result):
+    'Get the first phrase in a navigation'
+    return result.group(4)
+
+
+@navigation_parser('tcf_rest')
+def remove_first_navigation_step(result):
+    'Remove the first step in a navigation'
+    return result.string[result.end():]
+
+
+class backward_navigation_parser(navigation_parser):
+    '''
+    Decorator for adding navigation formatters to the Runtime class.
+    The parsing is done backwards, i.e. from right to left.
+    '''
+    regexp = re.compile(r"(\s*->\s*([\w]+)\[[Rr](\d+)(?:\.\'([^\']+)\')?\]\s*)$")
+    
+    
+@backward_navigation_parser('tcb_kl')
+def last_key_letter(result):
+    'Get the last key letter in a navigation'
+    return result.group(2)
+
+
+@backward_navigation_parser('tcb_rel')
+def last_association_id(result):
+    'Get the last association id in a navigation'
+    return result.group(3)
+
+
+@backward_navigation_parser('tcb_phrase')
+def last_phrase(result):
+    'Get the last phrase in a navigation'
+    return result.group(4)
+
+
+@backward_navigation_parser('tcb_rest')
+def remove_last_navigation_step(result):
+    'Remove the last step in a navigation'
+    return result.string[:result.start(1)]
 
 
