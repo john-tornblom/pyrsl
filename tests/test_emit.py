@@ -1,5 +1,7 @@
 # encoding: utf-8
 # Copyright (C) 2015 John Törnblom
+import os
+import time
 
 from utils import RSLTestCase
 from utils import evaluate
@@ -95,3 +97,41 @@ Hello world!
         with open("/tmp/RSLTestCase") as f:
             self.assertEqual(f.read(), "")
 
+    def testSupressEmit(self):
+        self.runtime.emit = 'never'
+        code = '''
+        Test
+        .emit to file "/tmp/RSLTestCase"
+        '''
+        path = "/tmp/RSLTestCase"
+        if os.path.exists(path):
+            os.remove(path)
+        
+        rc = self.eval_text(code, 'testSupressEmit')
+        self.assertFalse(rc)
+        
+        self.assertFalse(os.path.exists(path))
+        
+    def testEmitOnChange(self):
+        self.runtime.emit = 'change'
+        code = '''
+        Test
+        .emit to file "/tmp/RSLTestCase"
+        '''
+        path = "/tmp/RSLTestCase"
+        if os.path.exists(path):
+            os.remove(path)
+        
+        rc = self.eval_text(code, 'testEmitOnChange')
+        self.assertFalse(rc)
+        self.assertTrue(os.path.exists(path))
+        
+        t = os.path.getmtime(path)
+        self.eval_text('test' + code, 'testEmitOnChange')
+        self.assertNotEqual(t, os.path.getmtime(path))
+        
+        t = os.path.getmtime(path)
+        self.eval_text('test' + code, 'testEmitOnChange')
+        self.assertEqual(t, os.path.getmtime(path))
+        
+        
