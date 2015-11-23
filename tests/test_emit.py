@@ -127,11 +127,11 @@ Hello world!
         self.assertTrue(os.path.exists(path))
         
         t = os.path.getmtime(path)
+        time.sleep(0.05)
         self.eval_text('test' + code, 'testEmitOnChange')
-        self.assertNotEqual(t, os.path.getmtime(path))
+        self.assertTrue(t < os.path.getmtime(path))
         
         t = os.path.getmtime(path)
         self.eval_text('test' + code, 'testEmitOnChange')
         self.assertEqual(t, os.path.getmtime(path))
-        
         
