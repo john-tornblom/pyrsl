@@ -5,8 +5,11 @@ Abstract syntax tree node definitions for the rule-specification language (RSL).
 '''
 
 
-from xtuml.tools import Node
+class Node(object):
 
+    def __str__(self):
+        return self.__class__.__name__
+    
 
 #
 # Top-level node in a parsed file
