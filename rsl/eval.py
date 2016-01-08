@@ -491,5 +491,5 @@ class EvalWalker(xtuml.tools.Walker):
     
 def evaluate(rt, ast, includes):
     w = EvalWalker(rt, includes)
-    w.accept(ast)
+    return w.accept(ast)
     
