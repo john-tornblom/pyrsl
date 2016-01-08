@@ -6,11 +6,15 @@ Abstract syntax tree node definitions for the rule-specification language (RSL).
 
 
 class Node(object):
-
+    lineno = 0
+    
     def __str__(self):
         return self.__class__.__name__
     
-
+    @property
+    def children(self):
+        return tuple()
+        
 #
 # Top-level node in a parsed file
 #
@@ -21,6 +25,10 @@ class BodyNode(Node):
     def __init__(self, statement_list):
         self.statement_list = statement_list
 
+    @property
+    def children(self):
+        return (self.statement_list,)
+        
 #
 # Template-related nodes
 #    
@@ -31,7 +39,10 @@ class LiteralListNode(Node):
     def __init__(self):
         self.literals = list()
 
-
+    @property
+    def children(self):
+        return iter(self.literals)
+        
 class LiteralNode(Node):
     value = None
     
@@ -47,16 +58,24 @@ class SubstitutionVariableNode(Node):
         self.formats = fmt
         self.expr = expr
 
+    @property
+    def children(self):
+        return (self.expr,)
+
 
 class SubstitutionNavigationNode(Node):
     variable = None
-    relation = None
+    navigation = None
     
     def __init__(self, variable, navigation):
         self.variable = variable
         self.navigation = navigation
         
-
+    @property
+    def children(self):
+        return (self.variable,)
+        
+        
 class ParseKeywordNode(Node):
     expr = None
     keyword = None
@@ -65,6 +84,9 @@ class ParseKeywordNode(Node):
         self.expr = expr
         self.keyword = keyword
         
+    @property
+    def children(self):
+        return (self.expr, self.keyword)
 
 #
 # FUnction related nodes
@@ -79,6 +101,10 @@ class FunctionNode(Node):
         self.name = name
         self.parameter_list = params
         self.statement_list = body
+
+    @property
+    def children(self):
+        return (self.parameter_list, self.statement_list)
 
 
 class ParameterNode(Node):
@@ -96,6 +122,10 @@ class ParameterListNode(Node):
     def __init__(self):
         self.parameters = list()
 
+    @property
+    def children(self):
+        return iter(self.parameters)
+
 
 class ArgumentListNode(Node):
     arguments = list()
@@ -103,6 +133,10 @@ class ArgumentListNode(Node):
     def __init__(self):
         self.arguments = list()
 
+    @property
+    def children(self):
+        return iter(self.arguments)
+        
 
 class StatementListNode(Node):
     statements = list()
@@ -110,6 +144,10 @@ class StatementListNode(Node):
     def __init__(self):
         self.statements = list()
 
+    @property
+    def children(self):
+        return iter(self.statements)
+        
 
 #
 # Function-like statements
@@ -121,6 +159,10 @@ class ExitNode(Node):
     def __init__(self, return_code):
         self.return_code = return_code
 
+    @property
+    def children(self):
+        return (self.return_code,)
+
 
 class IncludeNode(Node):
     inc_filename = None
@@ -128,6 +170,10 @@ class IncludeNode(Node):
     def __init__(self, filename):
         self.inc_filename = filename
 
+    @property
+    def children(self):
+        return (self.inc_filename,)
+        
 
 class PrintNode(Node):
     value_list = None
@@ -135,12 +181,21 @@ class PrintNode(Node):
     def __init__(self, value_list):
         self.value_list = value_list
 
+    @property
+    def children(self):
+        return (self.value_list,)
+        
 
 class EmitNode(Node):
     emit_filename = None
 
     def __init__(self, filename):
         self.emit_filename = filename
+
+    @property
+    def children(self):
+        return (self.emit_filename,)
+
 
 class ClearNode(Node):
     pass
@@ -158,16 +213,25 @@ class AssignNode(Node):
         self.variable = variable
         self.expr = expr
 
+    @property
+    def children(self):
+        return (self.variable, self.expr)
+
+
 class InvokeNode(Node):
     function_name = None
     argument_list = None
     variable_name = None
 
-    def __init__(self, function_name, args, variable_name=None):
+    def __init__(self, function_name, argument_list, variable_name=None):
         self.function_name = function_name
-        self.argument_list = args
+        self.argument_list = argument_list
         self.variable_name = variable_name
 
+    @property
+    def children(self):
+        return (self.argument_list,)
+        
 
 #
 # Meta model manipulation statements
@@ -191,6 +255,10 @@ class SelectNode(Node):
         self.variable_name = variable_name
         self.instance_chain = instance_chain
         self.where = where
+
+    @property
+    def children(self):
+        return (self.instance_chain, self.where)
         
 
 class SelectFromNode(Node):
@@ -202,8 +270,12 @@ class SelectFromNode(Node):
         self.variable_name = variable_name
         self.key_letter = key_letter
         self.where = where
-        
 
+    @property
+    def children(self):
+        return (self.where,)
+        
+        
 class SelectAnyInstanceNode(SelectFromNode):
     pass
 
@@ -230,6 +302,10 @@ class WhereNode(Node):
     def __init__(self, expr=None):
         self.expr = expr
         
+    @property
+    def children(self):
+        return (self.expr,)
+        
 
 class InstanceChainNode(Node):
     variable = None
@@ -239,6 +315,12 @@ class InstanceChainNode(Node):
         self.variable = variable
         self.navigations = list()
 
+    @property
+    def children(self):
+        l = [self.variable]
+        l.extend(self.navigations)
+        return l
+
 
 class NavigationNode(Node):
     key_letter = None
@@ -247,6 +329,10 @@ class NavigationNode(Node):
     def __init__(self, key_letter, relation):
         self.key_letter = key_letter
         self.relation = relation
+
+    @property
+    def children(self):
+        return (self.relation,)
 
 
 class RelationNode(Node):
@@ -273,8 +359,8 @@ class AlXlateNode(Node):
 class IfNode(Node):
     cond = None
     iftrue = None
-    iffalse = None
     elif_list = None
+    iffalse = None
 
     def __init__(self, cond, iftrue, elif_list, iffalse):
         self.cond = cond
@@ -282,12 +368,20 @@ class IfNode(Node):
         self.elif_list = elif_list
         self.iffalse = iffalse
 
+    @property
+    def children(self):
+        return (self.cond, self.iftrue, self.elif_list, self.iffalse)
+
 
 class ElIfListNode(Node):
     elifs = None
     
     def __init__(self):
         self.elifs = list()
+
+    @property
+    def children(self):
+        return iter(self.elifs)
 
 
 class ElIfNode(Node):
@@ -298,7 +392,11 @@ class ElIfNode(Node):
         self.cond = cond
         self.statement_list = statement_list
     
-    
+    @property
+    def children(self):
+        return (self.cond, self.statement_list)
+
+
 #
 # Loop statements
 #
@@ -313,6 +411,10 @@ class ForNode(Node):
         self.set_name = set_name
         self.statement_list = statement_list
 
+    @property
+    def children(self):
+        return (self.statement_list,)
+
 
 class WhileNode(Node):
     cond = None
@@ -321,6 +423,10 @@ class WhileNode(Node):
     def __init__(self, cond, statement_list):
         self.cond = cond
         self.statement_list = statement_list
+
+    @property
+    def children(self):
+        return (self.cond, self.statement_list)
 
 
 class BreakNode(Node):
@@ -341,6 +447,10 @@ class BinaryOpNode(Node):
         self.left = left
         self.right = right
     
+    @property
+    def children(self):
+        return (self.left, self.right)
+        
 
 class UnaryOpNode(Node):
     sign = None
@@ -350,6 +460,10 @@ class UnaryOpNode(Node):
         self.sign = sign.lower()
         self.value = value
     
+    @property
+    def children(self):
+        return (self.value,)
+
 
 class VariableAccessNode(Node):
     name = None
@@ -366,12 +480,20 @@ class FieldAccessNode(Node):
         self.variable = variable
         self.field = field
 
+    @property
+    def children(self):
+        return (self.variable,)
+
 
 class StringBodyNode(Node):
     values = list()
     
     def __init__(self):
         self.values = list()
+
+    @property
+    def children(self):
+        return iter(self.values)
 
 
 class StringValueNode(Node):
