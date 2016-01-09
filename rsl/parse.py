@@ -1325,7 +1325,9 @@ class RSLParser(object):
         
     def p_error(self, p):
         if p:
-            raise ParseException("invalid token '%s' at %s:%s" % (p.type, self.filename, p.lineno))
+            raise ParseException("invalid token '%s' at %s:%s" % (p.type, 
+                                                                  self.filename,
+                                                                  p.lineno))
         else:
             raise ParseException("unknown parsing error in %s" % self.filename)
             
