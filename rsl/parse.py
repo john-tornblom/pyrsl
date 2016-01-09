@@ -1,10 +1,10 @@
 # encoding: utf-8
-# Copyright (C) 2015 John Törnblom
+# Copyright (C) 2015-2016 John Törnblom
 '''
 Parser for the rule-specification language (RSL). 
 Heavily inspired by: 
-   - https://github.com/xtuml/bposs/blob/master/mc/mcmc/arlan/arlan.l
-   - https://github.com/xtuml/bposs/blob/master/mc/mcmc/arlan/arlan.y
+   - https://github.com/xtuml/mc/blob/master/mcmc/arlan/arlan.l
+   - https://github.com/xtuml/mc/blob/master/mcmc/arlan/arlan.y
 '''
 
 
@@ -365,7 +365,6 @@ class RSLParser(object):
         t.lexer.begin('control')
         return t
     
-    #<pc>"."{word}                           {WORD_RETURN(WORD);}
     def t_pc_WORD(self, t):
         r"\.([a-zA-Z][0-9a-zA-Z_]*|[a-zA-Z][0-9a-zA-Z_]*[0-9a-zA-Z_]+)"
         t.endlexpos = t.lexpos + len(t.value)
@@ -648,23 +647,33 @@ class RSLParser(object):
         return t
     
     def t_error(self, t):
-        logger.error("%d,%d:illegal character '%s'in INITIAL" % (t.lineno, t.lexpos, t.value[0]))
+        logger.error("%d,%d:illegal character '%s' in INITIAL" % (t.lineno,
+                                                                  t.lexpos,
+                                                                  t.value[0]))
         t.lexer.skip(1)
     
     def t_comment_error(self, t):
-        logger.error("%d,%d:illegal character '%s' in comment" % (t.lineno, t.lexpos, t.value[0]))
+        logger.error("%d,%d:illegal character '%s' in comment" % (t.lineno,
+                                                                  t.lexpos,
+                                                                  t.value[0]))
         t.lexer.skip(1)
     
     def t_rt_error(self, t):
-        logger.error("%d,%d:illegal character '%s' on rt" % (t.lineno, t.lexpos, t.value[0]))
+        logger.error("%d,%d:illegal character '%s' on rt" % (t.lineno,
+                                                             t.lexpos,
+                                                             t.value[0]))
         t.lexer.skip(1)
     
     def t_literal_error(self, t):
-        logger.error("%d,%d:illegal character '%s' in literal" % (t.lineno, t.lexpos, t.value[0]))
+        logger.error("%d,%d:illegal character '%s' in literal" % (t.lineno,
+                                                                  t.lexpos,
+                                                                  t.value[0]))
         t.lexer.skip(1)
     
     def t_psv_error(self, t):
-        logger.error("%d,%d:illegal character '%s' in psv" % (t.lineno, t.lexpos, t.value[0]))
+        logger.error("%d,%d:illegal character '%s' in psv" % (t.lineno,
+                                                              t.lexpos,
+                                                              t.value[0]))
         t.lexer.skip(1)
     
     def p_archetypeprogram_1(self, p):
