@@ -115,7 +115,7 @@ class EvalWalker(xtuml.tools.Walker):
         assert isinstance(node, ast.AssignNode)
         
         value = self.accept(node.expr).fget()
-        variable = self.accept(node.variable, mode='w')
+        variable = self.accept(node.variable)
         variable.fset(value)
         
     def accept_StringBodyNode(self, node):
@@ -150,31 +150,32 @@ class EvalWalker(xtuml.tools.Walker):
         
         return property(lambda: i)
         
-    def accept_VariableAccessNode(self, node, mode='r'):
+    def accept_VariableAccessNode(self, node):
         assert isinstance(node, ast.VariableAccessNode)
         
-        fget = fset = None
-        if 'r' in mode:
-            value = self.symtab.find_symbol(node.name)
-            fget = lambda: value
-        if 'w' in mode:
-            fset = lambda value: self.symtab.install_symbol(node.name, value)
-            
-        return property(fget, fset)
+        return property(lambda: self.symtab.find_symbol(node.name))
     
-    def accept_FieldAccessNode(self, node, mode='r'):
+    def accept_VariableAssignmentNode(self, node):
+        assert isinstance(node, ast.VariableAssignmentNode)
+        
+        setter = lambda val: self.symtab.install_symbol(node.name, val)
+
+        return property(fset=setter)
+        
+    def accept_FieldAccessNode(self, node):
         assert isinstance(node, ast.FieldAccessNode)
         
         variable = self.accept(node.variable).fget()
         
-        fget = fset = None
-        if 'r' in mode:
-            fget = lambda: getattr(variable, node.field)    
-        if 'w' in mode:
-            fset = lambda value: setattr(variable, node.field, value)
-            
-        return property(fget, fset)
+        return property(lambda: getattr(variable, node.field))
     
+    def accept_FieldAssignmentNode(self, node):
+        assert isinstance(node, ast.FieldAssignmentNode)
+        
+        variable = self.accept(node.variable).fget()
+        
+        return property(fset=lambda val: setattr(variable, node.field, val))
+        
     def accept_SubstitutionVariableNode(self, node):
         assert isinstance(node, ast.SubstitutionVariableNode)
         

@@ -783,7 +783,7 @@ class RSLParser(object):
         p[0].lineno = p.lineno(0)
     
     def p_statement_14(self, p):
-        """statement : ASSIGN variable EQ expr lineabreak"""
+        """statement : ASSIGN variable_assignment EQ expr lineabreak"""
         p[0] = ast.AssignNode(p[2], p[4])
         p[0].filename = self.filename
         p[0].lineno = p.lineno(0)
@@ -1078,14 +1078,14 @@ class RSLParser(object):
         p[0] = p[1]
         p[0].append(p[2])
     
-    def p_variable_1(self, p):
-        """variable : identifier"""
+    def p_variable_access_1(self, p):
+        """variable_access : identifier"""
         p[0] = ast.VariableAccessNode(p[1])
         p[0].filename = self.filename
         p[0].lineno = p.lineno(0)
     
-    def p_variable_2(self, p):
-        """variable : identifier DOT attribute"""
+    def p_variable_access_2(self, p):
+        """variable_access : identifier DOT attribute"""
         var = ast.VariableAccessNode(p[1])
         var.filename = self.filename
         var.lineno = p.lineno(0)
@@ -1094,9 +1094,31 @@ class RSLParser(object):
         p[0].filename = self.filename
         p[0].lineno = p.lineno(3)
     
-    def p_variable_3(self, p):
-        """variable : keyword"""
+    def p_variable_access_3(self, p):
+        """variable_access : keyword"""
         p[0] = ast.VariableAccessNode(p[1])
+        p[0].filename = self.filename
+        p[0].lineno = p.lineno(0)
+        
+    def p_variable_assignment_1(self, p):
+        """variable_assignment : identifier"""
+        p[0] = ast.VariableAssignmentNode(p[1])
+        p[0].filename = self.filename
+        p[0].lineno = p.lineno(0)
+    
+    def p_variable_assignment_2(self, p):
+        """variable_assignment : identifier DOT attribute"""
+        var = ast.VariableAccessNode(p[1])
+        var.filename = self.filename
+        var.lineno = p.lineno(0)
+        
+        p[0] = ast.FieldAssignmentNode(var, p[3])
+        p[0].filename = self.filename
+        p[0].lineno = p.lineno(3)
+    
+    def p_variable_assignment_3(self, p):
+        """variable_assignment : keyword"""
+        p[0] = ast.VariableAssignmentNode(p[1])
         p[0].filename = self.filename
         p[0].lineno = p.lineno(0)
         
@@ -1137,7 +1159,7 @@ class RSLParser(object):
         p[0] = p[1]
     
     def p_inst_chain_1(self, p):
-        """inst_chain : variable"""
+        """inst_chain : variable_access"""
         p[0] = ast.InstanceChainNode(p[1])
         p[0].filename = self.filename
         p[0].lineno = p.lineno(0)

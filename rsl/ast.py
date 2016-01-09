@@ -471,7 +471,12 @@ class VariableAccessNode(Node):
     def __init__(self, name):
         self.name = name
 
-
+class VariableAssignmentNode(Node):
+    name = None
+    
+    def __init__(self, name):
+        self.name = name
+        
 class FieldAccessNode(Node):
     variable = None
     field = None
@@ -484,6 +489,19 @@ class FieldAccessNode(Node):
     def children(self):
         return (self.variable,)
 
+
+class FieldAssignmentNode(Node):
+    variable = None
+    field = None
+    
+    def __init__(self, variable, field):
+        self.variable = variable
+        self.field = field
+
+    @property
+    def children(self):
+        return (self.variable,)
+        
 
 class StringBodyNode(Node):
     values = list()
