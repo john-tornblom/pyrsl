@@ -150,11 +150,11 @@ def main():
 
         # ignore these options
         elif sys.argv[i] in ['-lVHs', '-lSCs', '-l2b', '-l2s', '-l3b', '-l3s',
-                             '-nopersist', '-q', '-l']:
+                             '-q', '-l']:
             pass
             
         # ignore these options (which expects a following value)
-        elif sys.argv[i] in ['-d', '-priority', '-e', '-t', '-t', '-f', '#']:
+        elif sys.argv[i] in ['-d', '-priority', '-e', '-t', '#']:
             i += 1
             
         else:
