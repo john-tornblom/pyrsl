@@ -2,53 +2,204 @@
 # encoding: utf-8
 # Copyright (C) 2015 John Törnblom
 '''
-Main script for the rule-specification language (RSL) interpreter.
+rule-specification language (RSL) interpreter.
+'''
+
+import sys
+import logging
+import os
+import xtuml
+
+import rsl.version
+ 
+
+complete_usage = '''
+USAGE: 
+
+   %s  [-arch <string>] ... [-import <string>] ... [-include <string>] ... [-d <integer>] ... [-diff <string>] [-emit <string>] [-priority <integer>] [-lVHs] [-lSCs] [-l2b] [-l2s] [-l3b] [-l3s] [-nopersist] [-force] [-e <string>] [-t <string>] [-v <string>] [-q] [-l] [-f <string>] [-# <integer>] [//] [-version] [-h]
+
+
+Where: 
+
+   -arch <string>  (accepted multiple times)
+     (value required)  Archetype file name(s)
+
+   -import <string>  (accepted multiple times)
+     (value required)  Data file name(s)
+
+   -include <string>  (accepted multiple times)
+     (value required) add a path to list of dirs to search for include files
+
+   -d <integer>  (accepted multiple times)
+     (value required)  The domain code.  This argument must immediately precede the "-import" argument that it applies to.
+
+   -diff <string>
+     (value required)  save a diff of all emits to a filename
+
+   -priority <integer>
+     (value required)  Set process priority.  Acceptable values are:
+
+             NORMAL_PRIORITY_CLASS = 32
+
+             IDLE_PRIORITY_CLASS = 64
+
+             HIGH_PRIORITY_CLASS = 128
+
+             REALTIME_PRIORITY_CLASS = 256
+
+             BELOW_NORMAL_PRIORITY_CLASS = 16384 (default)
+
+             ABOVE_NORMAL_PRIORITY_CLASS =
+     32768
+
+   -emit <string>
+     (value required) Chose when to emit. Acceptable values are:
+
+             never = never emit to disk
+
+             change = only emit to disk when files differ (default)
+
+             always = always emit to disk, even when the content in memory is the same as the content on disk
+
+   -lVHs
+     Use VHDL source license
+
+   -lSCs
+     Use SystemC source license
+
+   -l2b
+     Use MC-2020 binary license
+
+   -l2s
+     Use MC-2020 source license
+
+   -l3b
+     Use MC-3020 binary license
+
+   -l3s
+     Use MC-3020 source license
+
+   -nopersist
+     Disable persistence
+
+   -force
+     make read-only emit files writable
+
+   -e <string>
+     (value required)  Enable specified feature
+
+   -t <string>
+     (value required)  Full-blast logging
+
+   -v <string>
+     (value required)  Verbose mode (STMT, COMP, or SYS)
+
+   -q
+     Quit on error
+
+   -l
+     Use log file
+
+   -f <string>
+     (value required)  Generated file name (database)
+
+   -# <integer>
+     (value required)  Number of files to generate
+
+   //,  -ignore_rest
+     Ignores the rest of the labeled arguments following this flag.
+
+   -version
+     Displays version information and exits.
+
+   -h
+     Displays usage information and exits.
+
+
+   gen_erate
+'''
+
+brief_usage = '''
+Brief USAGE: 
+   %s  [-arch <string>] ... [-import <string>] ... [-include <string>] ... [-d <integer>] ... [-diff <string>] [-emit <string>] [-priority <integer>] [-lVHs] [-lSCs] [-l2b] [-l2s] [-l3b] [-l3s] [-nopersist] [-force] [-e <string>] [-t <string>] [-v <string>] [-q] [-l] [-f <string>] [-# <integer>] [//] [-version] [-h]
+
+For complete USAGE and HELP type: 
+   %s -h
 '''
 
 
-import optparse
-import logging
-import sys
-
-import xtuml
-import rsl
-
-    
 def main():
-    '''
-    Parse command line options and launch the RSL interpreter.
-    '''
-    parser = optparse.OptionParser(usage="%prog [options] script.arc", 
-                                   version=rsl.version.complete_string, 
-                                   formatter=optparse.TitledHelpFormatter())
-                                   
-    parser.add_option("-i", "--import", dest="imports", metavar="PATH", 
-                      help="import model information from PATH", 
-                      action="append", default=[])
-                      
-    parser.add_option("-I", "--include", dest="includes", metavar="PATH", 
-                      help="add PATH to list of dirs to search for include files",
-                      action="append", default=['./'])
-                      
-    parser.add_option("-e", "--emit", dest='emit', metavar="WHEN", 
-                      choices=['never', 'change', 'always'], action="store", 
-                      help="choose when to emit (never, change, always)", 
-                      default='change')
-                      
-    parser.add_option("-f", "--force", dest='force', action="store_true", 
-                      help="make read-only emit files writable", default=False)
-                      
-    parser.add_option("-d", "--diff", dest='diff', metavar="PATH", 
-                      action="store", help="save a diff of all emits to PATH", 
-                      default=None)
-                      
-    parser.add_option("-v", "--verbosity", dest='verbosity', action="count", 
-                      help="increase debug logging level", default=1)
+    loglevel = 2
+    database_filename = 'mcdbms.gen'
+    enable_persistance = True
+    force_overwrite = False
+    emit_when = 'change'
+    diff_filename = None
+    inputs = list()
+    includes = ['.']
     
-    (opts, args) = parser.parse_args()
-    if len(args) == 0:
-        parser.print_help()
-        sys.exit(1)
+    i = 1
+    while i < len(sys.argv):
+        if sys.argv[i] == '-arch':
+            i += 1
+            inputs.append((sys.argv[i], 'arc'))
+
+        elif sys.argv[i] == '-import':
+            i += 1
+            inputs.append((sys.argv[i], 'sql'))
+
+        elif sys.argv[i] == '-include':
+            i += 1
+            includes.append(sys.argv[i])
+
+        elif sys.argv[i] == '-emit':
+            i += 1
+            emit_when = sys.argv[i]
+    
+        elif sys.argv[i] == '-f':
+            i += 1
+            database_filename = sys.argv[i]
+
+        elif sys.argv[i] == '-force':
+            force_overwrite = True
+
+        elif sys.argv[i] == '-diff':
+            i += 1
+            diff_filename = sys.argv[i]
+            
+        elif sys.argv[i] == '-nopersist':
+            enable_persistance = False
+            
+        elif sys.argv[i] == '-v':
+            loglevel = max(loglevel, 3)
+            
+        elif sys.argv[i] == '-version':
+            print(rsl.version.complete_string)
+            sys.exit(0)
+            
+        elif sys.argv[i] == '-h':
+            print(complete_usage % sys.argv[0])
+            sys.exit(0)
+            
+        elif sys.argv[i] in ['//', '-ignore_rest']:
+            break
+
+        # ignore these options
+        elif sys.argv[i] in ['-lVHs', '-lSCs', '-l2b', '-l2s', '-l3b', '-l3s',
+                             '-q', '-l']:
+            pass
+            
+        # ignore these options (which expects a following value)
+        elif sys.argv[i] in ['-d', '-priority', '-e', '-t', '#']:
+            i += 1
+            
+        else:
+            print("PARSE ERROR: Argument: %s" % sys.argv[i])
+            print("Couldn't find match for argument")
+            print(brief_usage % (sys.argv[0], sys.argv[0]))
+            sys.exit(1)
+            
+        i += 1
         
     levels = {
               0: logging.ERROR,
@@ -56,24 +207,38 @@ def main():
               2: logging.INFO,
               3: logging.DEBUG,
     }
-    logging.basicConfig(level=levels.get(opts.verbosity, logging.DEBUG))
+    logging.basicConfig(stream=sys.stdout, level=levels.get(loglevel, logging.DEBUG))
     
-    loader = xtuml.ModelLoader()
-    for filename in opts.imports:
-        loader.filename_input(filename)
-
     id_generator = xtuml.IntegerGenerator()
-    metamodel = loader.build_metamodel(id_generator)
-    
-    if opts.diff:
-        with open(opts.diff, 'w') as f:
+    metamodel = xtuml.MetaModel(id_generator)
+
+    if diff_filename:
+        with open(diff_filename, 'w') as f:
             f.write(' '.join(sys.argv))
             f.write('\n')
             
-    rt = rsl.Runtime(metamodel, opts.emit, opts.force, opts.diff)
-    for filename in args:
-        ast = rsl.parse_file(filename)
-        rsl.evaluate(rt, ast, opts.includes)
+    if enable_persistance and os.path.isfile(database_filename):
+        loader = xtuml.ModelLoader()
+        loader.filename_input(database_filename)
+        loader.populate(metamodel)
+        
+    for filename, kind in inputs:
+        if kind == 'sql':
+            loader = xtuml.ModelLoader()
+            loader.filename_input(filename)
+            loader.populate(metamodel)
+        
+        elif kind == 'arc':
+            rt = rsl.Runtime(metamodel, emit_when, force_overwrite, diff_filename)
+            ast = rsl.parse_file(filename)
+            rsl.evaluate(rt, ast, includes)
+            
+        else:
+            #should not happen
+            print("Unknown %s is of unknown kind '%s', skipping it" % (filename, kind))
+        
+    if enable_persistance:
+        xtuml.persist_database(metamodel, database_filename)
 
 
 if __name__ == '__main__':
