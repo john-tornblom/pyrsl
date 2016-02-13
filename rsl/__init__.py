@@ -8,4 +8,5 @@ from rsl.parse import parse_text
 from rsl.eval import evaluate
 from rsl.runtime import Runtime
 from rsl.runtime import bridge
+from rsl.runtime import string_formatter
 from rsl.gen_erate import main
