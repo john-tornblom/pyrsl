@@ -83,13 +83,23 @@ pyrsl contain a set of unit tests that may be executed:
     $ python setup.py test
 
 
-Custom string transformations
-*****************************
-TODO
+Customizing gen_erate
+*********************
+pyrsl may be extended to include additional builtin function, i.e. bridges,
+and additional string formatters. The extensions may be added to your own pyz
+file by invoking **package_pyz.sh** located in the pyrsl source root folder:
 
-Custom bridges
-**************
-TODO
+::
+
+    $ ./package_pyz.sh examples/customization.py
+    $ ./gen_erate.pyz -nopersist -arch examples/customization_test.arc
+    Running my custom version of gen_erate
+    customization_test.arc: 4:  INFO:  the md5 of 'hello world' is 619d201e5209d3d52342cc5b6616b0cf
+    customization_test.arc: 11:  INFO:  the md5 of hello world is 5eb63bbbe01eeed093cb22bb8f5acdc3
+
+See `customization.py <https://github.com/john-tornblom/blob/master/examples/customization.py>`__
+and `customization_test.arc <https://github.com/john-tornblom/blob/master/examples/customization_test.arc>`__
+for more information.
 
 Reporting bugs
 ~~~~~~~~~~~~~~
