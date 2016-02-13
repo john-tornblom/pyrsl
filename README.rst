@@ -1,84 +1,103 @@
 pyrsl |Build Status| |Coverage Status|
 ======================================
 
-pyrsl is an interpreter for a language called RSL (Rule Specification
-Language). RSL is commonly used as a template language to express
-transformations from a `BridgePoint <https://www.xtuml.org>`__ model
-into a textual representation, e.g. when writing model compilers or
-when generating html documentation from a model.
-
-Dependencies
-~~~~~~~~~~~~
-pyrsl depend on pyxtuml, see its `github page
-<https://github.com/john-tornblom/pyxtuml>`__ for install instructions.
+pyrsl is an interpreter for a language called RSL (Rule Specification Language).
+RSL is commonly used as a template language to express transformations from a
+`BridgePoint <https://www.xtuml.org>`__ model into a textual representation,
+e.g. when writing model compilers or when generating html documentation from a
+model.
 
 Installation
 ~~~~~~~~~~~~
+POSIX
+*****
+POSIX users with python available on thier system may grap **gen_erate.pyz**
+from `a release <https://github.com/john-tornblom/pyrsl/releases>`__. The .pyz
+file contain pyrsl and all of its dependencises, and may be executed directly
+without installing anything:
 
-Install from pypi:
+::
+
+    $ chmod +x gen_erate.pyz
+    $ ./gen_erate.pyz
+
+Optionally, the .pyz file may be added to your PYTHONPATH:
+
+::
+
+    $ export PYTHONPATH=some/path/gen_erate.pyz
+    $ python -m rsl.gen_erate -h
+
+pyrsl is also available from pypi:
 
 ::
 
     $ python -m pip install pyrsl
+    $ python -m rsl.gen_erate -h
 
-Or fetch the source from github:
+
+Windows
+*******
+Generally, Windows users don't have python installed. However, `pyrsl 
+releases <https://github.com/john-tornblom/pyrsl/releases>`__ include
+**gen_erate.exe** that contain pyrsl and all of its dependencies, including
+python.
+
+Command Line Options
+~~~~~~~~~~~~~~~~~~~~
+To remain backwards compatable with `the original RSL interpreter
+<https://github.com/xtuml/generator>`__, some command line options are a bit
+confusing. Also, some of the options are not used by pyrsl.
+
+pyrsl also contain a few additional command line options not available
+in the original RSL interpreter:
+
+  -include   Add a path to list of dirs to search for include files.
+  -diff      Save a diff of all emits to a filename.
+  -emit      Chose when to emit, i.e. never, on change, or always.
+  -force     Make read-only emit files writable.
+
+For more information, see the help text by appending -h to the command line
+when executing pyrsl.
+    
+Language Reference
+~~~~~~~~~~~~~~~~~~
+See `BridgePoint UML Suite Rule Specification Language
+<https://cdn.rawgit.com/john-tornblom/pyrsl/master/doc/rsl_language_reference.html>`__.
+
+Developer Notes
+~~~~~~~~~~~~~~~
+Dependencies
+************
+pyrsl depend on pyxtuml, see its `github page
+<https://github.com/john-tornblom/pyxtuml>`__ for install instructions.
+
+Test suites
+***********
+pyrsl contain a set of unit tests that may be executed:
 
 ::
 
     $ git clone https://github.com/john-tornblom/pyrsl.git
     $ cd pyrsl
-    $ python setup.py install
-   
-Optionally, you can also execute a test suite:
-
-::
-
     $ python setup.py test
 
-Windows EXEs
-~~~~~~~~~~~~
-Windows users may obtain `self-contained EXEs from appveyor <https://ci.appveyor.com/project/john-tornblom/pyrsl/build/artifacts>`__:
 
-- legacy_cli.exe - legacy command line interface.
-- gen_erate.exe - pythonic command line interface with a few additional features.
+Custom string transformations
+*****************************
+TODO
 
-Usage
-~~~~~
-The command line usage is as follows:
-
-::
-   
-    $ python -m rsl.gen_erate [options] script.arc
-
-
-where script.arc is an RSL template, also known as a archetype. [options]
-may be a combination of the following:
-
-
-::
-   
-    --version               show program's version number and exit
-    --help, -h              show this help message and exit
-    --import=PATH, -i PATH  import model information from PATH
-    --include=PATH, -I PATH
-                            add PATH to list of dirs to search for include files
-    --emit=WHEN, -e WHEN    choose when to emit (never, change, always)
-    --force, -f             make read-only emit files writable
-    --diff=PATH, -d PATH    save a diff of all emits to PATH
-    --verbosity, -v         increase debug logging level
-
-Language Reference
-~~~~~~~~~~~~~~~~~~
-See `BridgePoint UML Suite Rule Specification Language <https://cdn.rawgit.com/john-tornblom/pyrsl/master/doc/rsl_language_reference.html>`__.
+Custom bridges
+**************
+TODO
 
 Reporting bugs
 ~~~~~~~~~~~~~~
 If you encounter problems with pyrsl, please `file a github
-issue <https://github.com/john-tornblom/pyrsl/issues/new>`__. If you
-plan on sending pull request which affect more than a few lines of code,
-please file an issue before you start to work on you changes. This will
-allow us to discuss the solution properly before you commit time and
-effort.
+issue <https://github.com/john-tornblom/pyrsl/issues/new>`__. If you plan on
+sending pull request which affect more than a few lines of code, please file an
+issue before you start to work on you changes. This will allow us to discuss the
+solution properly before you commit time and effort.
 
 License
 ~~~~~~~
