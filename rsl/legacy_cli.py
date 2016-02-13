@@ -16,7 +16,7 @@ import rsl.version
 complete_usage = '''
 USAGE: 
 
-   %s  [-arch <string>] ...  [-import <string>] ...  [-d <integer>] ...  [-priority <integer>] [-lVHs] [-lSCs] [-l2b] [-l2s] [-l3b] [-l3s] [-nopersist] [-e <string>] [-t <string>] [-v <string>] [-q] [-l] [-f <string>] [-# <integer>] [//] [-version] [-h]
+   %s  [-arch <string>] ... [-import <string>] ... [-include <string>] ... [-d <integer>] ... [-diff <string>] [-priority <integer>] [-lVHs] [-lSCs] [-l2b] [-l2s] [-l3b] [-l3s] [-nopersist] [-force] [-e <string>] [-t <string>] [-v <string>] [-q] [-l] [-f <string>] [-# <integer>] [//] [-version] [-h]
 
 
 Where: 
@@ -27,8 +27,14 @@ Where:
    -import <string>  (accepted multiple times)
      (value required)  Data file name(s)
 
+   -include <string>  (accepted multiple times)
+     (value required) add a path to list of dirs to search for include files
+
    -d <integer>  (accepted multiple times)
      (value required)  The domain code.  This argument must immediately precede the "-import" argument that it applies to.
+
+   -diff <string>
+     (value required)  save a diff of all emits to a filename
 
    -priority <integer>
      (value required)  Set process priority.  Acceptable values are:
@@ -68,6 +74,9 @@ Where:
    -nopersist
      Disable persistence
 
+   -force
+     make read-only emit files writable
+
    -e <string>
      (value required)  Enable specified feature
 
@@ -104,7 +113,7 @@ Where:
 
 brief_usage = '''
 Brief USAGE: 
-   %s  [-arch <string>] ...  [-import <string>] ...  [-d <integer>] ...  [-priority <integer>] [-lVHs] [-lSCs] [-l2b] [-l2s] [-l3b] [-l3s] [-nopersist] [-e <string>] [-t <string>] [-v <string>] [-q] [-l] [-f <string>] [-# <integer>] [//] [-version] [-h]
+   %s  [-arch <string>] ... [-import <string>] ... [-include <string>] ... [-d <integer>] ... [-diff <string>] [-priority <integer>] [-lVHs] [-lSCs] [-l2b] [-l2s] [-l3b] [-l3s] [-nopersist] [-force] [-e <string>] [-t <string>] [-v <string>] [-q] [-l] [-f <string>] [-# <integer>] [//] [-version] [-h]
 
 For complete USAGE and HELP type: 
    %s -h
@@ -115,7 +124,11 @@ def main():
     loglevel = 2
     database_filename = 'mcdbms.gen'
     enable_persistance = True
+    force_overwrite = False
+    emit_when = 'change'
+    diff_filename = None
     inputs = list()
+    includes = ['.']
     
     i = 1
     while i < len(sys.argv):
@@ -127,9 +140,20 @@ def main():
             i += 1
             inputs.append((sys.argv[i], 'sql'))
 
+        elif sys.argv[i] == '-include':
+            i += 1
+            includes.append(sys.argv[i])
+            
         elif sys.argv[i] == '-f':
             i += 1
             database_filename = sys.argv[i]
+
+        elif sys.argv[i] == '-force':
+            force_overwrite = True
+
+        elif sys.argv[i] == '-diff':
+            i += 1
+            diff_filename = sys.argv[i]
             
         elif sys.argv[i] == '-nopersist':
             enable_persistance = False
@@ -175,7 +199,12 @@ def main():
     
     id_generator = xtuml.IntegerGenerator()
     metamodel = xtuml.MetaModel(id_generator)
-    
+
+    if diff_filename:
+        with open(diff_filename, 'w') as f:
+            f.write(' '.join(sys.argv))
+            f.write('\n')
+            
     if enable_persistance and os.path.isfile(database_filename):
         loader = xtuml.ModelLoader()
         loader.filename_input(database_filename)
@@ -188,9 +217,9 @@ def main():
             loader.populate(metamodel)
         
         elif kind == 'arc':
-            rt = rsl.Runtime(metamodel, emit='change')
+            rt = rsl.Runtime(metamodel, emit_when, force_overwrite, diff_filename)
             ast = rsl.parse_file(filename)
-            rsl.evaluate(rt, ast, ['.'])
+            rsl.evaluate(rt, ast, includes)
             
         else:
             #should not happen
