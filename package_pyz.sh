@@ -50,11 +50,18 @@ function make_executable {
 
 mkdir $TEMP_DIR/inst || exit 1
 
+if [ "$#" -ne 1 ]; then
+    install_main  $TEMP_DIR/inst || exit 1
+else
+    echo "Using $1 as entry point"
+    cp $1 $TEMP_DIR/inst/__main__.py
+fi
+
+
 echo ""
 echo "Fetching from github and packaging, please wait..."
 echo ""
 
-install_main    $TEMP_DIR/inst || exit 1
 install_ply     $TEMP_DIR/inst || exit 1
 install_pyxtuml $TEMP_DIR/inst || exit 1
 install_pyrsl   $TEMP_DIR/inst || exit 1
