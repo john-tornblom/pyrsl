@@ -16,7 +16,7 @@ import rsl.version
 complete_usage = '''
 USAGE: 
 
-   %s  [-arch <string>] ... [-import <string>] ... [-include <string>] ... [-d <integer>] ... [-diff <string>] [-priority <integer>] [-lVHs] [-lSCs] [-l2b] [-l2s] [-l3b] [-l3s] [-nopersist] [-force] [-e <string>] [-t <string>] [-v <string>] [-q] [-l] [-f <string>] [-# <integer>] [//] [-version] [-h]
+   %s  [-arch <string>] ... [-import <string>] ... [-include <string>] ... [-d <integer>] ... [-diff <string>] [-emit <string>] [-priority <integer>] [-lVHs] [-lSCs] [-l2b] [-l2s] [-l3b] [-l3s] [-nopersist] [-force] [-e <string>] [-t <string>] [-v <string>] [-q] [-l] [-f <string>] [-# <integer>] [//] [-version] [-h]
 
 
 Where: 
@@ -52,6 +52,14 @@ Where:
              ABOVE_NORMAL_PRIORITY_CLASS =
      32768
 
+   -emit <string>
+     (value required) Chose when to emit. Acceptable values are:
+
+             never = never emit to disk
+
+             change = only emit to disk when files differ (default)
+
+             always = always emit to disk, even when the content in memory is the same as the content on disk
 
    -lVHs
      Use VHDL source license
@@ -113,7 +121,7 @@ Where:
 
 brief_usage = '''
 Brief USAGE: 
-   %s  [-arch <string>] ... [-import <string>] ... [-include <string>] ... [-d <integer>] ... [-diff <string>] [-priority <integer>] [-lVHs] [-lSCs] [-l2b] [-l2s] [-l3b] [-l3s] [-nopersist] [-force] [-e <string>] [-t <string>] [-v <string>] [-q] [-l] [-f <string>] [-# <integer>] [//] [-version] [-h]
+   %s  [-arch <string>] ... [-import <string>] ... [-include <string>] ... [-d <integer>] ... [-diff <string>] [-emit <string>] [-priority <integer>] [-lVHs] [-lSCs] [-l2b] [-l2s] [-l3b] [-l3s] [-nopersist] [-force] [-e <string>] [-t <string>] [-v <string>] [-q] [-l] [-f <string>] [-# <integer>] [//] [-version] [-h]
 
 For complete USAGE and HELP type: 
    %s -h
@@ -143,7 +151,11 @@ def main():
         elif sys.argv[i] == '-include':
             i += 1
             includes.append(sys.argv[i])
-            
+
+        elif sys.argv[i] == '-emit':
+            i += 1
+            emit_when = sys.argv[i]
+    
         elif sys.argv[i] == '-f':
             i += 1
             database_filename = sys.argv[i]
