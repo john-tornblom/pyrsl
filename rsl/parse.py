@@ -371,7 +371,7 @@ class RSLParser(object):
         return t
     
     def t_control_WHERE(self, t):
-        r"(?i)where(?=\s)"
+        r"(?i)where(?=[\s\(])"
         t.endlexpos = t.lexpos + len(t.value)
         return t
 
