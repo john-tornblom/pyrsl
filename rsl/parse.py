@@ -1176,7 +1176,10 @@ class RSLParser(object):
     def p_inst_chain_2(self, p):
         """inst_chain : inst_chain ARROW WORD LBRAC reltraversal RBRAC"""
         p[0] = p[1]
-        p[0].navigations.append(ast.NavigationNode(p[3], p[5]))
+        nav = ast.NavigationNode(p[3], p[5])
+        nav.filename = self.filename
+        nav.lineno = p.lineno(0)
+        p[0].navigations.append(nav)
         
     def p_obj_keyletters_1(self, p):
         """obj_keyletters : WORD"""
@@ -1193,7 +1196,9 @@ class RSLParser(object):
     def p_identifier_2(self, p):
         """identifier : WORD LBRAC reltraversal RBRAC"""
         p[0] = ast.NavigationNode(p[1], p[3])
-    
+        p[0].filename = self.filename
+        p[0].lineno = p.lineno(0)
+        
     def p_function_identifier_1(self, p):
         """function_identifier : WORD"""
         p[0] = p[1]
