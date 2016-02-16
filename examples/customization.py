@@ -17,6 +17,7 @@ def hash_md5(s):
         result = hashlib.md5(s).hexdigest()
         success = True
     except:
+        result = ''
         success = False
 
     return {'success': success,
