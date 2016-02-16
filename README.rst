@@ -19,7 +19,7 @@ without installing anything:
 ::
 
     $ chmod +x gen_erate.pyz
-    $ ./gen_erate.pyz
+    $ ./gen_erate.pyz -h
 
 Optionally, the .pyz file may be added to your PYTHONPATH:
 
