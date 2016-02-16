@@ -58,7 +58,7 @@ in the original RSL interpreter:
   -force     Make read-only emit files writable.
 
 For more information, see the help text by appending -h to the command line
-when executing pyrsl.
+when executing gen_erate.
     
 Language Reference
 ~~~~~~~~~~~~~~~~~~
