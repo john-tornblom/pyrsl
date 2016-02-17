@@ -5,6 +5,7 @@ Example on how to extend the functionallity of rsl.gen_erate by defining custom
 bridges and string formatters.
 '''
 import hashlib
+import sys
 
 from rsl import gen_erate
 from rsl import bridge
@@ -40,4 +41,6 @@ def remove_quot(s):
 
 
 print('Running my custom version of gen_erate')
-gen_erate.main()
+rc = gen_erate.main()
+sys.exit(rc)
+

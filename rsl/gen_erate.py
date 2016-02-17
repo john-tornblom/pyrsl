@@ -16,7 +16,7 @@ import rsl.version
 complete_usage = '''
 USAGE: 
 
-   %s  [-arch <string>] ... [-import <string>] ... [-include <string>] ... [-d <integer>] ... [-diff <string>] [-emit <string>] [-priority <integer>] [-lVHs] [-lSCs] [-l2b] [-l2s] [-l3b] [-l3s] [-nopersist] [-force] [-e <string>] [-t <string>] [-v <string>] [-q] [-l] [-f <string>] [-# <integer>] [//] [-version] [-h]
+   %s  [-arch <string>] ... [-import <string>] ... [-include <string>] ... [-d <integer>] ... [-diff <string>] [-emit <string>] [-priority <integer>] [-lVHs] [-lSCs] [-l2b] [-l2s] [-l3b] [-l3s] [-nopersist] [-force] [-integrity] [-e <string>] [-t <string>] [-v <string>] [-q] [-l] [-f <string>] [-# <integer>] [//] [-version] [-h]
 
 
 Where: 
@@ -85,6 +85,9 @@ Where:
    -force
      make read-only emit files writable
 
+    -integrity
+     check the model for integrity violations upon program exit
+
    -e <string>
      (value required)  Enable specified feature
 
@@ -121,7 +124,7 @@ Where:
 
 brief_usage = '''
 Brief USAGE: 
-   %s  [-arch <string>] ... [-import <string>] ... [-include <string>] ... [-d <integer>] ... [-diff <string>] [-emit <string>] [-priority <integer>] [-lVHs] [-lSCs] [-l2b] [-l2s] [-l3b] [-l3s] [-nopersist] [-force] [-e <string>] [-t <string>] [-v <string>] [-q] [-l] [-f <string>] [-# <integer>] [//] [-version] [-h]
+   %s  [-arch <string>] ... [-import <string>] ... [-include <string>] ... [-d <integer>] ... [-diff <string>] [-emit <string>] [-priority <integer>] [-lVHs] [-lSCs] [-l2b] [-l2s] [-l3b] [-l3s] [-nopersist] [-force] [-integrity] [-e <string>] [-t <string>] [-v <string>] [-q] [-l] [-f <string>] [-# <integer>] [//] [-version] [-h]
 
 For complete USAGE and HELP type: 
    %s -h
@@ -137,6 +140,7 @@ def main():
     diff_filename = None
     inputs = list()
     includes = ['.']
+    check_integrity = False
     
     i = 1
     while i < len(sys.argv):
@@ -163,6 +167,9 @@ def main():
         elif sys.argv[i] == '-force':
             force_overwrite = True
 
+        elif sys.argv[i] == '-integrity':
+            check_integrity = True
+            
         elif sys.argv[i] == '-diff':
             i += 1
             diff_filename = sys.argv[i]
@@ -236,11 +243,18 @@ def main():
         else:
             #should not happen
             print("Unknown %s is of unknown kind '%s', skipping it" % (filename, kind))
+
+    rc = 0
+    if check_integrity:
+        rc |= not xtuml.check_association_integrity(metamodel)
+        rc |= not xtuml.check_uniqueness_constraint(metamodel)
         
     if enable_persistance:
         xtuml.persist_database(metamodel, database_filename)
 
+    return rc
+
 
 if __name__ == '__main__':
-    main()
-
+    rc = main()
+    sys.exit(rc)
