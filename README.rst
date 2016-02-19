@@ -9,8 +9,6 @@ model.
 
 Installation
 ~~~~~~~~~~~~
-POSIX
-*****
 POSIX users with python available on thier system may grap **gen_erate.pyz**
 from `a release <https://github.com/john-tornblom/pyrsl/releases>`__. The .pyz
 file contain pyrsl and all of its dependencises, and may be executed directly
@@ -52,10 +50,11 @@ confusing. Also, some of the options are not used by pyrsl.
 pyrsl also contain a few additional command line options not available
 in the original RSL interpreter:
 
-  -include   Add a path to list of dirs to search for include files.
-  -diff      Save a diff of all emits to a filename.
-  -emit      Chose when to emit, i.e. never, on change, or always.
-  -force     Make read-only emit files writable.
+  -include    Add a path to list of dirs to search for include files.
+  -diff       Save a diff of all emits to a filename.
+  -emit       Chose when to emit, i.e. never, on change, or always.
+  -force      Make read-only emit files writable.
+  -integrity  check the model for integrity violations upon program exit
 
 For more information, see the help text by appending -h to the command line
 when executing gen_erate.
@@ -67,8 +66,6 @@ See `BridgePoint UML Suite Rule Specification Language
 
 Developer Notes
 ~~~~~~~~~~~~~~~
-Dependencies
-************
 pyrsl depend on pyxtuml, see its `github page
 <https://github.com/john-tornblom/pyxtuml>`__ for install instructions.
 
