@@ -137,8 +137,39 @@ class TestCommandLineInterface(unittest.TestCase):
             self.assertIn('CREATE TABLE', s)
             self.assertIn('INSERT INTO', s)
     
-    
-    
+    def test_disable_emit(self):
+        emit_filename = tempfile.mktemp()
+        script = tempfile.NamedTemporaryFile(mode='w')
+        script.file.write('Test\n')
+        script.file.write('.emit to file "%s"\n' % emit_filename)
+        script.file.flush()
+        
+        argv = ['test_disable_emit', 
+                '-nopersist',
+                '-arch', script.name,
+                '-emit', 'never',
+                '-nopersist']
+        
+        rsl.main(argv)
+        self.assertFalse(os.path.exists(emit_filename))
+
+    def test_diff(self):
+        diff = tempfile.NamedTemporaryFile(mode='r')
+        script = tempfile.NamedTemporaryFile(mode='w')
+        script.file.write('.print "Hello world"\n')
+        script.file.flush()
+        
+        argv = ['test_diff', 
+                '-nopersist',
+                '-arch', script.name,
+                '-diff', diff.name,
+                '-nopersist']
+        
+        rsl.main(argv)
+        with open(diff.name, 'r') as f:
+            self.assertIn('test_diff -nopersist', f.read())
+        
+
 if __name__ == "__main__":
-    #import sys;sys.argv = ['', 'Test.testName']
     unittest.main()
+
