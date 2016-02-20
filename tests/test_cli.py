@@ -55,8 +55,8 @@ class TestCommandLineInterface(unittest.TestCase):
         self.assertIn(rsl.version.complete_string, output)
         
     def test_integrity(self):
-        schema = tempfile.NamedTemporaryFile()
-        script = tempfile.NamedTemporaryFile()
+        schema = tempfile.NamedTemporaryFile(mode='w')
+        script = tempfile.NamedTemporaryFile(mode='w')
         
         schema.file.write('CREATE TABLE Cls (Id STRING);')
         schema.file.write('CREATE UNIQUE INDEX I1 ON Cls (Id);')
@@ -79,7 +79,7 @@ class TestCommandLineInterface(unittest.TestCase):
         self.assertEqual(1, rsl.main(argv))
     
     def test_include(self):
-        script = tempfile.NamedTemporaryFile()
+        script = tempfile.NamedTemporaryFile(mode='w')
         script.file.write('.print "Hello"\n')
         script.file.write('.include "spam.inc"\n')
         script.file.flush()
@@ -96,7 +96,7 @@ class TestCommandLineInterface(unittest.TestCase):
 
     def test_nopersist(self):
         db_filename = tempfile.mktemp()
-        script = tempfile.NamedTemporaryFile()
+        script = tempfile.NamedTemporaryFile(mode='w')
 
         script.file.write('.print "Hello"\n')
         script.file.flush()
@@ -112,9 +112,9 @@ class TestCommandLineInterface(unittest.TestCase):
         self.assertFalse(os.path.exists(db_filename))
     
     def test_persist(self):
-        db = tempfile.NamedTemporaryFile()
-        schema = tempfile.NamedTemporaryFile()
-        script = tempfile.NamedTemporaryFile()
+        db = tempfile.NamedTemporaryFile(mode='r')
+        schema = tempfile.NamedTemporaryFile(mode='w')
+        script = tempfile.NamedTemporaryFile(mode='w')
         
         schema.file.write('CREATE TABLE Cls (Id UNIQUE_ID);')
         schema.file.flush()
