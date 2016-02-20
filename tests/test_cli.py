@@ -145,7 +145,6 @@ class TestCommandLineInterface(unittest.TestCase):
         script.file.flush()
         
         argv = ['test_disable_emit', 
-                '-nopersist',
                 '-arch', script.name,
                 '-emit', 'never',
                 '-nopersist']
