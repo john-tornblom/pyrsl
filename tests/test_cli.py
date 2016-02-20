@@ -154,19 +154,23 @@ class TestCommandLineInterface(unittest.TestCase):
 
     def test_diff(self):
         diff = tempfile.NamedTemporaryFile(mode='r')
+        emit = tempfile.NamedTemporaryFile(mode='r')
         script = tempfile.NamedTemporaryFile(mode='w')
-        script.file.write('.print "Hello world"\n')
+        script.file.write('Hello file\n')
+        script.file.write('.emit to file "%s"\n' % emit.name)
         script.file.flush()
         
         argv = ['test_diff', 
-                '-nopersist',
                 '-arch', script.name,
                 '-diff', diff.name,
                 '-nopersist']
         
         rsl.main(argv)
         with open(diff.name, 'r') as f:
-            self.assertIn('test_diff -nopersist', f.read())
+            s = f.read()
+            print s
+            self.assertIn('test_diff -arch', s)
+            self.assertIn('Hello file', s)
         
 
 if __name__ == "__main__":
