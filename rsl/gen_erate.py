@@ -131,8 +131,8 @@ For complete USAGE and HELP type:
 '''
 
 
-def main():
-    loglevel = 2
+def main(argv=None):
+    loglevel = logging.INFO
     database_filename = 'mcdbms.gen'
     enable_persistance = True
     force_overwrite = False
@@ -141,87 +141,83 @@ def main():
     inputs = list()
     includes = ['.']
     check_integrity = False
+    argv = argv or sys.argv
     
     i = 1
-    while i < len(sys.argv):
-        if sys.argv[i] == '-arch':
+    while i < len(argv):
+        if argv[i] == '-arch':
             i += 1
-            inputs.append((sys.argv[i], 'arc'))
+            inputs.append((argv[i], 'arc'))
 
-        elif sys.argv[i] == '-import':
+        elif argv[i] == '-import':
             i += 1
-            inputs.append((sys.argv[i], 'sql'))
+            inputs.append((argv[i], 'sql'))
 
-        elif sys.argv[i] == '-include':
+        elif argv[i] == '-include':
             i += 1
-            includes.append(sys.argv[i])
+            includes.append(argv[i])
 
-        elif sys.argv[i] == '-emit':
+        elif argv[i] == '-emit':
             i += 1
-            emit_when = sys.argv[i]
+            emit_when = argv[i]
     
-        elif sys.argv[i] == '-f':
+        elif argv[i] == '-f':
             i += 1
-            database_filename = sys.argv[i]
+            database_filename = argv[i]
 
-        elif sys.argv[i] == '-force':
+        elif argv[i] == '-force':
             force_overwrite = True
 
-        elif sys.argv[i] == '-integrity':
+        elif argv[i] == '-integrity':
             check_integrity = True
             
-        elif sys.argv[i] == '-diff':
+        elif argv[i] == '-diff':
             i += 1
-            diff_filename = sys.argv[i]
+            diff_filename = argv[i]
             
-        elif sys.argv[i] == '-nopersist':
+        elif argv[i] == '-nopersist':
             enable_persistance = False
             
-        elif sys.argv[i] == '-v':
-            loglevel = max(loglevel, 3)
+        elif argv[i] == '-v':
+            i += 1
+            loglevel = logging.DEBUG
             
-        elif sys.argv[i] == '-version':
+        elif argv[i] == '-version':
             print(rsl.version.complete_string)
             sys.exit(0)
             
-        elif sys.argv[i] == '-h':
-            print(complete_usage % sys.argv[0])
+        elif argv[i] == '-h':
+            print(complete_usage % argv[0])
             sys.exit(0)
             
-        elif sys.argv[i] in ['//', '-ignore_rest']:
+        elif argv[i] in ['//', '-ignore_rest']:
             break
 
         # ignore these options
-        elif sys.argv[i] in ['-lVHs', '-lSCs', '-l2b', '-l2s', '-l3b', '-l3s',
+        elif argv[i] in ['-lVHs', '-lSCs', '-l2b', '-l2s', '-l3b', '-l3s',
                              '-q', '-l']:
             pass
             
         # ignore these options (which expects a following value)
-        elif sys.argv[i] in ['-d', '-priority', '-e', '-t', '#']:
+        elif argv[i] in ['-d', '-priority', '-e', '-t', '-#']:
             i += 1
             
         else:
-            print("PARSE ERROR: Argument: %s" % sys.argv[i])
+            print("PARSE ERROR: Argument: %s" % argv[i])
             print("Couldn't find match for argument")
-            print(brief_usage % (sys.argv[0], sys.argv[0]))
+            print(brief_usage % (argv[0], argv[0]))
             sys.exit(1)
             
         i += 1
         
-    levels = {
-              0: logging.ERROR,
-              1: logging.WARNING,
-              2: logging.INFO,
-              3: logging.DEBUG,
-    }
-    logging.basicConfig(stream=sys.stdout, level=levels.get(loglevel, logging.DEBUG))
+    logging.basicConfig(stream=sys.stdout, level=loglevel)
     
     id_generator = xtuml.IntegerGenerator()
     metamodel = xtuml.MetaModel(id_generator)
 
     if diff_filename:
         with open(diff_filename, 'w') as f:
-            f.write(' '.join(sys.argv))
+            f.write(' '.join(argv))
             f.write('\n')
             
     if enable_persistance and os.path.isfile(database_filename):
