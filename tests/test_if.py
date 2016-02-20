@@ -2,13 +2,13 @@
 # Copyright (C) 2015 John Törnblom
 
 from utils import RSLTestCase
-from utils import evaluate
+from utils import evaluate_docstring
 
 
-class TestIfStatements(RSLTestCase):
+class TestIf(RSLTestCase):
 
-    @evaluate
-    def testSingleIfTrue(self, rc):
+    @evaluate_docstring
+    def test_single_if_true(self, rc):
         '''
         .if ( 0 == 0 )
             .exit 1
@@ -17,8 +17,8 @@ class TestIfStatements(RSLTestCase):
         '''
         self.assertEqual(1, rc)
         
-    @evaluate
-    def testSingleIfFalse(self, rc):
+    @evaluate_docstring
+    def test_single_if_false(self, rc):
         '''
         .if ( 0 == 1 )
             .exit 0
@@ -27,8 +27,8 @@ class TestIfStatements(RSLTestCase):
         '''
         self.assertEqual(1, rc)
         
-    @evaluate
-    def testElifFirst(self, rc):
+    @evaluate_docstring
+    def test_elif_first(self, rc):
         '''
         .assign x = 0
         .if (1 == 0)
@@ -43,8 +43,8 @@ class TestIfStatements(RSLTestCase):
         '''
         self.assertEqual(2, rc)
         
-    @evaluate
-    def testElifMiddle(self, rc):
+    @evaluate_docstring
+    def test_elif_middle(self, rc):
         '''
         .if ( 0 == 1 )
             .exit 0
@@ -61,8 +61,8 @@ class TestIfStatements(RSLTestCase):
         '''
         self.assertEqual(2, rc)
         
-    @evaluate
-    def testElifLast(self, rc):
+    @evaluate_docstring
+    def test_elif_last(self, rc):
         '''
         .if ( 0 == 1 )
             .exit 0
@@ -75,8 +75,8 @@ class TestIfStatements(RSLTestCase):
         '''
         self.assertEqual(2, rc)
         
-    @evaluate
-    def testIfElIfElse(self, rc):
+    @evaluate_docstring
+    def test_if_elif_else(self, rc):
         '''
         .if ( 0 == 1 )
             .exit 0

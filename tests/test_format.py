@@ -2,168 +2,167 @@
 # Copyright (C) 2015 John Törnblom
 
 from utils import RSLTestCase
-from utils import evaluate
-
+from utils import evaluate_docstring
 
 from rsl.runtime import RuntimeException
 
 
-class TestConstLiterals(RSLTestCase):
+class TestFormat(RSLTestCase):
 
-    @evaluate
-    def testUpperCase(self, rc):
+    @evaluate_docstring
+    def test_uppercase(self, rc):
         '''
         .assign x = "hello"
         .exit "$U{x}"
         '''
         self.assertEqual("HELLO", rc)
 
-    @evaluate
-    def testLowerCase(self, rc):
+    @evaluate_docstring
+    def test_lowercase(self, rc):
         '''
         .assign x = "HELlo"
         .exit "$L{x}"
         '''
         self.assertEqual("hello", rc)
 
-    @evaluate
-    def testCapitalize(self, rc):
+    @evaluate_docstring
+    def test_capitalize(self, rc):
         '''
         .assign x = "heLLO"
         .exit "$C{x}"
         '''
         self.assertEqual("Hello", rc)
 
-    @evaluate
-    def testRemoveSplat(self, rc):
+    @evaluate_docstring
+    def test_remove_splat(self, rc):
         '''
         .assign x = "*splat*splat*"
         .exit "$tnosplat{x}"
         '''
         self.assertEqual("splatsplat", rc)
         
-    @evaluate
-    def testEscapeSingleQuote(self, rc):
+    @evaluate_docstring
+    def test_escape_single_quot(self, rc):
         '''
         .assign x = "'"
         .exit "$t2tick{x}"
         '''
         self.assertEqual("''", rc)
         
-    @evaluate
-    def testUnderscore(self, rc):
+    @evaluate_docstring
+    def test_underscore(self, rc):
         '''
         .assign x = "hello world"
         .exit "$_{x}"
         '''
         self.assertEqual("hello_world", rc)
 
-    @evaluate
-    def testcOrba(self, rc):
+    @evaluate_docstring
+    def test_corba(self, rc):
         '''
         .assign x = "HelLO woRLd"
         .exit "$o{x}"
         '''
         self.assertEqual("helloWorld", rc)
 
-    @evaluate
-    def testcOrbaWithUnderline(self, rc):
+    @evaluate_docstring
+    def test_corba_with_underline(self, rc):
         '''
         .assign x = "Hello_world!"
         .exit "$o{x}"
         '''
         self.assertEqual("helloWorld", rc)
         
-    @evaluate
-    def testcOrbaWithEmptyString(self, rc):
+    @evaluate_docstring
+    def test_corba_with_empty_string(self, rc):
         '''
         .assign x = ""
         .exit "$o{x}"
         '''
         self.assertEqual("", rc)
         
-    @evaluate
-    def testExampleU(self, rc):
+    @evaluate_docstring
+    def test_example_uppercase(self, rc):
         '''
         .assign x = "Example Text"
         .exit "$u{x}"
         '''
         self.assertEqual("EXAMPLE TEXT", rc)
         
-    @evaluate
-    def testExampleU_(self, rc):
+    @evaluate_docstring
+    def test_uppercase_with_underscore(self, rc):
         '''
         .assign x = "Example Text"
         .exit "$u_{x}"
         '''
         self.assertEqual("EXAMPLE_TEXT", rc)
 
-    @evaluate
-    def testExampleUR(self, rc):
+    @evaluate_docstring
+    def test_uppercase_with_remove_spaces(self, rc):
         '''
         .assign x = "Example Text"
         .exit "$ur{x}"
         '''
         self.assertEqual("EXAMPLETEXT", rc)
 
-    @evaluate
-    def testExampleC(self, rc):
+    @evaluate_docstring
+    def test_example_c(self, rc):
         '''
         .assign x = "ExamplE TExt"
         .exit "$c{x}"
         '''
         self.assertEqual("Example Text", rc)
         
-    @evaluate
-    def testExampleC_(self, rc):
+    @evaluate_docstring
+    def test_example_c_(self, rc):
         '''
         .assign x = "ExamplE TExt"
         .exit "$c_{x}"
         '''
         self.assertEqual("Example_Text", rc)
         
-    @evaluate
-    def testExampleCR(self, rc):
+    @evaluate_docstring
+    def test_example_cr(self, rc):
         '''
         .assign x = "ExamplE TExt"
         .exit "$cr{x}"
         '''
         self.assertEqual("ExampleText", rc)
         
-    @evaluate
-    def testExampleL(self, rc):
+    @evaluate_docstring
+    def test_underscore_with_lowercase(self, rc):
         '''
         .assign x = "ExamplE TExt"
         .exit "$l{x}"
         '''
         self.assertEqual("example text", rc)
         
-    @evaluate
-    def testExampleL_(self, rc):
+    @evaluate_docstring
+    def test_lowercase_with_underscore(self, rc):
         '''
         .assign x = "ExamplE TExt"
         .exit "$l_{x}"
         '''
         self.assertEqual("example_text", rc)
         
-    @evaluate
-    def testExampleLR(self, rc):
+    @evaluate_docstring
+    def test_example_lr(self, rc):
         '''
         .assign x = "ExamplE TExt"
         .exit "$lr{x}"
         '''
         self.assertEqual("exampletext", rc)
         
-    @evaluate
-    def testExampleO(self, rc):
+    @evaluate_docstring
+    def test_example_o(self, rc):
         '''
         .assign x = "ExamplE@34 TExt"
         .exit "$o{x}"
         '''
         self.assertEqual("example34Text", rc)
         
-    @evaluate
-    def testChain(self, rc):
+    @evaluate_docstring
+    def test_chain(self, rc):
         '''
         .function assertEquals
           .param string actual
@@ -282,64 +281,64 @@ class TestConstLiterals(RSLTestCase):
             self.fail(rc)
 
     
-    @evaluate
-    def testEmptyTSTRSEP_(self, rc):
+    @evaluate_docstring
+    def test_empty_tstrsep_(self, rc):
         '''
         .assign x = ""
         .exit "$tstrsep_{x}"
         '''
         self.assertEqual("",rc)
 
-    @evaluate
-    def testTSTRSEP_(self, rc):
+    @evaluate_docstring
+    def test_tstrsep_(self, rc):
         '''
         .assign x = "Hej_Hopp"
         .exit "$tstrsep_{x}"
         '''
         self.assertEqual("Hej",rc)
 
-    @evaluate
-    def testNo_TSTRSEP_(self, rc):
+    @evaluate_docstring
+    def test_no_tstrsep_(self, rc):
         '''
         .assign x = "No"
         .exit "$tstrsep_{x}"
         '''
         self.assertEqual("No",rc)
 
-    @evaluate
-    def testT_STRSEP(self, rc):
+    @evaluate_docstring
+    def test_t_strsep(self, rc):
         '''
         .assign x = "Hej_Hopp"
         .exit "$t_strsep{x}"
         '''
         self.assertEqual("Hopp",rc)
 
-    @evaluate
-    def testNo_T_STRSEP(self, rc):
+    @evaluate_docstring
+    def test_no_t_strsep(self, rc):
         '''
         .assign x = "No"
         .exit "$t_strsep{x}"
         '''
         self.assertEqual("",rc)
 
-    @evaluate
-    def testExampleTXMLCLEAN(self, rc):
+    @evaluate_docstring
+    def test_example_txmlclean(self, rc):
         '''
         .assign x = "ExamplETExt"
         .exit "$txmlclean{x}"
         '''
         self.assertEqual("ExamplETExt", rc)
 
-    @evaluate
-    def testXMLTXMLCLEAN(self, rc):
+    @evaluate_docstring
+    def test_txmlclean(self, rc):
         '''
         .assign x = "&<>"
         .exit "$txmlclean{x}"
         '''
         self.assertEqual("&amp;&lt;&gt;", rc)
 
-    @evaluate
-    def testTXMLQUOT(self, rc):
+    @evaluate_docstring
+    def test_txmlquot(self, rc):
         '''
         .assign x = "B'"
         .assign y = "C"
@@ -347,8 +346,8 @@ class TestConstLiterals(RSLTestCase):
         '''
         self.assertEqual(""""B'" 'C'""",rc)
 
-    @evaluate
-    def testTXMLNAME(self, rc):
+    @evaluate_docstring
+    def test_txmlname(self, rc):
         '''
         .assign x1 = "B"
         .assign x2 = "C.9"
@@ -361,24 +360,24 @@ class TestConstLiterals(RSLTestCase):
         '''
         self.assertEqual("B C.9 D_9 E-9 _G _H _I",rc)
 
-    @evaluate
-    def testTU2D(self, rc):
+    @evaluate_docstring
+    def test_tu2d(self, rc):
         '''
         .assign x = "-_"
         .exit "$tu2d{x}"
         '''
         self.assertEqual("--", rc)
 
-    @evaluate
-    def testTD2U(self, rc):
+    @evaluate_docstring
+    def test_td2u(self, rc):
         '''
         .assign x = "-_"
         .exit "$td2u{x}"
         '''
         self.assertEqual("__", rc)
 
-    @evaluate
-    def testInvalidFormat(self,rc):
+    @evaluate_docstring
+    def test_invalid_format(self,rc):
         '''
         .assign x = "-_"
         .exit "$tsomethinginvalid{x}"
@@ -386,8 +385,8 @@ class TestConstLiterals(RSLTestCase):
         self.assertIsInstance(rc, RuntimeException)
 
 
-    @evaluate
-    def testTInBody(self,rc):
+    @evaluate_docstring
+    def test_custom_transform_in_body(self,rc):
         '''
         .function f
           .param string s
@@ -398,15 +397,15 @@ Hej $t{s}
         '''
         self.assertEqual("Hej Hej!\n", rc)
 
-    @evaluate
-    def testDollarDollarInLiteral(self,rc):
+    @evaluate_docstring
+    def test_dollar_dollar_in_literal(self,rc):
         '''
         .exit "$${baff}"
         '''
         self.assertEqual("${baff}", rc)
 
-    @evaluate
-    def testSubstInSubst(self, rc):
+    @evaluate_docstring
+    def test_subst_in_subst(self, rc):
         '''
         .assign a = "b"
         .assign b = "Hej"

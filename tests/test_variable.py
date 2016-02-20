@@ -2,37 +2,37 @@
 # Copyright (C) 2015 John Törnblom
 
 from utils import RSLTestCase
-from utils import evaluate
+from utils import evaluate_docstring
 
 
-class TestVariables(RSLTestCase):
+class TestVariable(RSLTestCase):
 
-    @evaluate
-    def testVariableWithKeywordName_Empty(self, rc):
+    @evaluate_docstring
+    def test_variable_with_keyword_name_empty(self, rc):
         '''
         .assign empty = 1
         .exit "${empty}"
         '''
         self.assertEqual("1", rc)
         
-    @evaluate
-    def testVariableWithKeywordName_Where(self, rc):
+    @evaluate_docstring
+    def test_variable_with_keyword_name_where(self, rc):
         '''
         .assign where = 1
         .exit "${where}"
         '''
         self.assertEqual("1", rc)
 
-    @evaluate
-    def testVariableWithKeywordName_In(self, rc):
+    @evaluate_docstring
+    def test_variable_with_keyword_name_in(self, rc):
         '''
         .assign in = 1
         .exit "${in}"
         '''
         self.assertEqual("1", rc)
 
-    @evaluate
-    def testVariableWithTypeName(self, rc):
+    @evaluate_docstring
+    def test_variable_with_type_name(self, rc):
         '''
         .assign string = 1
         .exit "${string}"

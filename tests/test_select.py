@@ -1,14 +1,14 @@
 # encoding: utf-8
 # Copyright (C) 2015 John Törnblom
 
-import xtuml.model
+import xtuml
 
 from utils import RSLTestCase
 
 
 class TestSelect(RSLTestCase):
 
-    def testSelectAny_Empty(self):
+    def test_select_any_empty(self):
         self.metamodel.define_class('A', [])
 
         text = '''
@@ -24,7 +24,7 @@ class TestSelect(RSLTestCase):
         rc = self.eval_text(text)
         self.assertFalse(rc)
 
-    def testSelectAny_Not_Empty(self):
+    def test_select_any_not_empty(self):
         self.metamodel.define_class('A', [])
 
         text = '''
@@ -40,7 +40,7 @@ class TestSelect(RSLTestCase):
         rc = self.eval_text(text)
         self.assertTrue(rc)
         
-    def testSelectMany_Empty(self):
+    def test_select_many_empty(self):
         self.metamodel.define_class('A', [])
 
         text = '''
@@ -56,7 +56,7 @@ class TestSelect(RSLTestCase):
         rc = self.eval_text(text)
         self.assertFalse(rc)
         
-    def testSelectMany_Not_Empty(self):
+    def test_select_many_not_empty(self):
         self.metamodel.define_class('A', [])
         
         text = '''
@@ -72,7 +72,7 @@ class TestSelect(RSLTestCase):
         rc = self.eval_text(text)
         self.assertTrue(rc)
         
-    def testSelectMany_Cardinality(self):
+    def test_select_many_cardinality(self):
         self.metamodel.define_class('A', [])
         
         text = '''
@@ -85,7 +85,7 @@ class TestSelect(RSLTestCase):
             self.assertEqual(i, rc)
             self.metamodel.new('A')
 
-    def testSelectWhenCreated(self):
+    def test_select_when_created(self):
         self.metamodel.define_class('A', [])
 
         text = '''
@@ -96,11 +96,11 @@ class TestSelect(RSLTestCase):
         rc = self.eval_text(text)
         self.assertFalse(rc)
 
-    def testSelectOneNavigation(self):
+    def test_select_one_navigation(self):
         self.metamodel.define_class('A', [('Id', 'unique_id'), ('B_Id', 'unique_id')])
         self.metamodel.define_class('B', [('Id', 'unique_id'), ('A_Id', 'unique_id')])
-        a_endpint = xtuml.model.SingleAssociationLink('A')
-        b_endpint = xtuml.model.SingleAssociationLink('B')
+        a_endpint = xtuml.SingleAssociationLink('A')
+        b_endpint = xtuml.SingleAssociationLink('B')
         
         self.metamodel.define_relation('R1', a_endpint, b_endpint)
         
@@ -116,11 +116,11 @@ class TestSelect(RSLTestCase):
         rc = self.eval_text(text)
         self.assertEqual(b.Id, rc)
 
-    def testSelectAnyNavigation(self):
+    def test_select_any_navigation(self):
         self.metamodel.define_class('A', [('Id', 'unique_id')])
         self.metamodel.define_class('B', [('Id', 'unique_id'), ('A_Id', 'unique_id')])
-        a_endpint = xtuml.model.SingleAssociationLink('A')
-        b_endpint = xtuml.model.ManyAssociationLink('B')
+        a_endpint = xtuml.SingleAssociationLink('A')
+        b_endpint = xtuml.ManyAssociationLink('B')
         
         self.metamodel.define_relation('R1', a_endpint, b_endpint)
         
@@ -137,11 +137,11 @@ class TestSelect(RSLTestCase):
         rc = self.eval_text(text)
         self.assertEqual(b.Id, rc)
 
-    def testSelectManyNavigation(self):
+    def test_select_many_navigation(self):
         self.metamodel.define_class('A', [('Id', 'unique_id')])
         self.metamodel.define_class('B', [('Id', 'unique_id'), ('A_Id', 'unique_id')])
-        a_endpint = xtuml.model.SingleAssociationLink('A')
-        b_endpint = xtuml.model.ManyAssociationLink('B')
+        a_endpint = xtuml.SingleAssociationLink('A')
+        b_endpint = xtuml.ManyAssociationLink('B')
         
         self.metamodel.define_relation('R1', a_endpint, b_endpint)
         
@@ -159,13 +159,13 @@ class TestSelect(RSLTestCase):
         rc = self.eval_text(text)
         self.assertEqual(3, rc)
 
-    def testSelectOneReflexiveNavigation(self):
+    def test_select_one_reflexive_navigation(self):
         self.metamodel.define_class('A', [('Id', 'unique_id'),
                                           ('Next_Id', 'unique_id'),
                                           ('Name', 'string')])
         
-        endpint1 = xtuml.model.SingleAssociationLink('A', ids=['Id'], phrase='prev')
-        endpint2 = xtuml.model.SingleAssociationLink('A', ids=['Next_Id'], phrase='next')
+        endpint1 = xtuml.SingleAssociationLink('A', ids=['Id'], phrase='prev')
+        endpint2 = xtuml.SingleAssociationLink('A', ids=['Next_Id'], phrase='next')
         self.metamodel.define_relation('R1', endpint1, endpint2)
 
         first = self.metamodel.new('A', Name="First")
@@ -188,11 +188,11 @@ class TestSelect(RSLTestCase):
         rc = self.eval_text(text)
         self.assertEqual(first.Name, rc)
         
-    def testSelectAnySubstituionNavigation(self):
+    def test_select_any_substitution_navigation(self):
         self.metamodel.define_class('A', [('Id', 'unique_id')])
         self.metamodel.define_class('B', [('Id', 'unique_id'), ('A_Id', 'unique_id'), ('Name', 'string')])
-        a_endpint = xtuml.model.SingleAssociationLink('A')
-        b_endpint = xtuml.model.ManyAssociationLink('B')
+        a_endpint = xtuml.SingleAssociationLink('A')
+        b_endpint = xtuml.ManyAssociationLink('B')
         
         self.metamodel.define_relation('R1', a_endpint, b_endpint)
         
@@ -208,7 +208,7 @@ class TestSelect(RSLTestCase):
         rc = self.eval_text(text)
         self.assertEqual(a.Id, rc)
         
-    def testSelectWithManySpaces(self):
+    def test_select_with_many_spaces(self):
         self.metamodel.define_class('A', [])
 
         text = '''
@@ -218,7 +218,7 @@ class TestSelect(RSLTestCase):
         
         self.eval_text(text)
 
-    def testSelectWithTypeName(self):
+    def test_select_with_type_name(self):
         self.metamodel.define_class('A', [])
 
         text = '''

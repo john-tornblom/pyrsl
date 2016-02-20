@@ -2,14 +2,14 @@
 # Copyright (C) 2015 John Törnblom
 
 from utils import RSLTestCase
-from utils import evaluate
+from utils import evaluate_docstring
 
 import rsl
 
 
-class TestScopeRules(RSLTestCase):
+class TestScopeRule(RSLTestCase):
 
-    @evaluate
+    @evaluate_docstring
     def test_access_global_from_function(self, rc):
         '''
         .assign x = 5
@@ -20,7 +20,7 @@ class TestScopeRules(RSLTestCase):
         '''
         self.assertIsInstance(rc, rsl.symtab.SymtabException)
         
-    @evaluate
+    @evaluate_docstring
     def test_recursive_function(self, rc):
         '''
         .function f

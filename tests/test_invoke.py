@@ -2,15 +2,15 @@
 # Copyright (C) 2015 John Törnblom
 
 from utils import RSLTestCase
-from utils import evaluate
+from utils import evaluate_docstring
 
 from rsl.runtime import RuntimeException
 
 
 class TestInvoke(RSLTestCase):
 
-    @evaluate
-    def testInvokeEmptyFunction(self, rc):
+    @evaluate_docstring
+    def test_invoke_empty_function(self, rc):
         '''
         .function f
         .end function
@@ -19,8 +19,8 @@ class TestInvoke(RSLTestCase):
         '''
         self.assertEqual(1, rc)
         
-    @evaluate
-    def testInvokeDotNamedFunction(self, rc):
+    @evaluate_docstring
+    def test_invoke_dot_named_function(self, rc):
         '''
         .function module.f
         .exit 1
@@ -30,8 +30,8 @@ class TestInvoke(RSLTestCase):
         '''
         self.assertEqual(1, rc)
     
-    @evaluate
-    def testInvokeWithExit(self, rc):
+    @evaluate_docstring
+    def test_invoke_with_exit(self, rc):
         '''
         .function f
             .exit 1
@@ -41,8 +41,8 @@ class TestInvoke(RSLTestCase):
         '''
         self.assertEqual(1, rc)
 
-    @evaluate
-    def testInvokeWithParameter(self, rc):
+    @evaluate_docstring
+    def test_invoke_with_parameter(self, rc):
         '''
         .function f
             .param integer x
@@ -53,8 +53,8 @@ class TestInvoke(RSLTestCase):
         '''
         self.assertEqual(2, rc)
 
-    @evaluate
-    def testInvokeWithParameterAndComments(self, rc):
+    @evaluate_docstring
+    def test_invoke_with_parameter_and_comments(self, rc):
         '''
         .function f .// integer
             .param integer x .// some comment
@@ -66,8 +66,8 @@ class TestInvoke(RSLTestCase):
         '''
         self.assertEqual(2, rc)
         
-    @evaluate
-    def testParameterOrder(self, rc):
+    @evaluate_docstring
+    def test_parameter_order(self, rc):
         '''
         .function f
             .param integer x
@@ -80,8 +80,8 @@ class TestInvoke(RSLTestCase):
         '''
         self.assertEqual(1, rc)
 
-    @evaluate
-    def testInvokeWithReturnValue(self, rc):
+    @evaluate_docstring
+    def test_invoke_with_return_value(self, rc):
         '''
         .function f
             .assign attr_value = 1
@@ -91,8 +91,8 @@ class TestInvoke(RSLTestCase):
         '''
         self.assertEqual(1, rc)
 
-    @evaluate
-    def testInvokeDotNamedFunctionWithReturnValue(self, rc):
+    @evaluate_docstring
+    def test_invoke_dot_named_function_with_return_value(self, rc):
         '''
         .function module.f
             .assign attr_value = 1
@@ -102,8 +102,8 @@ class TestInvoke(RSLTestCase):
         '''
         self.assertEqual(1, rc)
 
-    @evaluate
-    def testInvokeWithReturnValues(self, rc):
+    @evaluate_docstring
+    def test_invoke_with_return_values(self, rc):
         '''
         .function f
             .assign attr_x = 1
@@ -120,8 +120,8 @@ class TestInvoke(RSLTestCase):
         '''
         self.assertEqual(0, rc)
 
-    @evaluate
-    def testInvokeFromOtherBody(self, rc):
+    @evaluate_docstring
+    def test_invoke_from_other_body(self, rc):
         '''
         ..function f
             ..assign attr_x = 1
@@ -140,8 +140,8 @@ class TestInvoke(RSLTestCase):
         '''
         self.assertEqual(0, rc)
 
-    @evaluate
-    def testInvokeUndefinedFunction(self, rc):
+    @evaluate_docstring
+    def test_invoke_undefined_function(self, rc):
         '''
         .invoke res = f()
         .exit 0

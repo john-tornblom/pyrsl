@@ -2,15 +2,15 @@
 # Copyright (C) 2015 John Törnblom
 
 import unittest
-import xtuml.model
+import xtuml
 import rsl
 
 
 class RSLTestCase(unittest.TestCase):
 
     def setUp(self):
-        id_generator = xtuml.model.IntegerGenerator()
-        self.metamodel = xtuml.model.MetaModel(id_generator)
+        id_generator = xtuml.IntegerGenerator()
+        self.metamodel = xtuml.MetaModel(id_generator)
         self.runtime = rsl.runtime.Runtime(self.metamodel)
         self.includes = ['./']
         
@@ -31,6 +31,7 @@ def expect_exception(exception):
         return test_decorated
     return test_decorator
 
-def evaluate(f):
-    return lambda self: f(self, self.eval_text(f.__doc__, f.__module__ + '.' + f.__name__))
+def evaluate_docstring(f):
+    return lambda self: f(self, self.eval_text(f.__doc__, 
+                                               f.__module__ + '.' + f.__name__))
 

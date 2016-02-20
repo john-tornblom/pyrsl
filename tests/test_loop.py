@@ -2,13 +2,13 @@
 # Copyright (C) 2015 John Törnblom
 
 from utils import RSLTestCase
-from utils import evaluate
+from utils import evaluate_docstring
 
 
 class TestLoop(RSLTestCase):
 
-    @evaluate
-    def testWhileLoop(self, rc):
+    @evaluate_docstring
+    def test_while_loop(self, rc):
         '''
         .assign x = 10
         .while (x > 0)
@@ -18,8 +18,8 @@ class TestLoop(RSLTestCase):
         '''
         self.assertEqual(0, rc)
         
-    @evaluate
-    def testWhileLoopBreak(self, rc):
+    @evaluate_docstring
+    def test_while_loop_break(self, rc):
         '''
         .assign x = 10
         .while (x > 0)
@@ -32,7 +32,7 @@ class TestLoop(RSLTestCase):
         '''
         self.assertEqual(5, rc)
         
-    def testForLoop(self):
+    def test_for_loop(self):
         self.metamodel.define_class('A', [])
 
         text = '''
@@ -49,7 +49,7 @@ class TestLoop(RSLTestCase):
             self.assertEqual(i, rc)
             self.metamodel.new('A')
         
-    def testForLoopBreak(self):
+    def test_for_loop_break(self):
         self.metamodel.define_class('A', [])
 
         text = '''
@@ -70,7 +70,7 @@ class TestLoop(RSLTestCase):
         rc = self.eval_text(text)
         self.assertEqual(3, rc)
 
-    def testFirstInLoop(self):
+    def test_first_in_loop(self):
         self.metamodel.define_class('A', [])
 
         text = '''
@@ -90,7 +90,7 @@ class TestLoop(RSLTestCase):
         rc = self.eval_text(text)
         self.assertEqual(1, rc)
 
-    def testNotFirstInLoop(self):
+    def test_not_first_in_loop(self):
         self.metamodel.define_class('A', [])
 
         text = '''
@@ -110,7 +110,7 @@ class TestLoop(RSLTestCase):
         rc = self.eval_text(text)
         self.assertEqual(9, rc)
         
-    def testLastInLoop(self):
+    def test_last_in_loop(self):
         self.metamodel.define_class('A', [])
 
         text = '''
@@ -130,7 +130,7 @@ class TestLoop(RSLTestCase):
         rc = self.eval_text(text)
         self.assertEqual(1, rc)
         
-    def testNotLastInLoop(self):
+    def test_not_last_in_loop(self):
         self.metamodel.define_class('A', [])
 
         text = '''

@@ -1,20 +1,14 @@
 # encoding: utf-8
 # Copyright (C) 2015 Per Jonsson
 
-import datetime
-import os
-
 from utils import RSLTestCase
-from utils import evaluate
-from utils import expect_exception
-
-import rsl.version
+from utils import evaluate_docstring
 
 
 class TestInclude(RSLTestCase):
 
-    @evaluate
-    def testReinclude(self, rc):
+    @evaluate_docstring
+    def test_reinclude(self, rc):
         '''
         ..assign attr_x = 1
         .emit to file "/tmp/RSLTestCase"
@@ -36,15 +30,15 @@ class TestInclude(RSLTestCase):
         '''
         self.assertEqual(0, rc)
 
-    @evaluate
-    def testRelativeInclude(self, rc):
+    @evaluate_docstring
+    def test_relative_include(self, rc):
         '''
         .include "tests/test_files/foo.rsl"
         '''
         self.assertEqual(4711, rc)
 
-    @evaluate
-    def testInvalidfile(self, rc):
+    @evaluate_docstring
+    def test_invalid_file(self, rc):
         '''
         .include "tests/test_files/nonexisting_file"
         '''

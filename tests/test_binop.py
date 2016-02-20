@@ -2,155 +2,155 @@
 # Copyright (C) 2015 John Törnblom
 
 from utils import RSLTestCase
-from utils import evaluate
+from utils import evaluate_docstring
 
 
-class TestBinOp(RSLTestCase):
+class TestBinaryOperation(RSLTestCase):
 
-    @evaluate
-    def testPlus(self, rc):
+    @evaluate_docstring
+    def test_plus(self, rc):
         '.exit 1 + 1'
         self.assertEqual(2, rc)
         
-    @evaluate
-    def testMinus(self, rc):
+    @evaluate_docstring
+    def test_minus(self, rc):
         '.exit 1 - 1'
         self.assertEqual(0, rc)
 
-    @evaluate
-    def testUnaryMinus(self, rc):
+    @evaluate_docstring
+    def test_minus_with_unary_minus(self, rc):
         '.exit 1 - -1'
         self.assertEqual(2, rc)
         
-    @evaluate
-    def testMult(self, rc):
+    @evaluate_docstring
+    def test_multiplication(self, rc):
         '.exit 2 * 2'
         self.assertEqual(4, rc)
         
-    @evaluate
-    def testDiv(self, rc):
+    @evaluate_docstring
+    def test_division(self, rc):
         '.exit 10 / 2'
         self.assertEqual(5, rc)
         
-    @evaluate
-    def testLessTrue(self, rc):
+    @evaluate_docstring
+    def test_less_true(self, rc):
         '.exit 0 < 1'
         self.assertTrue(rc)
         
-    @evaluate
-    def testLessFalse(self, rc):
+    @evaluate_docstring
+    def test_less_false(self, rc):
         '.exit 0 < 0'
         self.assertFalse(rc)
         
-    @evaluate
-    def testLessEqTrue(self, rc):
+    @evaluate_docstring
+    def test_less_equal_true(self, rc):
         '.exit 1 <= 1'
         self.assertTrue(rc)
         
-    @evaluate
-    def testLessEqFalse(self, rc):
+    @evaluate_docstring
+    def test_less_equal_false(self, rc):
         '.exit 2 <= 1'
         self.assertFalse(rc)
         
-    @evaluate
-    def testNotEqFalse(self, rc):
+    @evaluate_docstring
+    def test_not_equal_false(self, rc):
         '.exit 1 != 1'
         self.assertFalse(rc)
     
-    @evaluate
-    def testGreatEqFalse(self, rc):
+    @evaluate_docstring
+    def test_great_equal_false(self, rc):
         '.exit 1 >= 2'
         self.assertFalse(rc)
         
-    @evaluate
-    def testGreatEqTrue(self, rc):
+    @evaluate_docstring
+    def test_great_equal_true(self, rc):
         '.exit 3 >= 2'
         self.assertTrue(rc)
         
-    @evaluate
-    def testNotEqTrue(self, rc):
+    @evaluate_docstring
+    def test_not_equal_true(self, rc):
         '.exit 0 != 1'
         self.assertTrue(rc)
         
-    @evaluate
-    def testEqFalse(self, rc):
+    @evaluate_docstring
+    def test_equal_false(self, rc):
         '.exit 0 == 1'
         self.assertFalse(rc)
         
-    @evaluate
-    def testEqTrue(self, rc):
+    @evaluate_docstring
+    def test_equal_true(self, rc):
         '.exit 1 == 1'
         self.assertTrue(rc)
         
-    @evaluate
-    def testGroupedBinOp(self, rc):
+    @evaluate_docstring
+    def test_grouped(self, rc):
         '''
         .assign x = (1 + 1)
         .exit x
         '''
         self.assertEqual(2, rc)
         
-    @evaluate
-    def testChainedBinOp(self, rc):
+    @evaluate_docstring
+    def test_chained(self, rc):
         '''
         .assign x = (1 + 1) + 1
         .exit x
         '''
         self.assertEqual(3, rc)
 
-    @evaluate
-    def testChainedUnaryOp(self, rc):
+    @evaluate_docstring
+    def test_chained_with_unary(self, rc):
         '''
         .assign x = not (1 == 1)
         .exit x
         '''
         self.assertEqual(False, rc)
 
-    @evaluate
-    def testAndBinOpTrue(self, rc):
+    @evaluate_docstring
+    def test_and_true(self, rc):
         '''
         .exit True and True
         '''
         self.assertTrue(rc)
         
-    @evaluate
-    def testAndBinOpFalse(self, rc):
+    @evaluate_docstring
+    def test_and_false(self, rc):
         '''
         .exit True and False
         '''
         self.assertFalse(rc)
         
-    @evaluate
-    def testOrBinOpTrue(self, rc):
+    @evaluate_docstring
+    def test_or_true(self, rc):
         '''
         .exit True or False
         '''
         self.assertTrue(rc)
         
-    @evaluate
-    def testOrBinOpWithoutSpaces(self, rc):
+    @evaluate_docstring
+    def test_or_false(self, rc):
+        '''
+        .exit False or False
+        '''
+        self.assertFalse(rc)
+        
+    @evaluate_docstring
+    def test_or_without_spaces(self, rc):
         '''
         .assign x = (True)or(False)
         .exit x
         '''
         self.assertTrue(rc)
         
-    @evaluate
-    def testAndBinOpWithoutSpaces(self, rc):
+    @evaluate_docstring
+    def test_and_without_spaces(self, rc):
         '''
         .assign x = (True)AND(True)
         .exit x
         '''
         self.assertTrue(rc)
         
-    @evaluate
-    def testOrBinOpFalse(self, rc):
-        '''
-        .exit False or False
-        '''
-        self.assertFalse(rc)
-        
-    def testBinOpPipe(self):
+    def test_pipe(self):
         self.metamodel.define_class('A', [('Name', 'string')])
 
         text = '''
@@ -181,7 +181,7 @@ class TestBinOp(RSLTestCase):
         rc = self.eval_text(text)
         self.assertEqual(3, rc)
         
-    def testBinOpAmpesand(self):
+    def test_ampesand(self):
         self.metamodel.define_class('A', [('Name', 'string')])
 
         text = '''
@@ -211,7 +211,7 @@ class TestBinOp(RSLTestCase):
         rc = self.eval_text(text)
         self.assertEqual(1, rc)
         
-    def testInstancePlusInstance(self):
+    def test_instance_plus_instance(self):
         self.metamodel.define_class('A', [('Name', 'string')])
 
         text = '''
@@ -226,7 +226,7 @@ class TestBinOp(RSLTestCase):
         rc = self.eval_text(text)
         self.assertEqual(2, rc)
         
-    def testInstanceMinusInstance(self):
+    def test_instance_minus_instance(self):
         self.metamodel.define_class('A', [('Name', 'string')])
 
         text = '''
@@ -241,7 +241,7 @@ class TestBinOp(RSLTestCase):
         rc = self.eval_text(text)
         self.assertEqual(1, rc)
         
-    def testInstanceMinusSameInstance(self):
+    def test_instance_minus_same_instance(self):
         self.metamodel.define_class('A', [('Name', 'string')])
 
         text = '''

@@ -5,10 +5,11 @@ import unittest
 
 import rsl.symtab
 
+
 class TestSymbolTable(unittest.TestCase):
 
 
-    def testSymbolStore(self):
+    def test_symbol_store(self):
         symtab = rsl.symtab.SymbolTable()
         handle = "TEST"
         
@@ -23,7 +24,7 @@ class TestSymbolTable(unittest.TestCase):
         
         self.assertEqual(handle, value)
         
-    def testGlobalStore(self):
+    def test_global_store(self):
         symtab = rsl.symtab.SymbolTable()
 
         g1 = "Test1"
@@ -44,11 +45,11 @@ class TestSymbolTable(unittest.TestCase):
         self.assertRaises(rsl.symtab.SymtabException, symtab.find_symbol, "g1")
         self.assertRaises(rsl.symtab.SymtabException, symtab.find_symbol, "g2")
         
-    def testOutOfScope(self):
+    def test_out_of_scope(self):
         symtab = rsl.symtab.SymbolTable()
         self.assertRaises(rsl.symtab.SymtabException, symtab.leave_scope)
 
-    def testOutOfBlock(self):
+    def test_out_of_block(self):
         symtab = rsl.symtab.SymbolTable()
         
         symtab.enter_scope()
@@ -56,7 +57,7 @@ class TestSymbolTable(unittest.TestCase):
         
         self.assertRaises(rsl.symtab.SymtabException, symtab.leave_block)
         
-    def testSymbolRewrite(self):
+    def test_symbol_rewrite(self):
         symtab = rsl.symtab.SymbolTable()
         
         symtab.enter_scope()
@@ -69,7 +70,7 @@ class TestSymbolTable(unittest.TestCase):
         
         self.assertEqual(value, 'TEST2')
         
-    def testGetScopeSymbols(self):
+    def test_get_scope_symbols(self):
         symtab = rsl.symtab.SymbolTable()
         
         symtab.enter_scope()

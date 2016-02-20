@@ -6,10 +6,9 @@ from utils import RSLTestCase
 from rsl.runtime import RuntimeException
 
 
-class TestTypeSys(RSLTestCase):
+class TestTypeSystem(RSLTestCase):
 
-
-    def testInvoke_Parameter(self):
+    def test_invoke_parameter(self):
 
         def f(ty, val):
             return self.eval_text('''
@@ -17,7 +16,7 @@ class TestTypeSys(RSLTestCase):
                     .param %s x
                 .end function
                 .invoke f(%s)
-                .exit true''' % (ty, val), 'TestTypeSys.testInvoke_Parameter(%s, %s)' % (ty, val))
+                .exit true''' % (ty, val), 'TestTypeSys.test_invoke_parameter(%s, %s)' % (ty, val))
         
         self.assertTrue(f('boolean', 'true'))
         self.assertTrue(f('boolean', 'false'))
@@ -34,7 +33,7 @@ class TestTypeSys(RSLTestCase):
         self.assertIsInstance(f('string', 'true'), RuntimeException)
         self.assertIsInstance(f('frag_ref', '0'), RuntimeException)
 
-    def testInvoke_FragmentParameter(self):
+    def test_invoke_fragment_parameter(self):
 
         def f(ty):
             return self.eval_text('''
@@ -47,7 +46,7 @@ class TestTypeSys(RSLTestCase):
                 .invoke value = g()
                 .invoke f(value)
                 .exit true''' % ty, 
-                'TestTypeSys.testInvoke_FragmentParameter(%s)' % ty)
+                'TestTypeSys.test_invoke_fragment_parameter(%s)' % ty)
         
         self.assertTrue(f('frag_ref'))
         
