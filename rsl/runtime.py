@@ -194,7 +194,7 @@ class Runtime(object):
         
         if os.path.exists(filename):
             fromdate = os.path.getctime(filename)
-            fromdate = datetime.datetime.fromtimestamp(fromdate)
+            fromdate = str(datetime.datetime.fromtimestamp(fromdate))
             todate = str(datetime.datetime.now())
         else:
             fromdate = ''
