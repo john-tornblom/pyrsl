@@ -168,7 +168,6 @@ class TestCommandLineInterface(unittest.TestCase):
         rsl.main(argv)
         with open(diff.name, 'r') as f:
             s = f.read()
-            print s
             self.assertIn('test_diff -arch', s)
             self.assertIn('Hello file', s)
         
