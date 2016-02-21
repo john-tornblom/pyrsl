@@ -68,17 +68,17 @@ class TestIntrinsic(RSLTestCase):
         self.assertFalse(rc)
         
     @evaluate_docstring
-    def test_shell_command_true(self, rc):
+    def test_shell_command_exit_0(self, rc):
         '''
-        .invoke rc = SHELL_COMMAND("true")
+        .invoke rc = SHELL_COMMAND("exit 0")
         .exit rc.result
         '''
         self.assertEqual(0, rc)
     
     @evaluate_docstring
-    def test_shell_command_false(self, rc):
+    def test_shell_command_exit_1(self, rc):
         '''
-        .invoke rc = SHELL_COMMAND("false")
+        .invoke rc = SHELL_COMMAND("exit 1")
         .exit rc.result
         '''
         self.assertEqual(1, rc)
