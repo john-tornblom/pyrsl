@@ -22,7 +22,6 @@ class TestCommandLineInterface(unittest.TestCase):
     def temp_file(self, mode='w'):
         temp = tempfile.NamedTemporaryFile(mode=mode, delete=False)
         self.temp_files.add(temp)
-        
         return temp
     
     def test_unsed_arguments(self):
@@ -155,7 +154,7 @@ class TestCommandLineInterface(unittest.TestCase):
         emit_filename = tempfile.mktemp()
         script = self.temp_file(mode='w')
         script.file.write('Test\n')
-        script.file.write('.emit to file "%s"\n' % emit_filename)
+        script.file.write('.emit to file "%s"\n' % repr(emit_filename))
         script.file.flush()
         
         argv = ['test_disable_emit', 
@@ -171,7 +170,7 @@ class TestCommandLineInterface(unittest.TestCase):
         emit = self.temp_file(mode='r')
         script = self.temp_file(mode='w')
         script.file.write('Hello file\n')
-        script.file.write('.emit to file "%s"\n' % emit.name)
+        script.file.write('.emit to file "%s"\n' % repr(emit.name))
         script.file.flush()
         
         argv = ['test_diff', 
