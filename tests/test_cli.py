@@ -11,6 +11,19 @@ import rsl
 
 class TestCommandLineInterface(unittest.TestCase):
     
+    def setUp(self):
+        self.temp_files = set()
+        
+    def tearDown(self):
+        for temp_file in self.temp_files:
+            os.remove(temp_file)
+
+    def temp_file(self, mode='w'):
+        temp = tempfile.NamedTemporaryFile(mode=mode, delete=False)
+        self.temp_files.add(temp.name)
+        
+        return temp
+    
     def test_unsed_arguments(self):
         argv = ['test_unsed_arguments', 
                 '-nopersist', #don't save database to disk during testing
@@ -55,8 +68,8 @@ class TestCommandLineInterface(unittest.TestCase):
         self.assertIn(rsl.version.complete_string, output)
         
     def test_integrity(self):
-        schema = tempfile.NamedTemporaryFile(mode='w')
-        script = tempfile.NamedTemporaryFile(mode='w')
+        schema = self.temp_file(mode='w')
+        script = self.temp_file(mode='w')
         
         schema.file.write('CREATE TABLE Cls (Id STRING);')
         schema.file.write('CREATE UNIQUE INDEX I1 ON Cls (Id);')
@@ -79,7 +92,7 @@ class TestCommandLineInterface(unittest.TestCase):
         self.assertEqual(1, rsl.main(argv))
     
     def test_include(self):
-        script = tempfile.NamedTemporaryFile(mode='w')
+        script = self.temp_file(mode='w')
         script.file.write('.print "Hello"\n')
         script.file.write('.include "spam.inc"\n')
         script.file.flush()
@@ -96,7 +109,7 @@ class TestCommandLineInterface(unittest.TestCase):
 
     def test_nopersist(self):
         db_filename = tempfile.mktemp()
-        script = tempfile.NamedTemporaryFile(mode='w')
+        script = self.temp_file(mode='w')
 
         script.file.write('.print "Hello"\n')
         script.file.flush()
@@ -112,9 +125,9 @@ class TestCommandLineInterface(unittest.TestCase):
         self.assertFalse(os.path.exists(db_filename))
     
     def test_persist(self):
-        db = tempfile.NamedTemporaryFile(mode='r')
-        schema = tempfile.NamedTemporaryFile(mode='w')
-        script = tempfile.NamedTemporaryFile(mode='w')
+        db = self.temp_file(mode='r')
+        schema = self.temp_file(mode='w')
+        script = self.temp_file(mode='w')
         
         schema.file.write('CREATE TABLE Cls (Id UNIQUE_ID);')
         schema.file.flush()
@@ -139,7 +152,7 @@ class TestCommandLineInterface(unittest.TestCase):
     
     def test_disable_emit(self):
         emit_filename = tempfile.mktemp()
-        script = tempfile.NamedTemporaryFile(mode='w')
+        script = self.temp_file(mode='w')
         script.file.write('Test\n')
         script.file.write('.emit to file "%s"\n' % emit_filename)
         script.file.flush()
@@ -153,9 +166,9 @@ class TestCommandLineInterface(unittest.TestCase):
         self.assertFalse(os.path.exists(emit_filename))
 
     def test_diff(self):
-        diff = tempfile.NamedTemporaryFile(mode='r')
-        emit = tempfile.NamedTemporaryFile(mode='r')
-        script = tempfile.NamedTemporaryFile(mode='w')
+        diff = self.temp_file(mode='r')
+        emit = self.temp_file(mode='r')
+        script = self.temp_file(mode='w')
         script.file.write('Hello file\n')
         script.file.write('.emit to file "%s"\n' % emit.name)
         script.file.flush()
