@@ -15,12 +15,13 @@ class TestCommandLineInterface(unittest.TestCase):
         self.temp_files = set()
         
     def tearDown(self):
-        for temp_file in self.temp_files:
-            os.remove(temp_file)
+        for temp in self.temp_files:
+            temp.close()
+            os.remove(temp.name)
 
     def temp_file(self, mode='w'):
         temp = tempfile.NamedTemporaryFile(mode=mode, delete=False)
-        self.temp_files.add(temp.name)
+        self.temp_files.add(temp)
         
         return temp
     
