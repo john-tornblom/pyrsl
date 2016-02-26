@@ -10,7 +10,7 @@ model.
 Installation
 ~~~~~~~~~~~~
 POSIX users with python available on thier system may grap **gen_erate.pyz**
-from `a release <https://github.com/john-tornblom/pyrsl/releases>`__. The .pyz
+from `a release <https://github.com/xtuml/pyrsl/releases>`__. The .pyz
 file contain pyrsl and all of its dependencises, and may be executed directly
 without installing anything:
 
@@ -37,7 +37,7 @@ pyrsl is also available from pypi:
 Windows
 *******
 Generally, Windows users don't have python installed. However, `pyrsl 
-releases <https://github.com/john-tornblom/pyrsl/releases>`__ include
+releases <https://github.com/xtuml/pyrsl/releases>`__ include
 **gen_erate.exe** that contain pyrsl and all of its dependencies, including
 python.
 
@@ -62,12 +62,12 @@ when executing gen_erate.
 Language Reference
 ~~~~~~~~~~~~~~~~~~
 See `BridgePoint UML Suite Rule Specification Language
-<https://cdn.rawgit.com/john-tornblom/pyrsl/master/doc/rsl_language_reference.html>`__.
+<https://cdn.rawgit.com/xtuml/pyrsl/master/doc/rsl_language_reference.html>`__.
 
 Developer Notes
 ~~~~~~~~~~~~~~~
 pyrsl depend on pyxtuml, see its `github page
-<https://github.com/john-tornblom/pyxtuml>`__ for install instructions.
+<https://github.com/xtuml/pyxtuml>`__ for install instructions.
 
 Test suites
 ***********
@@ -75,7 +75,7 @@ pyrsl contain a set of unit tests that may be executed:
 
 ::
 
-    $ git clone https://github.com/john-tornblom/pyrsl.git
+    $ git clone https://github.com/xtuml/pyrsl.git
     $ cd pyrsl
     $ python setup.py test
 
@@ -94,14 +94,14 @@ file by invoking **package_pyz.sh** located in the pyrsl source root folder:
     customization_test.arc: 4:  INFO:  the md5 of 'hello world' is 619d201e5209d3d52342cc5b6616b0cf
     customization_test.arc: 11:  INFO:  the md5 of hello world is 5eb63bbbe01eeed093cb22bb8f5acdc3
 
-See `customization.py <https://github.com/john-tornblom/pyrsl/blob/master/examples/customization.py>`__
-and `customization_test.arc <https://github.com/john-tornblom/pyrsl/blob/master/examples/customization_test.arc>`__
+See `customization.py <https://github.com/xtuml/pyrsl/blob/master/examples/customization.py>`__
+and `customization_test.arc <https://github.com/xtuml/pyrsl/blob/master/examples/customization_test.arc>`__
 for more information.
 
 Reporting bugs
 ~~~~~~~~~~~~~~
 If you encounter problems with pyrsl, please `file a github
-issue <https://github.com/john-tornblom/pyrsl/issues/new>`__. If you plan on
+issue <https://github.com/xtuml/pyrsl/issues/new>`__. If you plan on
 sending pull request which affect more than a few lines of code, please file an
 issue before you start to work on you changes. This will allow us to discuss the
 solution properly before you commit time and effort.
@@ -110,8 +110,8 @@ License
 ~~~~~~~
 pyrsl is licensed under the GPLv3, see LICENSE for more information.
 
-.. |Build Status| image:: https://travis-ci.org/john-tornblom/pyrsl.svg?branch=master
-   :target: https://travis-ci.org/john-tornblom/pyrsl
-.. |Coverage Status| image:: https://coveralls.io/repos/john-tornblom/pyrsl/badge.svg?branch=master
-   :target: https://coveralls.io/r/john-tornblom/pyrsl?branch=master
+.. |Build Status| image:: https://travis-ci.org/xtuml/pyrsl.svg?branch=master
+   :target: https://travis-ci.org/xtuml/pyrsl
+.. |Coverage Status| image:: https://coveralls.io/repos/xtuml/pyrsl/badge.svg?branch=master
+   :target: https://coveralls.io/r/xtuml/pyrsl?branch=master
 
