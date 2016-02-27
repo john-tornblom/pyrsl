@@ -9,7 +9,7 @@ model.
 
 Installation
 ~~~~~~~~~~~~
-POSIX users with python available on thier system may grap **gen_erate.pyz**
+POSIX users with python available on thier system may grab **gen_erate.pyz**
 from `a release <https://github.com/xtuml/pyrsl/releases>`__. The .pyz
 file contain pyrsl and all of its dependencises, and may be executed directly
 without installing anything:
