@@ -88,7 +88,7 @@ file by invoking **package_pyz.sh** located in the pyrsl source root folder:
 
 ::
 
-    $ ./package_pyz.sh examples/customization.py
+    $ ./package_pyz.sh -main examples/customization.py
     $ ./gen_erate.pyz -nopersist -arch examples/customization_test.arc
     Running my custom version of gen_erate
     customization_test.arc: 4:  INFO:  the md5 of 'hello world' is 619d201e5209d3d52342cc5b6616b0cf
