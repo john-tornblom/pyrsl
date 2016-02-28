@@ -489,7 +489,24 @@ class EvalWalker(xtuml.tools.Walker):
         
         return property(lambda: result)
     
-    
+    def accept_RelateNode(self, node):
+        assert isinstance(node, ast.RelateNode)
+        from_inst = self.symtab.find_symbol(node.from_variable_name)
+        to_inst = self.symtab.find_symbol(node.to_variable_name)
+        xtuml.relate(from_inst, to_inst, node.rel_id, node.phrase)
+        
+    def accept_UnrelateNode(self, node):
+        assert isinstance(node, ast.UnrelateNode)
+        from_inst = self.symtab.find_symbol(node.from_variable_name)
+        to_inst = self.symtab.find_symbol(node.to_variable_name)
+        xtuml.unrelate(from_inst, to_inst, node.rel_id, node.phrase)
+        
+    def accept_DeleteNode(self, node):
+        assert isinstance(node, ast.DeleteNode)
+        inst = self.symtab.find_symbol(node.variable_name)
+        xtuml.delete(inst)
+
+        
 def evaluate(rt, ast, includes):
     w = EvalWalker(rt, includes)
     return w.accept(ast)

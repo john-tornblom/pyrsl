@@ -30,8 +30,14 @@ class RSLParser(object):
               'SELECTANY',
               'SELECTMANY',
               'CREATEOBJ',
+              'DELETEOBJ',
+              'RELATE',
+              'UNRELATE',
+              'ACROSS',
+              'FROM',
               'OF',
               'IF',
+              'TO',
               'FOR',
               'TYPE',
               'RELATEDBY',
@@ -257,6 +263,18 @@ class RSLParser(object):
         t.lexer.begin('control')
         return t
     
+    def t_pc_RELATE(self, t):
+        r"(?i)\.relate"
+        t.endlexpos = t.lexpos + len(t.value)
+        t.lexer.begin('control')
+        return t
+    
+    def t_pc_UNRELATE(self, t):
+        r"(?i)\.unrelate"
+        t.endlexpos = t.lexpos + len(t.value)
+        t.lexer.begin('control')
+        return t
+    
     def t_pc_IF(self, t):
         r"(?i)\.if"
         t.endlexpos = t.lexpos + len(t.value)
@@ -365,8 +383,24 @@ class RSLParser(object):
         t.lexer.begin('control')
         return t
     
+    def t_pc_DELETEOBJ(self, t):
+        r"(?i)\.delete[\s]+object[\s]+instance"
+        t.endlexpos = t.lexpos + len(t.value)
+        t.lexer.begin('control')
+        return t
+    
     def t_pc_WORD(self, t):
         r"\.([a-zA-Z][0-9a-zA-Z_]*|[a-zA-Z][0-9a-zA-Z_]*[0-9a-zA-Z_]+)"
+        t.endlexpos = t.lexpos + len(t.value)
+        return t
+    
+    def t_control_TO(self, t):
+        r"(?i)to(?=\s)"
+        t.endlexpos = t.lexpos + len(t.value)
+        return t
+    
+    def t_control_ACROSS(self, t):
+        r"(?i)across(?=[\s])"
         t.endlexpos = t.lexpos + len(t.value)
         return t
     
@@ -382,6 +416,11 @@ class RSLParser(object):
     
     def t_control_FROMINSTOF(self, t):
         r"(?i)from[\s]+instances[\s]+of(?=\s)"
+        t.endlexpos = t.lexpos + len(t.value)
+        return t
+    
+    def t_control_FROM(self, t):
+        r"(?i)from(?=[\s])"
         t.endlexpos = t.lexpos + len(t.value)
         return t
     
@@ -509,6 +548,12 @@ class RSLParser(object):
         return t
     
     def t_rt_PHRASE(self, t):
+        r"\'[^\']*\'"
+        t.endlexpos = t.lexpos + len(t.value)
+        t.value = t.value[1:-1]
+        return t
+    
+    def t_control_PHRASE(self, t):
         r"\'[^\']*\'"
         t.endlexpos = t.lexpos + len(t.value)
         t.value = t.value[1:-1]
@@ -825,6 +870,12 @@ class RSLParser(object):
         p[0].filename = self.filename
         p[0].lineno = p.lineno(0)
     
+    def p_delete_statement(self, p):
+        '''statement : DELETEOBJ inst_ref_var'''
+        p[0] = ast.DeleteNode(p[2])
+        p[0].filename = self.filename
+        p[0].lineno = p.lineno(0)
+    
     def p_selectstatement_1(self, p):
         """selectstatement : SELECTONE inst_ref_var RELATEDBY inst_chain whereclause"""
         p[0] = ast.SelectOneNode(p[2], p[4], p[5])
@@ -855,6 +906,30 @@ class RSLParser(object):
         p[0].filename = self.filename
         p[0].lineno = p.lineno(0)
         
+    def p_relate_statement_1(self, p):
+        '''statement : RELATE inst_ref_var TO inst_ref_var ACROSS WORD'''
+        p[0] = ast.RelateNode(p[2],  p[4], p[6], '')
+        p[0].filename = self.filename
+        p[0].lineno = p.lineno(0)
+        
+    def p_relate_statement_2(self, p):
+        '''statement : RELATE inst_ref_var TO inst_ref_var ACROSS WORD DOT PHRASE'''
+        p[0] = ast.RelateNode(p[2], p[4], p[6], p[8])
+        p[0].filename = self.filename
+        p[0].lineno = p.lineno(0)
+        
+    def p_unrelate_statement_1(self, p):
+        '''statement : UNRELATE inst_ref_var FROM inst_ref_var ACROSS WORD'''
+        p[0] = ast.UnrelateNode(p[2], p[4], p[6], '')
+        p[0].filename = self.filename
+        p[0].lineno = p.lineno(0)
+        
+    def p_unrelate_statement_2(self, p):
+        '''statement : UNRELATE inst_ref_var FROM inst_ref_var ACROSS WORD DOT PHRASE'''
+        p[0] = ast.UnrelateNode(p[2], p[4], p[6], p[8])
+        p[0].filename = self.filename
+        p[0].lineno = p.lineno(0)
+    
     def p_whereclause_1(self, p):
         """whereclause : """
         p[0] = ast.WhereNode()
@@ -1146,6 +1221,26 @@ class RSLParser(object):
     def p_keyword_4(self, p):
         """keyword : IN"""
         p[0] = p[1]
+         
+    def p_keyword_5(self, p):
+        """keyword : RELATE"""
+        p[0] = p[1]
+        
+    def p_keyword_6(self, p):
+        """keyword : TO"""
+        p[0] = p[1]
+        
+    def p_keyword_7(self, p):
+        """keyword : ACROSS"""
+        p[0] = p[1]
+        
+    def p_keyword_8(self, p):
+        """keyword : UNRELATE"""
+        p[0] = p[1]
+        
+    def p_keyword_9(self, p):
+        """keyword : FROM"""
+        p[0] = p[1]
         
     def p_param_name_1(self, p):
         """param_name : WORD"""
@@ -1356,4 +1451,29 @@ def parse_text(text, filename=''):
     parser = RSLParser()
     return parser.text_input(text, filename)
 
+
+if __name__ == '__main__':
+    import sys
+    import xtuml.tools
+    logging.basicConfig(level=logging.WARN)
+    
+    print ('Enter the character stream below. Press Ctrl-D to begin parsing.')
+    print ('')
+    s = sys.stdin.read()
+    
+    print ('--------- Token Stream ----------')
+    parser = RSLParser()
+    lexer = lex.lex(module=parser)
+    lexer.input(s)
+    while True:
+        tok = lexer.token()
+        if not tok:
+            break
+        print(tok)
+
+    print ('--------- Syntax Tree ----------')
+    root = parse_text(s)
+    w = xtuml.tools.Walker()
+    w.visitors.append(xtuml.tools.NodePrintVisitor())
+    w.accept(root)
 
