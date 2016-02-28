@@ -296,6 +296,43 @@ class SelectManyNode(SelectNode):
     pass
 
 
+class RelateNode(Node):
+    from_variable_name = None
+    to_variable_name = None
+    rel_id = None
+    phrase = None
+    
+    def __init__(self, from_variable_name, to_variable_name, rel_id, phrase):
+        self.from_variable_name = from_variable_name
+        self.to_variable_name = to_variable_name
+        self.rel_id = rel_id
+        self.phrase = phrase
+
+
+class UnrelateNode(Node):
+    from_variable_name = None
+    to_variable_name = None
+    rel_id = None
+    phrase = None
+    
+    def __init__(self, from_variable_name, to_variable_name, rel_id, phrase):
+        self.from_variable_name = from_variable_name
+        self.to_variable_name = to_variable_name
+        self.rel_id = rel_id
+        self.phrase = phrase
+        
+
+class DeleteNode(Node):
+    variable_name = None
+    
+    def __init__(self, variable_name):
+        self.variable_name = variable_name
+
+    @property
+    def children(self):
+        return (self.variable_name,)
+
+
 class WhereNode(Node):
     expr = None
     
