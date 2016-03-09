@@ -7,7 +7,7 @@ Heavily inspired by:
    - https://github.com/xtuml/mc/blob/master/mcmc/arlan/arlan.y
 '''
 
-
+import io
 import os
 import logging
 
@@ -121,6 +121,8 @@ class RSLParser(object):
                   ('left', 'UMINUS')]
 
 
+    t_ignore = '\r'
+    
     def __init__(self):
         self.filename = ''
         
@@ -138,9 +140,12 @@ class RSLParser(object):
                                 outputdir=os.path.dirname(__file__),
                                 tabmodule='rsl.__rsl_parsetab')
 
+    t_ignore = '\r'
+    
     def filename_input(self, filename):
-        with open(filename, 'rU') as f:
-            return self.text_input(f.read(), filename)
+        with open(filename, 'rb') as f:
+            text = f.read().decode('utf8', 'replace')
+            return self.text_input(text, filename)
     
     def text_input(self, text, filename=''):
         logger.debug('parsing %s' % filename)
