@@ -50,7 +50,8 @@ class EvalWalker(xtuml.tools.Walker):
             print('Traceback  (most recent call last):')
             for n in self.callstack + [node]:
                 print('    File "%s", line %d' % (n.filename, n.lineno))
-            #print(traceback.format_exc())
+            import traceback
+            print(traceback.format_exc())
             sys.exit(e)
     
     def default_accept(self, node, **kwargs):
