@@ -148,8 +148,8 @@ Hello world!
         rc = self.eval_text(code, 'test_emit_cp1252')
         self.assertIsNone(rc)
 
-        with open("/tmp/RSLTestCase") as f:
-            self.assertEqual(f.read(), "���\n")
+        with open("/tmp/RSLTestCase", 'r+b') as f:
+            self.assertEqual(f.read(), b'\xef\xbf\xbd\xef\xbf\xbd\xef\xbf\xbd\n')
 
     def test_parse_cp932(self):
         rc = self.eval_text('.include "tests/test_files/cp932.data"',
@@ -164,5 +164,5 @@ Hello world!
         rc = self.eval_text(code, 'test_emit_cp932')
         self.assertIsNone(rc)
 
-        with open("/tmp/RSLTestCase") as f:
-            self.assertEqual(f.read(), "���{��\n")
+        with open("/tmp/RSLTestCase", 'r+b') as f:
+            self.assertEqual(f.read(), b'\xef\xbf\xbd\xef\xbf\xbd\xef\xbf\xbd{\xef\xbf\xbd\xef\xbf\xbd\n')
