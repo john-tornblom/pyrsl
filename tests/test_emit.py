@@ -136,16 +136,14 @@ Hello world!
         self.assertEqual(t, os.path.getmtime(path))
         
     def test_parse_cp1252(self):
-        path = os.path.dirname(__file__) + '/test_files'
-        rc = self.eval_text('.include "%s/cp1252.data"' % path,
+        rc = self.eval_text('.include "tests/test_files/cp1252.data"',
                             'test_parse_cp1252')
         self.assertIsNone(rc)
 
     def test_emit_cp1252(self):
-        path = os.path.dirname(__file__) + '/test_files'
-        code = '''.include "%s/cp1252.data"
+        code = '''.include "tests/test_files/cp1252.data"
         .emit to file "/tmp/RSLTestCase"
-        ''' % path
+        '''
         
         rc = self.eval_text(code, 'test_emit_cp1252')
         self.assertIsNone(rc)
@@ -154,16 +152,14 @@ Hello world!
             self.assertEqual(f.read(), "���\n")
 
     def test_parse_cp932(self):
-        path = os.path.dirname(__file__) + '/test_files'
-        rc = self.eval_text('.include "%s/cp932.data"' % path,
+        rc = self.eval_text('.include "tests/test_files/cp932.data"',
                             'test_parse_cp932')
         self.assertIsNone(rc)
 
     def test_emit_cp932(self):
-        path = os.path.dirname(__file__) + '/test_files'
-        code = '''.include "%s/cp932.data"
+        code = '''.include "tests/test_files/cp932.data"
         .emit to file "/tmp/RSLTestCase"
-        ''' % path
+        '''
         
         rc = self.eval_text(code, 'test_emit_cp932')
         self.assertIsNone(rc)
