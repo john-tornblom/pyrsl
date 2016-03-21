@@ -202,8 +202,9 @@ class Runtime(object):
         
         diff = difflib.unified_diff(org, buf, fromfile, tofile, fromdate, todate)
 
-        with open(self.diff, 'a') as f:
-            f.write(''.join(diff))
+        with open(self.diff, 'a+b') as f:
+            diff = ''.join(diff)
+            f.write(diff.encode('utf8', 'replace'))
 
     def emit_buffer(self, filename):
         org = ''
@@ -216,8 +217,8 @@ class Runtime(object):
             
         filename = os.path.normpath(filename)
         if os.path.exists(filename):
-            with open(filename, 'rU') as f:
-                org = f.read()
+            with open(filename, 'r+b') as f:
+                org = f.read().decode('utf8', 'replace')
         
         if self.emit == 'never':
             do_write = False 
@@ -245,8 +246,8 @@ class Runtime(object):
             else:
                 self.invoke_print("File '%s' CREATED" % filename)
 
-            with open(filename, 'w+') as f:
-                f.write(buf)
+            with open(filename, 'w+b') as f:
+                f.write(buf.encode('utf8', 'replace'))
     
     def clear_buffer(self):
         self.buffer.close()
