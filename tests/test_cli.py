@@ -183,8 +183,32 @@ class TestCommandLineInterface(unittest.TestCase):
             s = f.read()
             self.assertIn('test_diff -arch', s)
             self.assertIn('Hello file', s)
-        
 
+
+    def test_diff_cp932(self):
+        diff = self.temp_file(mode='r')
+        emit = self.temp_file(mode='r')
+        script = self.temp_file(mode='w')
+
+        script.file.write('.include "tests/test_files/cp932.data"\n')
+        script.file.write('.emit to file "/tmp/RSLTestCase"\n')
+        script.file.flush()
+        
+        argv = ['test_diff_cp932', 
+                '-arch', script.name,
+                '-diff', diff.name,
+                '-nopersist']
+        
+        rsl.main(argv)
+        with open(diff.name, 'r+b') as f:
+            s = f.read()
+            self.assertIn(b'\xef\xbf\xbd\xef\xbf\xbd\xef\xbf\xbd', s)
+            
+        rsl.main(argv)
+        with open(diff.name, 'r+b') as f:
+            s = f.read()
+            self.assertNotIn(b'\xef\xbf\xbd\xef\xbf\xbd\xef\xbf\xbd', s)
+            
 if __name__ == "__main__":
     unittest.main()
 
