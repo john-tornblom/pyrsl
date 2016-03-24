@@ -14,6 +14,7 @@ import datetime
 import logging
 import re
 import difflib
+import getpass
 from functools import partial
 
 import rsl.version
@@ -59,7 +60,7 @@ class Info(object):
     
     @property
     def user_id(self):
-        return os.getlogin()
+        return getpass.getuser()
     
     @property
     def interpreter_version(self):

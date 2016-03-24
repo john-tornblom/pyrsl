@@ -2,6 +2,7 @@
 # Copyright (C) 2015 John Törnblom
 
 import datetime
+import getpass
 import os
 
 from utils import RSLTestCase
@@ -23,7 +24,7 @@ class TestInfo(RSLTestCase):
     @evaluate_docstring
     def test_user_id(self, rc):
         '.exit "${info.user_id}"'
-        self.assertEqual(os.getlogin(), rc)
+        self.assertEqual(getpass.getuser(), rc)
 
     @evaluate_docstring
     def test_uuid(self, rc):
