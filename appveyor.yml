@@ -2,8 +2,8 @@ build: off
 
 environment:
   matrix:
-    - PYTHON: "C:\\Python34"
-      PYTHON_VERSION: "3.4.x"
+    - PYTHON: "C:\\Python27"
+      PYTHON_VERSION: "2.7.x"
       PYTHON_ARCH: "32"
 
 init:
@@ -12,7 +12,7 @@ init:
 install:
   - "%PYTHON%/python -m pip install ply"
   - "%PYTHON%/python -m pip install pyxtuml"
-  - "%PYTHON%/python -m pip install py2exe"
+  - "%PYTHON%/python -m pip install py2exe_py2"
 
 before_test:
   - "%PYTHON%/python setup.py build"
