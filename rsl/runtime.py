@@ -153,9 +153,9 @@ class Runtime(object):
     
     def invoke_print(self, value, prefix='INFO'):
         sys.stdout.write("%s: %d:  %s:  %s\n" % (os.path.basename(self.info.arch_file_name),
-                                                   self.info.arch_file_line,
-                                                   prefix,
-                                                   value))
+                                                 self.info.arch_file_line,
+                                                 prefix,
+                                                 value))
     
     @staticmethod
     def invoke_exit(exit_code):
@@ -560,6 +560,7 @@ def linebreak_to_space(value):
     'Replace all occurrences of a line break with a white space'
     return value.replace('\n', ' ')
 
+
 @string_formatter('tu2d')
 def underscore_to_dash(value):
     'Replace all occurrences of an underscore with a dash'
@@ -570,6 +571,7 @@ def underscore_to_dash(value):
 def dash_to_underscore(value):
     'Replace all occurrences of a dash with an underscore'
     return value.replace('-', '_')
+
 
 @string_formatter('tstrsep_')
 def remove_underscore_suffix(value):
@@ -597,7 +599,7 @@ def xml_clean(value):
 @string_formatter('txmlquot')
 def xml_quot(value):
     'Add quotes to a string intended to be used as an xml attribute'
-    if '\'' in value:
+    if "'" in value:
         return '"%s"' % value
     else:
         return "'%s'" % value
@@ -614,7 +616,6 @@ class navigation_parser(string_formatter):
     '''
     Decorator for adding navigation formatters to the Runtime class.
     '''
-    
     regexp = re.compile(r"(\s*->\s*([\w]+)\[[Rr](\d+)(?:\.\'([^\']+)\')?\]\s*)") 
     
     def parse_string(self, f, value):
