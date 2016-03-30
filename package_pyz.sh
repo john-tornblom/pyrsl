@@ -20,6 +20,7 @@ function install_pyxtuml {
     wget -qO - https://github.com/xtuml/pyxtuml/archive/$1.tar.gz | tar xzf -
 
     cd pyxtuml-*
+    ln -s $2/ply ply
     PYTHONPATH=$2 python setup.py build
     cp -r xtuml $2
     cp -r bridgepoint $2
@@ -30,6 +31,8 @@ function install_pyrsl {
     wget -qO - https://github.com/xtuml/pyrsl/archive/$1.tar.gz | tar xzf -
 
     cd pyrsl-*
+    ln -s $2/ply ply
+    ln -s $2/xtuml xtuml
     PYTHONPATH=$2 python setup.py build
     cp -r rsl $2
 }
