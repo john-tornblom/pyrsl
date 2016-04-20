@@ -9,6 +9,7 @@ helper functions like 'emit to file'.
 import sys
 import os
 import stat
+import string
 import subprocess
 import datetime
 import logging
@@ -514,8 +515,7 @@ def capitalize(value):
     Make the first character of each word in value capitalized and all other 
     characters of a word lower case.
     '''
-    return value.title()
-
+    return string.capwords(value)
 
 @string_formatter('_')
 def underscore(value):

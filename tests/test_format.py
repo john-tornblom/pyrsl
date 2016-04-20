@@ -34,6 +34,14 @@ class TestFormat(RSLTestCase):
         self.assertEqual("Hello", rc)
 
     @evaluate_docstring
+    def test_capitalize_with_underscore(self, rc):
+        '''
+        .assign x = "test_something_else"
+        .exit "$C{x}"
+        '''
+        self.assertEqual("Test_something_else", rc)
+    
+    @evaluate_docstring
     def test_remove_splat(self, rc):
         '''
         .assign x = "*splat*splat*"
