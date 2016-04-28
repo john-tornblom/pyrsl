@@ -53,6 +53,33 @@ class TestInvoke(RSLTestCase):
         '''
         self.assertEqual(2, rc)
 
+
+    @evaluate_docstring
+    def test_parameter_named_from(self, rc):
+        '''
+        .function f
+            .param string from
+            .assign from = "f"
+            .exit "${from}"
+        .end function
+        .invoke f("from")
+        .exit 0
+        '''
+        self.assertEqual("f", rc)
+
+    @evaluate_docstring
+    def test_parameter_named_cardinality(self, rc):
+        '''
+        .function f
+            .param integer cardinality
+            .assign cardinality = (cardinality cardinality)
+            .exit "${cardinality}"
+        .end function
+        .invoke f(3)
+        .exit 0
+        '''
+        self.assertEqual('0', rc)
+        
     @evaluate_docstring
     def test_invoke_with_parameter_and_comments(self, rc):
         '''

@@ -1245,6 +1245,10 @@ class RSLParser(object):
     def p_param_name_1(self, p):
         """param_name : WORD"""
         p[0] = p[1]
+
+    def p_param_name_2(self, p):
+        """param_name : keyword"""
+        p[0] = p[1]
         
     def p_frag_ref_var_1(self, p):
         """frag_ref_var : WORD"""
