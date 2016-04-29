@@ -150,3 +150,33 @@ class TestLoop(RSLTestCase):
         rc = self.eval_text(text)
         self.assertEqual(9, rc)
         
+    def test_shadowing_selected(self):
+        self.metamodel.define_class('A', [('ID', 'integer')])
+        self.metamodel.define_class('B', [('ID', 'integer')])
+        
+        text = '''
+        .select many a_set from instances of A
+        .for each a in a_set
+          .select many b_set from instances of B where (selected.ID > 5)
+          .assign x = 0
+          .assign y = 0
+          .for each b in b_set
+            .assign x = (x + (first b_set))
+            .assign y = (y + (first a_set))
+          .end for
+          .exit "${x} ${y}"
+        .end for
+        .exit 1
+        '''
+
+        self.metamodel.new('A', ID=1);
+        self.metamodel.new('A', ID=2);
+        self.metamodel.new('A', ID=3);
+        
+        self.metamodel.new('B', ID=6);
+        self.metamodel.new('B', ID=7);
+        self.metamodel.new('B', ID=8);
+
+        rc = self.eval_text(text)
+        self.assertEqual("1 3", rc)
+        

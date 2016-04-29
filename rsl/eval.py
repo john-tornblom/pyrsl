@@ -269,8 +269,10 @@ class EvalWalker(xtuml.tools.Walker):
         
         try:
             self.symtab.enter_block()
-            for value in iter(self.symtab.find_symbol(node.set_name)):
-                self.symtab.install_symbol('selected', value)
+            handle = self.symtab.find_symbol(node.set_name)
+            for value in iter(handle):
+                iterator_name = '_%d' % id(handle)
+                self.symtab.install_symbol(iterator_name, value)
                 self.symtab.install_symbol(node.variable_name, value)
                 self.accept(node.statement_list)
             self.symtab.leave_block()
@@ -323,11 +325,11 @@ class EvalWalker(xtuml.tools.Walker):
             'not':         lambda value: not value,
             'cardinality': lambda value: self.runtime.cardinality(value),
             'empty':       lambda value: self.runtime.empty(value),
-            'first':       lambda value: self.runtime.first(self.symtab.find_symbol('selected'), value),
-            'last':        lambda value: self.runtime.last(self.symtab.find_symbol('selected'), value),
+            'first':       lambda value: self.runtime.first(self.symtab.find_symbol('_%d' % id(value)), value),
+            'last':        lambda value: self.runtime.last(self.symtab.find_symbol('_%d' % id(value)), value),
             'not_empty':   lambda value: self.runtime.not_empty(value),
-            'not_first':   lambda value: self.runtime.not_first(self.symtab.find_symbol('selected'), value),
-            'not_last':    lambda value: self.runtime.not_last(self.symtab.find_symbol('selected'), value),
+            'not_first':   lambda value: self.runtime.not_first(self.symtab.find_symbol('_%d' % id(value)), value),
+            'not_last':    lambda value: self.runtime.not_last(self.symtab.find_symbol('_%d' % id(value)), value),
         }
 
         value = self.accept(node.value).fget()
