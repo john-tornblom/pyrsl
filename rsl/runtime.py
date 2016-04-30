@@ -44,11 +44,20 @@ class Info(object):
     Helper class for providing access to the built-in
     substitution variables "${info.date}" et.al.
     '''
+    arch_file_path = ''
+    arch_file_line = 0
+        
     def __init__(self, metamodel):
         self.metamodel = metamodel
-        self.arch_file_name = ''
-        self.arch_file_line = 0
-        
+    
+    @property
+    def arch_file_name(self):
+        return os.path.basename(self.arch_file_path)
+    
+    @property
+    def arch_folder_path(self):
+        return os.path.dirname(self.arch_file_path)
+    
     @property
     def date(self):
         now = datetime.datetime.now()
@@ -153,7 +162,7 @@ class Runtime(object):
         return Fragment(**return_values)
     
     def invoke_print(self, value, prefix='INFO'):
-        sys.stdout.write("%s: %d:  %s:  %s\n" % (os.path.basename(self.info.arch_file_name),
+        sys.stdout.write("%s: %d:  %s:  %s\n" % (self.info.arch_file_name,
                                                  self.info.arch_file_line,
                                                  prefix,
                                                  value))

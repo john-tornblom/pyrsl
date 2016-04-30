@@ -35,7 +35,22 @@ class TestInfo(RSLTestCase):
     def test_arch_file_name(self, rc):
         '.exit "${info.arch_file_name}"'
         self.assertEqual("test_info.test_arch_file_name", rc)
+    
+    def test_arch_file_name_with_folder(self):
+        text = '.exit "${info.arch_file_name}"'
+        rc = self.eval_text(text, '/dev/stdin')
+        self.assertEqual("stdin", rc)
+    
+    def test_arch_file_path(self):
+        text = '.exit "${info.arch_file_path}"'
+        rc = self.eval_text(text, '/dev/stdin')
+        self.assertEqual("/dev/stdin", rc)
         
+    def test_arch_folder_path(self):
+        text = '.exit "${info.arch_folder_path}"'
+        rc = self.eval_text(text, '/dev/stdin')
+        self.assertEqual("/dev", rc)
+    
     @evaluate_docstring
     def test_arch_file_line(self, rc):
         '''

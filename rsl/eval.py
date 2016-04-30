@@ -38,7 +38,7 @@ class EvalWalker(xtuml.tools.Walker):
         self.symtab.enter_scope()
                     
     def accept(self, node, **kwargs):
-        self.runtime.info.arch_file_name = node.filename
+        self.runtime.info.arch_file_path = node.filename
         self.runtime.info.arch_file_line = node.lineno
 
         try:
@@ -382,7 +382,7 @@ class EvalWalker(xtuml.tools.Walker):
 
         # search relative include paths
         else:
-            paths_to_search = [os.path.dirname(self.runtime.info.arch_file_name)]
+            paths_to_search = [self.runtime.info.arch_folder_path]
             paths_to_search.extend(self.includes)
             paths_to_search = filter(None, paths_to_search)
             
