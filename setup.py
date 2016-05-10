@@ -50,7 +50,7 @@ opts = dict(name='pyrsl',
             description='Interpreter for the Rule Specification Language (RSL)',
             author='John Törnblom',
             author_email='john.tornblom@gmail.com',
-            url='https://github.com/john-tornblom/pyrsl',
+            url='https://github.com/xtuml/pyrsl',
             license='GPLv3',
             classifiers=[
                 'Development Status :: 4 - Beta',
