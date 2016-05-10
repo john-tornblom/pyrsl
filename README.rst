@@ -79,6 +79,28 @@ pyrsl contain a set of unit tests that may be executed:
     $ cd pyrsl
     $ python setup.py test
 
+Bundling gen_erate
+******************
+pyrsl may be bundled into a self contained file with a limited amount of external
+dependencies. **gen_erate.exe** may be produced by issuing the following command
+on a windows machine where python, ply and pyrsl are installed:
+
+::
+
+    $ python setup.py py2exe -O2 -c -b1 -p xtuml,rsl
+
+Note that binaries produced by py2exe depend on MSVCR90.dll which is distributed
+with the `Microsoft Visual C++ 2008 Redistributable Package <https://www.microsoft.com/en-us/download/details.aspx?id=29>`__
+
+To produce **gen_erate.pyz**, a python zip app that is executable and easy to
+distribute to POSIX compatable operating systems where python is allready
+available, use the bash script **package_pyz.sh**.
+
+::
+
+    $ bash package_pyz.sh
+
+For more information on the script usage, append the -h flag to the command line.
 
 Customizing gen_erate
 *********************
