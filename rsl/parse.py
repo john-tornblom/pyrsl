@@ -112,7 +112,7 @@ class RSLParser(object):
        ('rt', 'exclusive'),  # relationship traversal
        ('psv', 'exclusive'),  # pre-substitution variable (format)
        ('sv', 'inclusive'),  # substitution variable
-       ('pc', 'inclusive'),  # substitution variable
+       ('pc', 'inclusive'),  # pre-control (start of line with control word)
        ('control', 'inclusive'),  # control (action language instruction)
        ('str', 'inclusive'),  # string delimited by quotation marks
     )
