@@ -388,11 +388,11 @@ class RSLParser(object):
         t.endlexpos = t.lexpos + len(t.value)
         t.lexer.begin('control')
         return t
-    
-    def t_pc_WORD(self, t):
-        r"\.([a-zA-Z][0-9a-zA-Z_]*|[a-zA-Z][0-9a-zA-Z_]*[0-9a-zA-Z_]+)"
-        t.endlexpos = t.lexpos + len(t.value)
-        return t
+
+    def t_pc_LITERAL(self, t):
+        r"\.[^\n]*"
+        raise ParseException("invalid control statement at %s:%s" % (self.filename,
+                                                                     t.lineno))
     
     def t_control_TO(self, t):
         r"(?i)to(?=\s)"
