@@ -4,7 +4,10 @@
 
 import logging
 import unittest
+import os
 import sys
+import stat
+import zipfile
 
 try:
     from setuptools import setup
@@ -15,9 +18,13 @@ except ImportError:
     from distutils.core  import Command
     from distutils.command.build_py import build_py
 
+
+import ply
 import rsl
+import xtuml
 
 
+logger = logging.getLogger('setup')
 logging.basicConfig(level=logging.DEBUG)
 
 
@@ -45,6 +52,55 @@ class TestCommand(Command):
         sys.exit(exit_code)
 
 
+class BundleCommand(Command):
+    description = "Bundle pyrsl into a self-contained and executable pyz archive"
+    user_options = [('main=', 'm', 'Path to a customized entry point'),
+                    ('output=', 'o', 'Output path for the bundled pyz file')]
+
+    def initialize_options(self):
+        rsl.parse_text('', '')
+        self.main = None
+        self.output = 'gen_erate.pyz'
+        
+    def finalize_options(self):
+        pass
+
+    def run(self):
+        logger.info('Using ply v%s', ply.__version__)
+        logger.info('Using pyxtuml v%s', xtuml.version.release)
+        logger.info('Using pyrsl v%s', rsl.version.release)
+        
+        dirname = os.path.dirname(self.output) or os.getcwd()
+        if not os.path.exists(dirname):
+            os.mkdir(dirname)
+
+        with open(self.output, 'wb') as outfile:
+            outfile.write('#!/usr/bin/env python\n')
+        
+        with zipfile.PyZipFile(self.output, mode='a') as zf:
+            if self.main:
+                with open(self.main, 'r') as f:
+                    main = f.read()
+            else:
+                main = ('from rsl import gen_erate\n'
+                        'gen_erate.main()\n')
+            
+            zf.writestr('__main__.py', main)
+            for mod in [ply, xtuml, rsl]:
+                dirname = os.path.dirname(mod.__file__)
+                for filename in os.listdir(dirname):
+                    if filename.endswith('.py'):
+                        path = dirname + os.path.sep + filename
+                        zipname = mod.__name__ + os.path.sep + filename
+                        zf.write(path, zipname)
+                        logger.debug('Added %s', path)
+                        
+        st = os.stat(self.output)
+        os.chmod(self.output, st.st_mode | stat.S_IEXEC)
+        
+        logger.info('Bundle successfully saved to %s', self.output)
+
+
 opts = dict(name='pyrsl',
             version=rsl.version.release,
             description='Interpreter for the Rule Specification Language (RSL)',
@@ -63,6 +119,7 @@ opts = dict(name='pyrsl',
             packages=['rsl'],
             requires=['ply', 'xtuml'],
             cmdclass={'build_py': BuildCommand,
+                      'bundle': BundleCommand,
                       'test': TestCommand})
 
 
