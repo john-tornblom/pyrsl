@@ -22,6 +22,7 @@ test_script:
 
 after_test:
   - "%PYTHON%/python setup.py py2exe -O2 -c -b1 -p xtuml,rsl"
+  - "%PYTHON%/python setup.py bundle bundle -o dist/gen_erate.pyz"
   
 artifacts:
   - path: dist\*
