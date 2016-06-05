@@ -94,23 +94,22 @@ with the `Microsoft Visual C++ 2008 Redistributable Package <https://www.microso
 
 To produce **gen_erate.pyz**, a python zip app that is executable and easy to
 distribute to POSIX compatable operating systems where python is allready
-available, use the bash script **package_pyz.sh**.
+available, use the setup.py bundle command.
 
 ::
 
-    $ bash package_pyz.sh
+    $ python setup.py bundle
 
-For more information on the script usage, append the -h flag to the command line.
 
 Customizing gen_erate
 *********************
 pyrsl may be extended to include additional builtin functions, i.e. bridges,
 and additional string formatters. The extensions may be added to your own pyz
-file by invoking **package_pyz.sh** located in the pyrsl source root folder:
+file when invoking the setup.py bundle command:
 
 ::
 
-    $ ./package_pyz.sh -main examples/customization.py
+    $ python setup.py bundle -o gen_erate.pyz -m examples/customization.py
     $ ./gen_erate.pyz -nopersist -arch examples/customization_test.arc
     Running my custom version of gen_erate
     customization_test.arc: 4:  INFO:  the md5 of 'hello world' is 619d201e5209d3d52342cc5b6616b0cf
