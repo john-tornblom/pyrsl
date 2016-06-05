@@ -71,8 +71,9 @@ class BundleCommand(Command):
         logger.info('Using pyrsl v%s', rsl.version.release)
         
         dirname = os.path.dirname(self.output) or os.getcwd()
+        dirname = os.path.abspath(dirname)
         if not os.path.exists(dirname):
-            os.mkdir(dirname)
+            os.makedirs(dirname)
 
         with open(self.output, 'wb') as outfile:
             outfile.write('#!/usr/bin/env python\n')
