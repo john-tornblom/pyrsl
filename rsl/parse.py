@@ -1458,7 +1458,7 @@ def parse_text(text, filename=''):
 
 if __name__ == '__main__':
     import sys
-    import xtuml.tools
+    import xtuml
     logging.basicConfig(level=logging.WARN)
     
     print ('Enter the character stream below. Press Ctrl-D to begin parsing.')
@@ -1477,7 +1477,7 @@ if __name__ == '__main__':
 
     print ('--------- Syntax Tree ----------')
     root = parse_text(s)
-    w = xtuml.tools.Walker()
-    w.visitors.append(xtuml.tools.NodePrintVisitor())
+    w = xtuml.Walker()
+    w.visitors.append(xtuml.NodePrintVisitor())
     w.accept(root)
 

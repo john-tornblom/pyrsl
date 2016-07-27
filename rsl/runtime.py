@@ -19,7 +19,7 @@ import getpass
 from functools import partial
 
 import rsl.version
-import xtuml.model
+import xtuml
 
 try:
     from future_builtins import filter
@@ -81,18 +81,20 @@ class Info(object):
         return os.name
 
 
-class Fragment(xtuml.model.BaseObject):
-    __r__ = dict()
-    __q__ = dict()
-    __c__ = dict()
+class MetaFragment(type):
+    cache = dict()
+    attributes = list()
+    
+
+class Fragment(xtuml.Class):
+    __metaclass__ = MetaFragment
     
     def __init__(self, **kwargs):
         self.__dict__.update(kwargs)
-        xtuml.model.BaseObject.__init__(self)
+        xtuml.Class.__init__(self)
 
 
 class Runtime(object):
-
     bridges = dict()
     string_formatters = dict()
     
@@ -173,8 +175,8 @@ class Runtime(object):
         
     @staticmethod
     def cast_to_set(value):
-        if not isinstance(value, xtuml.model.QuerySet):
-            return xtuml.model.QuerySet([value])
+        if not isinstance(value, xtuml.QuerySet):
+            return xtuml.QuerySet([value])
         else:
             return value
         
@@ -338,7 +340,7 @@ class Runtime(object):
 
     @staticmethod
     def is_instance(inst):
-        return isinstance(inst, xtuml.BaseObject)
+        return isinstance(inst, xtuml.Class)
 
     def assert_type(self, exptected_type, value):
         value_type = self.type_name(type(value))
@@ -351,7 +353,7 @@ class Runtime(object):
         elif issubclass(ty, float): return 'real'
         elif issubclass(ty, str): return 'string'
         elif issubclass(ty, Fragment): return 'frag_ref'
-        elif issubclass(ty, xtuml.BaseObject): return 'inst_ref'
+        elif issubclass(ty, xtuml.Class): return 'inst_ref'
         elif issubclass(ty, type(None)): return 'inst_ref'
         elif issubclass(ty, xtuml.QuerySet): return 'inst_ref_set'
         elif issubclass(ty, type(self.metamodel.id_generator.peek())): return 'unique_id'

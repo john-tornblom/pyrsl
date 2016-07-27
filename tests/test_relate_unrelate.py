@@ -11,11 +11,17 @@ class TestRelate(RSLTestCase):
     def test_relate(self):
         self.metamodel.define_class('A', [('Id', 'unique_id'), ('B_Id', 'unique_id')])
         self.metamodel.define_class('B', [('Id', 'unique_id')])
-        a_endpint = xtuml.SingleAssociationLink('A', ids=['B_Id'])
-        b_endpint = xtuml.SingleAssociationLink('B', ids=['Id'])
-        
-        self.metamodel.define_relation('R1', a_endpint, b_endpint)
-        
+        self.metamodel.define_association(rel_id='R1',
+                                          source_kind='A',
+                                          target_kind='B',
+                                          source_keys=['B_Id'],
+                                          target_keys=['Id'],
+                                          source_many=False,
+                                          target_many=False,
+                                          source_conditional=True,
+                                          target_conditional=True,
+                                          source_phrase='',
+                                          target_phrase='')
         text = '''
         .create object instance a of A
         .create object instance b of B
@@ -30,11 +36,18 @@ class TestRelate(RSLTestCase):
     def test_unrelate(self):
         self.metamodel.define_class('A', [('Id', 'unique_id'), ('B_Id', 'unique_id')])
         self.metamodel.define_class('B', [('Id', 'unique_id')])
-        a_endpint = xtuml.SingleAssociationLink('A', ids=['B_Id'])
-        b_endpint = xtuml.SingleAssociationLink('B', ids=['Id'])
-        
-        self.metamodel.define_relation('R1', a_endpint, b_endpint)
-        
+        self.metamodel.define_association(rel_id='R1',
+                                          source_kind='A',
+                                          target_kind='B',
+                                          source_keys=['B_Id'],
+                                          target_keys=['Id'],
+                                          source_many=False,
+                                          target_many=False,
+                                          source_conditional=True,
+                                          target_conditional=True,
+                                          source_phrase='',
+                                          target_phrase='')
+
         a = self.metamodel.new('A')
         b = self.metamodel.new('B')
         xtuml.relate(a, b, 1)
@@ -57,9 +70,17 @@ class TestRelate(RSLTestCase):
                                           ('Next_Id', 'unique_id'),
                                           ('Name', 'string')])
         
-        endpint1 = xtuml.SingleAssociationLink('A', ids=['Id'], phrase='prev')
-        endpint2 = xtuml.SingleAssociationLink('A', ids=['Next_Id'], phrase='next')
-        self.metamodel.define_relation('R1', endpint1, endpint2)
+        self.metamodel.define_association(rel_id='R1',
+                                          source_kind='A',
+                                          target_kind='A',
+                                          source_keys=['Id'],
+                                          target_keys=['Next_Id'],
+                                          source_many=False,
+                                          target_many=False,
+                                          source_conditional=True,
+                                          target_conditional=True,
+                                          source_phrase='prev',
+                                          target_phrase='next')
         
         text = '''
         .create object instance a1 of A
@@ -80,9 +101,17 @@ class TestRelate(RSLTestCase):
                                           ('Next_Id', 'unique_id'),
                                           ('Name', 'string')])
         
-        endpint1 = xtuml.SingleAssociationLink('A', ids=['Id'], phrase='prev')
-        endpint2 = xtuml.SingleAssociationLink('A', ids=['Next_Id'], phrase='next')
-        self.metamodel.define_relation('R1', endpint1, endpint2)
+        self.metamodel.define_association(rel_id='R1',
+                                          source_kind='A',
+                                          target_kind='A',
+                                          source_keys=['Id'],
+                                          target_keys=['Next_Id'],
+                                          source_many=False,
+                                          target_many=False,
+                                          source_conditional=True,
+                                          target_conditional=True,
+                                          source_phrase='prev',
+                                          target_phrase='next')
 
         first = self.metamodel.new('A', Name="First")
         second = self.metamodel.new('A', Name="Second")

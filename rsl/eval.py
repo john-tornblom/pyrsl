@@ -9,7 +9,7 @@ import sys
 import os
 import logging
 
-import xtuml.tools
+import xtuml
 
 from . import ast
 from . import symtab
@@ -22,10 +22,10 @@ class BreakException(Exception):
     pass
 
 
-class EvalWalker(xtuml.tools.Walker):
+class EvalWalker(xtuml.Walker):
     
     def __init__(self, rt, includes):
-        xtuml.tools.Walker.__init__(self)
+        xtuml.Walker.__init__(self)
         self.runtime = rt
         self.includes = includes
         self.callstack = list()
@@ -42,7 +42,7 @@ class EvalWalker(xtuml.tools.Walker):
         self.runtime.info.arch_file_line = node.lineno
 
         try:
-            return xtuml.tools.Walker.accept(self, node, **kwargs)
+            return xtuml.Walker.accept(self, node, **kwargs)
         except BreakException as e:
             raise e
         except Exception as e:
@@ -310,7 +310,7 @@ class EvalWalker(xtuml.tools.Walker):
         if node.sign in ['|', '&']:
             lhs = self.runtime.cast_to_set(lhs)
             
-        if isinstance(lhs, xtuml.model.QuerySet):
+        if self.runtime.is_set(lhs):
             rhs = self.runtime.cast_to_set(rhs)
             
         value = ops[node.sign](lhs, rhs)

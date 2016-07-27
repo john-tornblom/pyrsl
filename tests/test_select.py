@@ -97,12 +97,20 @@ class TestSelect(RSLTestCase):
         self.assertFalse(rc)
 
     def test_select_one_navigation(self):
-        self.metamodel.define_class('A', [('Id', 'unique_id'), ('B_Id', 'unique_id')])
+        self.metamodel.define_class('A', [('Id', 'unique_id')])
         self.metamodel.define_class('B', [('Id', 'unique_id'), ('A_Id', 'unique_id')])
-        a_endpint = xtuml.SingleAssociationLink('A')
-        b_endpint = xtuml.SingleAssociationLink('B')
         
-        self.metamodel.define_relation('R1', a_endpint, b_endpint)
+        self.metamodel.define_association(rel_id='R1',
+                                          source_kind='A',
+                                          target_kind='B',
+                                          source_keys=['Id'],
+                                          target_keys=['A_Id'],
+                                          source_many=False,
+                                          target_many=False,
+                                          source_conditional=True,
+                                          target_conditional=True,
+                                          source_phrase='',
+                                          target_phrase='')
         
         a = self.metamodel.new('A')
         b = self.metamodel.new('B')
@@ -117,12 +125,29 @@ class TestSelect(RSLTestCase):
         self.assertEqual(b.Id, rc)
 
     def test_select_any_navigation(self):
+        '''
+        |===================|                |======================|  
+        |         A         |                |         B            |
+        |-------------------| 1           *  |----------------------|
+        | Id: unique_id {I} | -------------- | Id: unique_id    {I} |
+        |===================|       R1       | A_Id: unique_id {R1} |
+                                             |======================|
+        '''
         self.metamodel.define_class('A', [('Id', 'unique_id')])
-        self.metamodel.define_class('B', [('Id', 'unique_id'), ('A_Id', 'unique_id')])
-        a_endpint = xtuml.SingleAssociationLink('A')
-        b_endpint = xtuml.ManyAssociationLink('B')
+        self.metamodel.define_class('B', [('Id', 'unique_id'), 
+                                          ('A_Id', 'unique_id')])
         
-        self.metamodel.define_relation('R1', a_endpint, b_endpint)
+        self.metamodel.define_association(rel_id='R1',
+                                          source_kind='B',
+                                          target_kind='A',
+                                          source_keys=['A_Id'],
+                                          target_keys=['Id'],
+                                          source_many=True,
+                                          target_many=False,
+                                          source_conditional=True,
+                                          target_conditional=False,
+                                          source_phrase='',
+                                          target_phrase='')
         
         a = self.metamodel.new('A')
         b = self.metamodel.new('B')
@@ -138,12 +163,29 @@ class TestSelect(RSLTestCase):
         self.assertEqual(b.Id, rc)
 
     def test_select_many_navigation(self):
+        '''
+        |===================|                |======================|  
+        |         A         |                |         B            |
+        |-------------------| 1           *  |----------------------|
+        | Id: unique_id {I} | -------------- | Id: unique_id    {I} |
+        |===================|       R1       | A_Id: unique_id {R1} |
+                                             |======================|
+        '''
         self.metamodel.define_class('A', [('Id', 'unique_id')])
-        self.metamodel.define_class('B', [('Id', 'unique_id'), ('A_Id', 'unique_id')])
-        a_endpint = xtuml.SingleAssociationLink('A')
-        b_endpint = xtuml.ManyAssociationLink('B')
+        self.metamodel.define_class('B', [('Id', 'unique_id'), 
+                                          ('A_Id', 'unique_id')])
         
-        self.metamodel.define_relation('R1', a_endpint, b_endpint)
+        self.metamodel.define_association(rel_id='R1',
+                                          source_kind='B',
+                                          target_kind='A',
+                                          source_keys=['A_Id'],
+                                          target_keys=['Id'],
+                                          source_many=True,
+                                          target_many=False,
+                                          source_conditional=True,
+                                          target_conditional=False,
+                                          source_phrase='',
+                                          target_phrase='')
         
         a = self.metamodel.new('A')
         xtuml.relate(a, self.metamodel.new('B'), 1)
@@ -164,9 +206,17 @@ class TestSelect(RSLTestCase):
                                           ('Next_Id', 'unique_id'),
                                           ('Name', 'string')])
         
-        endpint1 = xtuml.SingleAssociationLink('A', ids=['Id'], phrase='prev')
-        endpint2 = xtuml.SingleAssociationLink('A', ids=['Next_Id'], phrase='next')
-        self.metamodel.define_relation('R1', endpint1, endpint2)
+        self.metamodel.define_association(rel_id='R1',
+                                          source_kind='A',
+                                          target_kind='A',
+                                          source_keys=['Id'],
+                                          target_keys=['Next_Id'],
+                                          source_many=False,
+                                          target_many=False,
+                                          source_conditional=True,
+                                          target_conditional=True,
+                                          source_phrase='prev',
+                                          target_phrase='next')
 
         first = self.metamodel.new('A', Name="First")
         second = self.metamodel.new('A', Name="Second")
@@ -190,12 +240,22 @@ class TestSelect(RSLTestCase):
         
     def test_select_any_substitution_navigation(self):
         self.metamodel.define_class('A', [('Id', 'unique_id')])
-        self.metamodel.define_class('B', [('Id', 'unique_id'), ('A_Id', 'unique_id'), ('Name', 'string')])
-        a_endpint = xtuml.SingleAssociationLink('A')
-        b_endpint = xtuml.ManyAssociationLink('B')
+        self.metamodel.define_class('B', [('Id', 'unique_id'), 
+                                          ('A_Id', 'unique_id'), 
+                                          ('Name', 'string')])
         
-        self.metamodel.define_relation('R1', a_endpint, b_endpint)
-        
+        self.metamodel.define_association(rel_id='R1',
+                                          source_kind='A',
+                                          target_kind='B',
+                                          source_keys=[],
+                                          target_keys=[],
+                                          source_many=False,
+                                          target_many=True,
+                                          source_conditional=True,
+                                          target_conditional=True,
+                                          source_phrase='',
+                                          target_phrase='')
+
         a = self.metamodel.new('A')
         b = self.metamodel.new('B', Name='Test')
         xtuml.relate(a, b, 1)
