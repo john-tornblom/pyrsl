@@ -11,7 +11,6 @@ import logging
 
 import xtuml
 
-from . import ast
 from . import symtab
 from . import parse
 
@@ -57,13 +56,9 @@ class EvalWalker(xtuml.Walker):
         print ('> %s' % node.__class__.__name__)
             
     def accept_BodyNode(self, node):
-        assert isinstance(node, ast.BodyNode)
-        
         self.accept(node.statement_list)
         
     def accept_FunctionNode(self, node):
-        assert isinstance(node, ast.FunctionNode)
-        
         def _(fn, *args):
             self.symtab.enter_scope()
             
@@ -76,20 +71,14 @@ class EvalWalker(xtuml.Walker):
         self.runtime.define_function(node.name, lambda *args: _(node, *args))
     
     def accept_ParameterListNode(self, node, args):
-        assert isinstance(node, ast.ParameterListNode)
-        
         for param, arg in zip (node.parameters, args):
             self.accept(param, arg=arg)
 
     def accept_ParameterNode(self, node, arg):
-        assert isinstance(node, ast.ParameterNode)
-        
         self.runtime.assert_type(node.type, arg)
         self.symtab.install_symbol(node.name, arg)
 
     def accept_InvokeNode(self, node):
-        assert isinstance(node, ast.InvokeNode)
-
         args = self.accept(node.argument_list)
         args = [arg.fget() for arg in args]
         
@@ -101,26 +90,18 @@ class EvalWalker(xtuml.Walker):
             self.symtab.install_symbol(node.variable_name, value)
     
     def accept_ArgumentListNode(self, node):
-        assert isinstance(node, ast.ArgumentListNode)
-        
         return [self.accept(arg) for arg in node.arguments]
 
     def accept_StatementListNode(self, node):
-        assert isinstance(node, ast.StatementListNode)
-        
         for stmt in node.statements:
             self.accept(stmt)
             
     def accept_AssignNode(self, node):
-        assert isinstance(node, ast.AssignNode)
-        
         value = self.accept(node.expr).fget()
         variable = self.accept(node.variable)
         variable.fset(value)
         
     def accept_StringBodyNode(self, node):
-        assert isinstance(node, ast.StringBodyNode)
-        
         s = ''
         for value in node.values:
             s += self.accept(value).fget()
@@ -128,8 +109,6 @@ class EvalWalker(xtuml.Walker):
         return property(lambda: s)
     
     def accept_StringValueNode(self, node):
-        assert isinstance(node, ast.StringValueNode)
-        
         s = node.value
         s = s.replace('\\n', '\n')
         s = s.replace('\\t', '\t')
@@ -137,56 +116,40 @@ class EvalWalker(xtuml.Walker):
         return property(lambda: s)
         
     def accept_IntegerValueNode(self, node):
-        assert isinstance(node, ast.IntegerValueNode)
-        
         i = int(node.value)
         
         return property(lambda: i)
         
     def accept_RealValueNode(self, node):
-        assert isinstance(node, ast.RealValueNode)
-        
         i = float(node.value)
         
         return property(lambda: i)
         
     def accept_VariableAccessNode(self, node):
-        assert isinstance(node, ast.VariableAccessNode)
-        
         return property(lambda: self.symtab.find_symbol(node.name))
     
     def accept_VariableAssignmentNode(self, node):
-        assert isinstance(node, ast.VariableAssignmentNode)
-        
         setter = lambda val: self.symtab.install_symbol(node.name, val)
 
         return property(fset=setter)
         
     def accept_FieldAccessNode(self, node):
-        assert isinstance(node, ast.FieldAccessNode)
-        
         variable = self.accept(node.variable).fget()
         
         return property(lambda: getattr(variable, node.field))
     
     def accept_FieldAssignmentNode(self, node):
-        assert isinstance(node, ast.FieldAssignmentNode)
-        
         variable = self.accept(node.variable).fget()
         
         return property(fset=lambda val: setattr(variable, node.field, val))
         
     def accept_SubstitutionVariableNode(self, node):
-        assert isinstance(node, ast.SubstitutionVariableNode)
-        
         value = self.accept(node.expr).fget()
         value = self.runtime.format_string(value, node.formats)
 
         return property(lambda: value)
     
     def accept_SubstitutionNavigationNode(self, node):
-        assert isinstance(node, ast.SubstitutionNavigationNode)
-        
         variable = self.accept(node.variable).fget()
         chain = self.runtime.chain(variable)
         
@@ -200,8 +163,6 @@ class EvalWalker(xtuml.Walker):
         return property(lambda: value)
     
     def accept_ParseKeywordNode(self, node):
-        assert isinstance(node, ast.ParseKeywordNode)
-        
         keyword = self.accept(node.keyword).fget()
         value = self.accept(node.expr).fget()
         value = self.runtime.parse_keyword(value, keyword)
@@ -209,20 +170,14 @@ class EvalWalker(xtuml.Walker):
         return property(lambda: value)
     
     def accept_PrintNode(self, node):
-        assert isinstance(node, ast.PrintNode)
-        
         value = self.accept(node.value_list).fget()
         self.runtime.invoke_print(value)
 
     def accept_ExitNode(self, node):
-        assert isinstance(node, ast.ExitNode)
-        
         value = self.accept(node.return_code).fget()
         self.runtime.invoke_exit(value)
         
     def accept_IfNode(self, node):
-        assert isinstance(node, ast.IfNode)
-        
         try:
             self.symtab.enter_block()
             if self.accept(node.cond).fget():
@@ -235,8 +190,6 @@ class EvalWalker(xtuml.Walker):
             raise e
                         
     def accept_ElIfListNode(self, node):
-        assert isinstance(node, ast.ElIfListNode)
-        
         b = False
         for _elif in node.elifs:
             b = self.accept(_elif).fget()
@@ -245,8 +198,6 @@ class EvalWalker(xtuml.Walker):
         return property(lambda: b)
     
     def accept_ElIfNode(self, node):
-        assert isinstance(node, ast.ElIfNode)
-        
         b = self.accept(node.cond).fget()
         if b:
             self.accept(node.statement_list)
@@ -254,8 +205,6 @@ class EvalWalker(xtuml.Walker):
         return property(lambda: b)
     
     def accept_WhileNode(self, node):
-        assert isinstance(node, ast.WhileNode)
-        
         try:
             self.symtab.enter_block()
             while self.accept(node.cond).fget():
@@ -265,8 +214,6 @@ class EvalWalker(xtuml.Walker):
             self.symtab.leave_block()
         
     def accept_ForNode(self, node):
-        assert isinstance(node, ast.ForNode)
-        
         try:
             self.symtab.enter_block()
             handle = self.symtab.find_symbol(node.set_name)
@@ -280,13 +227,9 @@ class EvalWalker(xtuml.Walker):
             self.symtab.leave_block()
 
     def accept_BreakNode(self, node):
-        assert isinstance(node, ast.BreakNode)
-        
         raise BreakException()
 
     def accept_BinaryOpNode(self, node):
-        assert isinstance(node, ast.BinaryOpNode)
-        
         ops = {
             '|':   lambda lhs, rhs: (lhs | rhs),
             '&':   lambda lhs, rhs: (lhs & rhs),
@@ -318,8 +261,6 @@ class EvalWalker(xtuml.Walker):
         return property(lambda: value)
     
     def accept_UnaryOpNode(self, node):
-        assert isinstance(node, ast.UnaryOpNode)
-        
         ops = {
             '-':           lambda value:-value,
             'not':         lambda value: not value,
@@ -338,15 +279,11 @@ class EvalWalker(xtuml.Walker):
         return property(lambda: value)
     
     def accept_LiteralNode(self, node):
-        assert isinstance(node, ast.LiteralNode)
-        
         s = node.value
         
         return property(lambda: s)
     
     def accept_LiteralListNode(self, node):
-        assert isinstance(node, ast.LiteralListNode)
-        
         s = ''
         for literal in node.literals:
             s += self.accept(literal).fget()
@@ -354,20 +291,13 @@ class EvalWalker(xtuml.Walker):
         self.runtime.buffer_literal(s)
         
     def accept_EmitNode(self, node):
-        assert isinstance(node, ast.EmitNode)
-        
         filename = self.accept(node.emit_filename).fget()
-        
         self.runtime.emit_buffer(filename)
     
     def accept_ClearNode(self, node):
-        assert isinstance(node, ast.ClearNode)
-        
         self.runtime.clear_buffer()
             
     def accept_IncludeNode(self, node):
-        assert isinstance(node, ast.IncludeNode)
-        
         filename = self.accept(node.inc_filename).fget()
         root = None
         
@@ -401,16 +331,12 @@ class EvalWalker(xtuml.Walker):
         self.callstack.pop()
         
     def accept_CreateNode(self, node):
-        assert isinstance(node, ast.CreateNode)
-        
         inst = self.runtime.new(node.key_letter)
         self.symtab.install_symbol(node.variable_name, inst)
         
         return property(lambda: inst)
         
     def accept_SelectAnyInstanceNode(self, node):
-        assert isinstance(node, ast.SelectAnyInstanceNode)
-        
         where = self.accept(node.where)
         value = self.runtime.select_any_from(node.key_letter, where)
         
@@ -419,8 +345,6 @@ class EvalWalker(xtuml.Walker):
         return property(lambda: value)
         
     def accept_SelectManyInstanceNode(self, node):
-        assert isinstance(node, ast.SelectManyInstanceNode)
-
         where = self.accept(node.where)
         value = self.runtime.select_many_from(node.key_letter, where)
         
@@ -429,8 +353,6 @@ class EvalWalker(xtuml.Walker):
         return property(lambda: value)
 
     def accept_SelectOneNode(self, node):
-        assert isinstance(node, ast.SelectOneNode)
-        
         inst_set = iter(self.accept(node.instance_chain).fget())
         where = self.accept(node.where)
         value = self.runtime.select_one_in(inst_set, where)
@@ -440,8 +362,6 @@ class EvalWalker(xtuml.Walker):
         return property(lambda: value)
 
     def accept_SelectAnyNode(self, node):
-        assert isinstance(node, ast.SelectAnyNode)
-        
         inst_set = iter(self.accept(node.instance_chain).fget())
         where = self.accept(node.where)
         value = self.runtime.select_any_in(inst_set, where)
@@ -451,8 +371,6 @@ class EvalWalker(xtuml.Walker):
         return property(lambda: value)
         
     def accept_SelectManyNode(self, node):
-        assert isinstance(node, ast.SelectManyNode)
-        
         inst_set = iter(self.accept(node.instance_chain).fget())
         where = self.accept(node.where)
         value = self.runtime.select_many_in(inst_set, where)
@@ -462,10 +380,9 @@ class EvalWalker(xtuml.Walker):
         return property(lambda: value)
 
     def accept_WhereNode(self, node):
-        assert isinstance(node, ast.WhereNode)
-        
         def where(expr, selected):
-            if node.expr is None: return True
+            if node.expr is None:
+                return True
             
             self.symtab.enter_block()
             self.symtab.install_symbol('selected', selected)
@@ -477,8 +394,6 @@ class EvalWalker(xtuml.Walker):
         return lambda selected: where(node.expr, selected)
         
     def accept_InstanceChainNode(self, node):
-        assert isinstance(node, ast.InstanceChainNode)
-        
         inst = self.accept(node.variable).fget()
         chain = self.runtime.chain(inst)
         
@@ -492,19 +407,16 @@ class EvalWalker(xtuml.Walker):
         return property(lambda: result)
     
     def accept_RelateNode(self, node):
-        assert isinstance(node, ast.RelateNode)
         from_inst = self.symtab.find_symbol(node.from_variable_name)
         to_inst = self.symtab.find_symbol(node.to_variable_name)
         xtuml.relate(from_inst, to_inst, node.rel_id, node.phrase)
         
     def accept_UnrelateNode(self, node):
-        assert isinstance(node, ast.UnrelateNode)
         from_inst = self.symtab.find_symbol(node.from_variable_name)
         to_inst = self.symtab.find_symbol(node.to_variable_name)
         xtuml.unrelate(from_inst, to_inst, node.rel_id, node.phrase)
         
     def accept_DeleteNode(self, node):
-        assert isinstance(node, ast.DeleteNode)
         inst = self.symtab.find_symbol(node.variable_name)
         xtuml.delete(inst)
 

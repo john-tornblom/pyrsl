@@ -292,7 +292,8 @@ class Runtime(object):
     def select_one_in(inst_set, where_cond):
         cardinality = Runtime.cardinality(inst_set)
         if cardinality > 1:
-            raise RuntimeException('select one from a set with cardinality %d' % cardinality)
+            raise RuntimeException('select one from a set with cardinality %d' % 
+                                   cardinality)
         
         return Runtime.select_any_in(inst_set, where_cond)
                 
@@ -345,7 +346,8 @@ class Runtime(object):
     def assert_type(self, exptected_type, value):
         value_type = self.type_name(type(value))
         if exptected_type.upper() != value_type.upper():
-            raise RuntimeException('expected type %s, not %s' % (exptected_type, value_type))
+            raise RuntimeException('expected type %s, not %s' % 
+                                   (exptected_type, value_type))
         
     def type_name(self, ty):
         if   issubclass(ty, bool): return 'boolean'
@@ -360,7 +362,7 @@ class Runtime(object):
         else: raise RuntimeException("Unknown type '%s'" % ty.__name__)
         
 
-class bridge(object):
+class Bridge(object):
     '''
     Decorator for adding bridges to the Runtime class.
     '''
@@ -386,7 +388,9 @@ class bridge(object):
         
         return f
     
-    
+bridge = Bridge
+
+
 @bridge('GET_ENV_VAR')
 def get_env_var(name):
     if name in os.environ:
@@ -468,7 +472,7 @@ def boolean_to_string(value):
     return {'result': str(value).upper()}  
 
 
-class string_formatter(object):
+class StringFormatter(object):
     '''
     Decorator for adding string formatters to the Runtime class.
     '''
@@ -486,6 +490,8 @@ class string_formatter(object):
         cls.string_formatters[name] = f
         
         return f
+
+string_formatter = StringFormatter
 
 
 @string_formatter('o')
@@ -623,7 +629,7 @@ def xml_name(value):
     return re.sub(regexp, '_', value)
 
 
-class navigation_parser(string_formatter):
+class NavigationParser(StringFormatter):
     '''
     Decorator for adding navigation formatters to the Runtime class.
     '''
@@ -639,6 +645,8 @@ class navigation_parser(string_formatter):
     def __call__(self, f):
         f = partial(self.parse_string, f)
         return string_formatter.__call__(self, f)
+
+navigation_parser = NavigationParser
 
 
 @navigation_parser('tcf_kl')
@@ -665,14 +673,16 @@ def remove_first_navigation_step(result):
     return result.string[result.end():]
 
 
-class backward_navigation_parser(navigation_parser):
+class BackwardNavigationParser(NavigationParser):
     '''
     Decorator for adding navigation formatters to the Runtime class.
     The parsing is done backwards, i.e. from right to left.
     '''
     regexp = re.compile(r"(\s*->\s*([\w]+)\[[Rr](\d+)(?:\.\'([^\']+)\')?\]\s*)$")
     
-    
+backward_navigation_parser = BackwardNavigationParser
+
+
 @backward_navigation_parser('tcb_kl')
 def last_key_letter(result):
     'Get the last key letter in a navigation'
