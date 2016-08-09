@@ -86,10 +86,11 @@ class TestCommandLineInterface(unittest.TestCase):
         
         self.assertEqual(0, rsl.main(argv))
     
+        # expect two uniqueness constrain violations
         script.file.write('.create object instance cls of Cls\n')
         script.file.write('.assign cls.Id = "test"\n')
         script.file.flush()
-        self.assertEqual(1, rsl.main(argv))
+        self.assertEqual(2, rsl.main(argv)) 
     
     def test_include(self):
         script = self.temp_file(mode='w')

@@ -240,17 +240,17 @@ def main(argv=None):
             #should not happen
             print("Unknown %s is of unknown kind '%s', skipping it" % (filename, kind))
 
-    rc = 0
+    errors = 0
     if check_integrity:
-        rc |= not xtuml.check_association_integrity(metamodel)
-        rc |= not xtuml.check_uniqueness_constraint(metamodel)
+        errors += xtuml.check_association_integrity(metamodel)
+        errors += xtuml.check_uniqueness_constraint(metamodel)
         
     if enable_persistance:
         xtuml.persist_database(metamodel, database_filename)
 
-    return rc
+    return errors
 
 
 if __name__ == '__main__':
-    rc = main()
-    sys.exit(rc)
+    num_errors = main()
+    sys.exit(num_errors > 0)
