@@ -53,7 +53,33 @@ class Linter(xtuml.Visitor):
         except xtuml.UnknownClassException as e:
             self.warn(node, 'Undefined class %s' % node.key_letter)
 
-    
+    def enter_InstanceChainNode(self, node):
+        prev = None
+        for nav in node.navigations:
+            if not prev:
+                prev = nav
+                continue
+
+            try:
+                metaclass = self.m.find_metaclass(prev.key_letter)
+            except xtuml.UnknownClassException as e:
+                continue
+                
+            link = metaclass.find_link(nav.key_letter,
+                                       nav.relation.rel_id,
+                                       nav.relation.phrase)
+            if not link:
+                if nav.relation.phrase:
+                    phrase = ".'%s'" % nav.relation.phrase
+                else:
+                    phrase = ''
+                    
+                self.warn(node, "Undefined association %s->%s[%s%s]"
+                          % (prev.key_letter, nav.key_letter,
+                             nav.relation.rel_id, phrase))
+
+            prev = nav
+            
 def lint_file(metamodel, filename):
     root = rsl.parse.parse_file(filename)
     w = xtuml.Walker()
