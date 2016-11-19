@@ -25,7 +25,7 @@ class Linter(xtuml.Visitor):
 
     def enter_FunctionNode(self, node):
         if node.name in self.functions:
-            self.warn(node, 'redefinition of function %s' % node.node)
+            self.warn(node, 'redefinition of function %s' % node.name)
         else:
             self.functions[node.name] = node
 
