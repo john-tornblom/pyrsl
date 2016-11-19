@@ -11,7 +11,7 @@ import xtuml
 import rsl
 
 
-logger = logging.getLogger('lint')
+logger = logging.getLogger('rsl.lint')
 
 
 class Linter(xtuml.Visitor):
