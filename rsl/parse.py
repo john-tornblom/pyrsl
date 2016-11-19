@@ -692,33 +692,33 @@ class RSLParser(object):
         return t
     
     def t_error(self, t):
-        logger.error("%d,%d:illegal character '%s' in INITIAL" % (t.lineno,
-                                                                  t.lexpos,
-                                                                  t.value[0]))
+        logger.error("%s:%d:illegal character '%s'" % (self.filename,
+                                                       t.lineno,
+                                                       t.value[0]))
         t.lexer.skip(1)
     
     def t_comment_error(self, t):
-        logger.error("%d,%d:illegal character '%s' in comment" % (t.lineno,
-                                                                  t.lexpos,
-                                                                  t.value[0]))
+        logger.error("%s:%d:illegal character '%s'" % (self.filename,
+                                                       t.lineno,
+                                                       t.value[0]))
         t.lexer.skip(1)
     
     def t_rt_error(self, t):
-        logger.error("%d,%d:illegal character '%s' on rt" % (t.lineno,
-                                                             t.lexpos,
-                                                             t.value[0]))
+        logger.error("%s:%d:illegal character '%s'" % (self.filename,
+                                                       t.lineno,
+                                                       t.value[0]))
         t.lexer.skip(1)
     
     def t_literal_error(self, t):
-        logger.error("%d,%d:illegal character '%s' in literal" % (t.lineno,
-                                                                  t.lexpos,
-                                                                  t.value[0]))
+        logger.error("%s:%d:illegal character '%s'" % (self.filename,
+                                                       t.lineno,
+                                                       t.value[0]))
         t.lexer.skip(1)
     
     def t_psv_error(self, t):
-        logger.error("%d,%d:illegal character '%s' in psv" % (t.lineno,
-                                                              t.lexpos,
-                                                              t.value[0]))
+        logger.error("%s:%d:illegal character '%s'" % (self.filename,
+                                                       t.lineno,
+                                                       t.value[0]))
         t.lexer.skip(1)
     
     def p_archetypeprogram_1(self, p):
