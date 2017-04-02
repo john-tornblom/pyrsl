@@ -1,5 +1,5 @@
 # encoding: utf-8
-# Copyright (C) 2015-2016 John Törnblom
+# Copyright (C) 2017 John Törnblom
 '''
 Simple linter for the rule-specification language (RSL).
 '''
@@ -15,14 +15,26 @@ logger = logging.getLogger('rsl.lint')
 
 
 class Linter(xtuml.Visitor):
-
+    count = 0
+    
     def __init__(self, metamodel):
         self.m = metamodel
         self.functions = dict()
+        self.count = 0
         
     def warn(self, node, msg):
+        self.count += 1
         logger.warning('%s:%s:%s' % (node.filename, node.lineno, msg))
 
+    def check_key_letter(self, node, key_letter):
+        try:
+            cls = self.m.find_metaclass(key_letter)
+            if cls.kind != key_letter:
+                self.warn(node, 'Key letter case mismatch (%s != %s)' % (key_letter, cls.kind))
+            
+        except xtuml.UnknownClassException as e:
+            self.warn(node, 'Undefined class %s' % key_letter)
+            
     def enter_FunctionNode(self, node):
         if node.name in self.functions:
             self.warn(node, 'redefinition of function %s' % node.name)
@@ -30,28 +42,16 @@ class Linter(xtuml.Visitor):
             self.functions[node.name] = node
 
     def enter_CreateNode(self, node):
-        try:
-            self.m.find_metaclass(node.key_letter)
-        except xtuml.UnknownClassException as e:
-            self.warn(node, 'Undefined class %s' % node.key_letter)
+        self.check_key_letter(node, node.key_letter)
                     
     def enter_SelectAnyInstanceNode(self, node):
-        try:
-            self.m.find_metaclass(node.key_letter)
-        except xtuml.UnknownClassException as e:
-            self.warn(node, 'Undefined class %s' % node.key_letter)
+        self.check_key_letter(node, node.key_letter)
             
     def enter_SelectManyInstanceNode(self, node):
-        try:
-            self.m.find_metaclass(node.key_letter)
-        except xtuml.UnknownClassException as e:
-            self.warn(node, 'Undefined class %s' % node.key_letter)
-
+        self.check_key_letter(node, node.key_letter)
+        
     def enter_NavigationNode(self, node):
-        try:
-            self.m.find_metaclass(node.key_letter)
-        except xtuml.UnknownClassException as e:
-            self.warn(node, 'Undefined class %s' % node.key_letter)
+        self.check_key_letter(node, node.key_letter)
 
     def enter_InstanceChainNode(self, node):
         prev = None
@@ -79,16 +79,18 @@ class Linter(xtuml.Visitor):
                              nav.relation.rel_id, phrase))
 
             prev = nav
+
             
-def lint_file(metamodel, filename):
-    root = rsl.parse.parse_file(filename)
+def lint_ast(metamodel, root):
     w = xtuml.Walker()
+    l = Linter(metamodel)
     #w.visitors.append(xtuml.NodePrintVisitor())
-    w.visitors.append(Linter(metamodel))
+    w.visitors.append(l)
     w.accept(root)
 
+    return l.count
 
-    
+
 def main():
     '''
     Parse command line options and launch the RSL linter.
@@ -119,10 +121,14 @@ def main():
     }
     logging.basicConfig(level=levels.get(opts.verbosity, logging.DEBUG))
 
+    rc = 0
     m = xtuml.load_metamodel(opts.imports)
     for filename in args:
-        lint_file(m, filename)
+        root = rsl.parse_file(filename)
+        rc |= lint_ast(m, root)
 
+    return rc
 
 if __name__ == '__main__':
-    main()
+    rc = main()
+    sys.exit(rc)

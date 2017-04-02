@@ -1,5 +1,5 @@
 # encoding: utf-8
-# Copyright (C) 2015-2016 John Törnblom
+# Copyright (C) 2015-2017 John Törnblom
 '''
 Parser for the rule-specification language (RSL). 
 Heavily inspired by: 
