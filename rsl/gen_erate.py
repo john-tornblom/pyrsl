@@ -232,6 +232,7 @@ def main(argv=None):
             loader.populate(metamodel)
         
         elif kind == 'arc':
+            metamodel.batch_relate()
             rt = rsl.Runtime(metamodel, emit_when, force_overwrite, diff_filename)
             ast = rsl.parse_file(filename)
             rsl.evaluate(rt, ast, includes)
