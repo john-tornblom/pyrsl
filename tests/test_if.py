@@ -16,6 +16,16 @@ class TestIf(RSLTestCase):
         .exit 0
         '''
         self.assertEqual(1, rc)
+
+    @evaluate_docstring
+    def test_if_with_simple_end(self, rc):
+        '''
+        .if ( 0 == 0 )
+            .exit 1
+        .end
+        .exit 0
+        '''
+        self.assertEqual(1, rc)
         
     @evaluate_docstring
     def test_single_if_false(self, rc):

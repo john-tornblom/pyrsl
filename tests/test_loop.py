@@ -17,7 +17,18 @@ class TestLoop(RSLTestCase):
         .exit x
         '''
         self.assertEqual(0, rc)
-        
+
+    @evaluate_docstring
+    def test_while_loop_with_simple_end(self, rc):
+        '''
+        .assign x = 10
+        .while (x > 0)
+            .assign x = x - 1
+        .end
+        .exit x
+        '''
+        self.assertEqual(0, rc)
+
     @evaluate_docstring
     def test_while_loop_break(self, rc):
         '''
@@ -48,7 +59,23 @@ class TestLoop(RSLTestCase):
             rc = self.eval_text(text)
             self.assertEqual(i, rc)
             self.metamodel.new('A')
-        
+
+    def test_for_loop_with_simple_end(self):
+        self.metamodel.define_class('A', [])
+
+        text = '''
+        .select many a_set from instances of A
+        .assign x = 0
+        .for each a in a_set
+            .assign x = x + 1
+        .end
+        .exit x
+        '''
+        for i in range(0, 10):
+            rc = self.eval_text(text)
+            self.assertEqual(i, rc)
+            self.metamodel.new('A')
+            
     def test_for_loop_break(self):
         self.metamodel.define_class('A', [])
 

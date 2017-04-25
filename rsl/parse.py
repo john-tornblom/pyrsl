@@ -42,6 +42,7 @@ class RSLParser(object):
               'TYPE',
               'RELATEDBY',
               'ELIF',
+              'END',
               'ENDFOR',
               'FORMAT',
               'FUNCTION',
@@ -331,6 +332,12 @@ class RSLParser(object):
     
     def t_pc_ENDWHILE(self, t):
         r"(?i)\.end[\s]+while"
+        t.endlexpos = t.lexpos + len(t.value)
+        t.lexer.begin('pc')
+        return t
+    
+    def t_pc_END(self, t):
+        r"(?i)\.end"
         t.endlexpos = t.lexpos + len(t.value)
         t.lexer.begin('pc')
         return t
@@ -1018,16 +1025,22 @@ class RSLParser(object):
         p[0] = p[3]
     
     def p_endiffer_1(self, p):
-        """endiffer : ENDIF lineabreak"""
-    
+        '''
+        endiffer : ENDIF lineabreak
+                 | END lineabreak
+        '''
     
     def p_endwhiler_1(self, p):
-        """endwhiler : ENDWHILE lineabreak"""
-    
+        '''
+        endwhiler : ENDWHILE lineabreak
+                  | END lineabreak
+        '''
     
     def p_endforrer_1(self, p):
-        """endforrer : ENDFOR lineabreak"""
-    
+        '''
+        endforrer : ENDFOR lineabreak
+                  | END lineabreak
+        '''
     
     def p_condition_1(self, p):
         """condition : LPAREN expr RPAREN"""
