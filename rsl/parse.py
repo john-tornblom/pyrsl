@@ -784,7 +784,7 @@ class RSLParser(object):
         p[0].lineno = p.lineno(0)
     
     def p_statement_3(self, p):
-        """statement : FUNCTION function_identifier lineabreak fparameters fbody ENDFUNCTION lineabreak"""
+        """statement : FUNCTION function_identifier lineabreak fparameters fbody endfunction"""
         p[0] = ast.FunctionNode(p[2], p[4], p[5])
         p[0].filename = self.filename
         p[0].lineno = p.lineno(0)
@@ -1041,7 +1041,13 @@ class RSLParser(object):
         endforrer : ENDFOR lineabreak
                   | END lineabreak
         '''
-    
+
+    def p_endfunction_1(self, p):
+        '''
+        endfunction : ENDFUNCTION lineabreak
+                  | END lineabreak
+        '''
+        
     def p_condition_1(self, p):
         """condition : LPAREN expr RPAREN"""
         p[0] = p[2]

@@ -18,7 +18,17 @@ class TestInvoke(RSLTestCase):
         .exit 1
         '''
         self.assertEqual(1, rc)
-        
+
+    @evaluate_docstring
+    def test_invoke_function_with_simple_end(self, rc):
+        '''
+        .function f
+        .end
+        .invoke f()
+        .exit 1
+        '''
+        self.assertEqual(1, rc)
+
     @evaluate_docstring
     def test_invoke_dot_named_function(self, rc):
         '''
