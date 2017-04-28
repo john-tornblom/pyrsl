@@ -115,6 +115,19 @@ class ParameterNode(Node):
         self.name = name
         self.type = ty
 
+    @property
+    def children(self):
+        return (self.type,)
+
+
+class ParameterTypeNode(Node):
+    name = None
+    kind = None
+
+    def __init__(self, name, kind=None):
+        self.name = name
+        self.kind = kind
+
 
 class ParameterListNode(Node):
     parameters = list()

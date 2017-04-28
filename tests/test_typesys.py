@@ -54,3 +54,79 @@ class TestTypeSystem(RSLTestCase):
         self.assertIsInstance(f('integer'), RuntimeException)
         self.assertIsInstance(f('real'), RuntimeException)
         self.assertIsInstance(f('string'), RuntimeException)
+
+    def test_invoke_instref_with_kind(self):
+        self.metamodel.define_class('My_Class1', [('Name', 'string')])
+        self.metamodel.define_class('My_Class2', [('Name', 'string')])
+        self.metamodel.new('My_Class1', Name='1')
+        self.metamodel.new('My_Class2', Name='2')
+        
+        text = '''
+            .function f
+                .param inst_ref<My_Class1> inst
+                .exit 1
+            .end function
+            .select any inst from instances of My_Class1
+            .invoke res = f(inst)
+            .exit 0
+        '''
+        rc = self.eval_text(text)
+        self.assertEqual(rc, 1)
+        
+    def test_invoke_instref_with_wrong_kind(self):
+        self.metamodel.define_class('My_Class1', [('Name', 'string')])
+        self.metamodel.define_class('My_Class2', [('Name', 'string')])
+        self.metamodel.new('My_Class1', Name='1')
+        self.metamodel.new('My_Class2', Name='2')
+        
+        text = '''
+            .function f
+                .param inst_ref<My_Class2> inst
+                .exit 1
+            .end function
+            .select any inst from instances of My_Class1
+            .invoke res = f(inst)
+            .exit 0
+        '''
+        rc = self.eval_text(text)
+        self.assertIsInstance(rc, RuntimeException)
+        
+    def test_invoke_instrefset_with_kind(self):
+        self.metamodel.define_class('My_Class1', [('Name', 'string')])
+        self.metamodel.define_class('My_Class2', [('Name', 'string')])
+        self.metamodel.new('My_Class1', Name='1')
+        self.metamodel.new('My_Class2', Name='2')
+        
+        text = '''
+            .function f
+                .param inst_ref_set<My_Class1> insts
+                .exit 1
+            .end function
+            .select many insts from instances of My_Class1
+            .invoke res = f(insts)
+            .exit 0
+        '''
+        rc = self.eval_text(text)
+        self.assertEqual(rc, 1)
+        
+    def test_invoke_instrefset_with_wrong_kind(self):
+        self.metamodel.define_class('My_Class1', [('Name', 'string')])
+        self.metamodel.define_class('My_Class2', [('Name', 'string')])
+        self.metamodel.new('My_Class1', Name='1')
+        self.metamodel.new('My_Class2', Name='2')
+        
+        text = '''
+            .function f
+                .param inst_ref_set<My_Class2> insts
+                .exit 1
+            .end function
+            .select many insts from instances of My_Class1
+            .invoke res = f(insts)
+            .exit 0
+        '''
+        rc = self.eval_text(text)
+        self.assertIsInstance(rc, RuntimeException)
+        
+        
+        
+        
