@@ -438,6 +438,12 @@ class RSLParser(object):
         r"(?i)(boolean|integer|real|string|inst_ref|inst_ref_set|frag_ref)(?=\s)"
         t.endlexpos = t.lexpos + len(t.value)
         return t
+
+    def t_control_TYPE2(self, t):
+        r"(?i)(inst_ref|inst_ref_set|frag_ref)(?=<[^>]+>\s)"
+        t.endlexpos = t.lexpos + len(t.value)
+        t.type = 'TYPE'
+        return t
     
     def t_control_AND(self, t):
         r"(?i)and(?=[\s\(])"
@@ -949,13 +955,25 @@ class RSLParser(object):
         p[0].lineno = p.lineno(0)
     
     def p_fparameters_3(self, p):
-        """fparameters : fparameters PARAM TYPE param_name lineabreak"""
+        """fparameters : fparameters PARAM param_type param_name lineabreak"""
         p[0] = p[1]
         param = ast.ParameterNode(p[3], p[4])
         param.filename = self.filename
         param.lineno = p.lineno(2)
         p[0].parameters.append(param)
     
+    def p_param_type_1(self, p):
+        '''
+        param_type : TYPE
+        '''
+        p[0] = ast.ParameterTypeNode(p[1])
+    
+    def p_param_type_2(self, p):
+        '''
+        param_type : TYPE LT function_identifier GT
+        '''
+        p[0] = ast.ParameterTypeNode(p[1], p[3])
+     
     def p_fbody_0(self, p):
         """fbody : """
         p[0] = ast.StatementListNode()

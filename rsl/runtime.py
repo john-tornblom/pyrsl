@@ -345,9 +345,17 @@ class Runtime(object):
 
     def assert_type(self, exptected_type, value):
         value_type = self.type_name(type(value))
-        if exptected_type.upper() != value_type.upper():
+        if exptected_type.name.upper() != value_type.upper():
             raise RuntimeException('expected type %s, not %s' % 
-                                   (exptected_type, value_type))
+                                   (exptected_type.name, value_type))
+            
+        if not exptected_type.kind:
+            return
+        
+        value_kind = self.type_kind(value)
+        if value_kind and exptected_type.kind.upper() != value_kind.upper():
+            raise RuntimeException('expected kind %s, not %s' % 
+                                   (exptected_type.kind, value_kind))
         
     def type_name(self, ty):
         if   issubclass(ty, bool): return 'boolean'
@@ -360,6 +368,14 @@ class Runtime(object):
         elif issubclass(ty, xtuml.QuerySet): return 'inst_ref_set'
         elif issubclass(ty, type(self.metamodel.id_generator.peek())): return 'unique_id'
         else: raise RuntimeException("Unknown type '%s'" % ty.__name__)
+        
+    def type_kind(self, value):
+        if isinstance(value, xtuml.QuerySet): 
+            value = value.first
+        
+        if isinstance(value, xtuml.Class): 
+            return value.__metaclass__.kind
+        
         
 
 class Bridge(object):
