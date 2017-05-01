@@ -138,7 +138,8 @@ def main(argv=None):
     force_overwrite = False
     emit_when = 'change'
     diff_filename = None
-    inputs = list()
+    archetypes = list()
+    imports = list()
     includes = ['.']
     check_integrity = False
     argv = argv or sys.argv
@@ -147,11 +148,11 @@ def main(argv=None):
     while i < len(argv):
         if argv[i] == '-arch':
             i += 1
-            inputs.append((argv[i], 'arc'))
+            archetypes.append(argv[i])
 
         elif argv[i] == '-import':
             i += 1
-            inputs.append((argv[i], 'sql'))
+            imports.append(argv[i])
 
         elif argv[i] == '-include':
             i += 1
@@ -212,34 +213,26 @@ def main(argv=None):
         
     logging.basicConfig(stream=sys.stdout, level=loglevel)
     
+    loader = xtuml.ModelLoader()
+    if enable_persistance and os.path.isfile(database_filename):
+        loader.filename_input(database_filename)
+
+    for filename in imports:
+        loader.filename_input(filename)
+    
     id_generator = xtuml.IntegerGenerator()
-    metamodel = xtuml.MetaModel(id_generator)
+    metamodel = loader.build_metamodel(id_generator)
 
     if diff_filename:
         with open(diff_filename, 'w') as f:
             f.write(' '.join(argv))
             f.write('\n')
-            
-    if enable_persistance and os.path.isfile(database_filename):
-        loader = xtuml.ModelLoader()
-        loader.filename_input(database_filename)
-        loader.populate(metamodel)
-        
-    for filename, kind in inputs:
-        if kind == 'sql':
-            loader = xtuml.ModelLoader()
-            loader.filename_input(filename)
-            loader.populate(metamodel)
-        
-        elif kind == 'arc':
-            rt = rsl.Runtime(metamodel, emit_when, force_overwrite, diff_filename)
-            ast = rsl.parse_file(filename)
-            rsl.evaluate(rt, ast, includes)
-            
-        else:
-            #should not happen
-            print("Unknown %s is of unknown kind '%s', skipping it" % (filename, kind))
 
+    for filename in archetypes:
+        rt = rsl.Runtime(metamodel, emit_when, force_overwrite, diff_filename)
+        ast = rsl.parse_file(filename)
+        rsl.evaluate(rt, ast, includes)
+    
     errors = 0
     if check_integrity:
         errors += xtuml.check_association_integrity(metamodel)
