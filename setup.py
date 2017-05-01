@@ -81,7 +81,7 @@ class BundleCommand(Command):
             os.makedirs(dirname)
 
         with open(self.output, 'wb') as outfile:
-            outfile.write('#!/usr/bin/env python\n')
+            outfile.write(b'#!/usr/bin/env python\n')
         
         with zipfile.PyZipFile(self.output, mode='a') as zf:
             if self.main:
