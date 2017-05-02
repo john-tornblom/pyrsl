@@ -214,27 +214,26 @@ def main(argv=None):
     
     id_generator = xtuml.IntegerGenerator()
     metamodel = xtuml.MetaModel(id_generator)
-
+    loader = xtuml.ModelLoader()
+    
     if diff_filename:
         with open(diff_filename, 'w') as f:
             f.write(' '.join(argv))
             f.write('\n')
             
     if enable_persistance and os.path.isfile(database_filename):
-        loader = xtuml.ModelLoader()
         loader.filename_input(database_filename)
-        loader.populate(metamodel)
         
     for filename, kind in inputs:
         if kind == 'sql':
-            loader = xtuml.ModelLoader()
             loader.filename_input(filename)
-            loader.populate(metamodel)
-        
+            
         elif kind == 'arc':
+            loader.populate(metamodel)
             rt = rsl.Runtime(metamodel, emit_when, force_overwrite, diff_filename)
             ast = rsl.parse_file(filename)
             rsl.evaluate(rt, ast, includes)
+            loader = xtuml.ModelLoader()
             
         else:
             #should not happen
