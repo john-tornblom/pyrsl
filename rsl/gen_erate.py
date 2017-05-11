@@ -16,7 +16,7 @@ import rsl.version
 complete_usage = '''
 USAGE: 
 
-   %s  [-arch <string>] ... [-import <string>] ... [-include <string>] ... [-d <integer>] ... [-diff <string>] [-emit <string>] [-priority <integer>] [-lVHs] [-lSCs] [-l2b] [-l2s] [-l3b] [-l3s] [-nopersist] [-force] [-integrity] [-e <string>] [-t <string>] [-v <string>] [-q] [-l] [-f <string>] [-# <integer>] [//] [-version] [-h]
+   %s  [-arch <string>] ... [-import <string>] ... [-include <string>] ... [-d <integer>] ... [-diff <string>] [-emit <string>] [-priority <integer>] [-lVHs] [-lSCs] [-l2b] [-l2s] [-l3b] [-l3s] [-nopersist] [-force] [-integrity] [-e <string>] [-t <string>] [-v <string>] [-qim] [-q] [-l] [-f <string>] [-# <integer>] [//] [-version] [-h]
 
 
 Where: 
@@ -97,6 +97,9 @@ Where:
    -v <string>
      (value required)  Verbose mode (STMT, COMP, or SYS)
 
+   -qim
+     Quiet insert mismatches. Do not print warnings if insert data doesn't populate all attributes.
+
    -q
      Quit on error
 
@@ -124,7 +127,7 @@ Where:
 
 brief_usage = '''
 Brief USAGE: 
-   %s  [-arch <string>] ... [-import <string>] ... [-include <string>] ... [-d <integer>] ... [-diff <string>] [-emit <string>] [-priority <integer>] [-lVHs] [-lSCs] [-l2b] [-l2s] [-l3b] [-l3s] [-nopersist] [-force] [-integrity] [-e <string>] [-t <string>] [-v <string>] [-q] [-l] [-f <string>] [-# <integer>] [//] [-version] [-h]
+   %s  [-arch <string>] ... [-import <string>] ... [-include <string>] ... [-d <integer>] ... [-diff <string>] [-emit <string>] [-priority <integer>] [-lVHs] [-lSCs] [-l2b] [-l2s] [-l3b] [-l3s] [-nopersist] [-force] [-integrity] [-e <string>] [-t <string>] [-v <string>] [-qim] [-q] [-l] [-f <string>] [-# <integer>] [//] [-version] [-h]
 
 For complete USAGE and HELP type: 
    %s -h
@@ -142,6 +145,7 @@ def main(argv=None):
     includes = ['.']
     check_integrity = False
     argv = argv or sys.argv
+    quiet_insert_mismatch = False
     
     i = 1
     while i < len(argv):
@@ -182,6 +186,9 @@ def main(argv=None):
             i += 1
             loglevel = logging.DEBUG
             
+        elif argv[i] == '-qim':
+            quiet_insert_mismatch = True
+            
         elif argv[i] == '-version':
             print(rsl.version.complete_string)
             sys.exit(0)
@@ -216,6 +223,10 @@ def main(argv=None):
     metamodel = xtuml.MetaModel(id_generator)
     loader = xtuml.ModelLoader()
     
+    if quiet_insert_mismatch:
+        load_logger = logging.getLogger(xtuml.load.__name__)
+        load_logger.setLevel(logging.ERROR)
+
     if diff_filename:
         with open(diff_filename, 'w') as f:
             f.write(' '.join(argv))
