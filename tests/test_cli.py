@@ -5,6 +5,8 @@ import unittest
 import tempfile
 import sys
 import os
+import StringIO
+import logging
 
 import rsl
 
@@ -13,8 +15,14 @@ class TestCommandLineInterface(unittest.TestCase):
     
     def setUp(self):
         self.temp_files = set()
+        logger = logging.getLogger()
+        self.log = logging.StreamHandler(StringIO.StringIO())
+        logger.addHandler(self.log)
         
     def tearDown(self):
+        logger = logging.getLogger()
+        logger.removeHandler(self.log)
+        
         for temp in self.temp_files:
             temp.close()
             os.remove(temp.name)
@@ -92,6 +100,39 @@ class TestCommandLineInterface(unittest.TestCase):
         script.file.flush()
         self.assertEqual(2, rsl.main(argv)) 
     
+    def test_qim(self):
+        schema = self.temp_file(mode='w')
+        modeldata = self.temp_file(mode='w')
+        script = self.temp_file(mode='w')
+        
+        schema.file.write('CREATE TABLE Cls (Id STRING, OtherAttr INTEGER);')
+        schema.file.write('CREATE UNIQUE INDEX I1 ON Cls (Id);')
+        schema.file.flush()
+        
+        modeldata.file.write('INSERT INTO Cls VALUES ("myid");')
+        modeldata.file.flush()
+        
+        script.file.write('')
+        script.file.flush()
+        
+        argv = ['test_qim', 
+                '-nopersist',
+                '-import', schema.name,
+                '-import', modeldata.name,
+                '-arch', script.name]
+        rsl.main(argv)
+        
+        argv = ['test_qim', 
+                '-nopersist',
+                '-qim',
+                '-import', schema.name,
+                '-import', modeldata.name,
+                '-arch', script.name]
+        rsl.main(argv)
+
+        mismatches = self.log.stream.getvalue().count('mismatch')
+        self.assertEqual(1, mismatches)
+        
     def test_include(self):
         script = self.temp_file(mode='w')
         script.file.write('.print "Hello"\n')
