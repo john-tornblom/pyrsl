@@ -35,6 +35,7 @@ class RSLParser(object):
               'UNRELATE',
               'ACROSS',
               'FROM',
+              'USING',
               'OF',
               'IF',
               'TO',
@@ -401,6 +402,11 @@ class RSLParser(object):
     
     def t_control_ACROSS(self, t):
         r"(?i)across(?=[\s])"
+        t.endlexpos = t.lexpos + len(t.value)
+        return t
+    
+    def t_control_USING(self, t):
+        r"(?i)using(?=\s)"
         t.endlexpos = t.lexpos + len(t.value)
         return t
     
@@ -918,6 +924,18 @@ class RSLParser(object):
         p[0].filename = self.filename
         p[0].lineno = p.lineno(0)
         
+    def p_relate_using_statement_1(self, p):
+        '''statement : RELATE inst_ref_var TO inst_ref_var ACROSS WORD USING inst_ref_var'''
+        p[0] = ast.RelateUsingNode(p[2], p[4], p[6], '', p[8])
+        p[0].filename = self.filename
+        p[0].lineno = p.lineno(0)
+        
+    def p_relate_using_statement_2(self, p):
+        '''statement : RELATE inst_ref_var TO inst_ref_var ACROSS WORD DOT PHRASE USING inst_ref_var'''
+        p[0] = ast.RelateUsingNode(p[2], p[4], p[6], p[8], p[10])
+        p[0].filename = self.filename
+        p[0].lineno = p.lineno(0)
+        
     def p_unrelate_statement_1(self, p):
         '''statement : UNRELATE inst_ref_var FROM inst_ref_var ACROSS WORD'''
         p[0] = ast.UnrelateNode(p[2], p[4], p[6], '')
@@ -930,6 +948,18 @@ class RSLParser(object):
         p[0].filename = self.filename
         p[0].lineno = p.lineno(0)
     
+    def p_unrelate_statement_using_1(self, p):
+        '''statement : UNRELATE inst_ref_var FROM inst_ref_var ACROSS WORD USING inst_ref_var'''
+        p[0] = ast.UnrelateUsingNode(p[2], p[4], p[6], '', p[8])
+        p[0].filename = self.filename
+        p[0].lineno = p.lineno(0)
+        
+    def p_unrelate_statement_using_2(self, p):
+        '''statement : UNRELATE inst_ref_var FROM inst_ref_var ACROSS WORD DOT PHRASE USING inst_ref_var'''
+        p[0] = ast.UnrelateUsingNode(p[2], p[4], p[6], p[8], p[10])
+        p[0].filename = self.filename
+        p[0].lineno = p.lineno(0)
+        
     def p_whereclause_1(self, p):
         """whereclause : """
         p[0] = ast.WhereNode()

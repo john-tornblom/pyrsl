@@ -309,6 +309,22 @@ class RelateNode(Node):
         self.phrase = phrase
 
 
+class RelateUsingNode(Node):
+    from_variable_name = None
+    to_variable_name = None
+    rel_id = None
+    phrase = None
+    using_variable_name = None
+    
+    def __init__(self, from_variable_name, to_variable_name, rel_id, phrase,
+                 using_variable_name):
+        self.from_variable_name = from_variable_name
+        self.to_variable_name = to_variable_name
+        self.rel_id = rel_id
+        self.phrase = phrase
+        self.using_variable_name = using_variable_name
+
+
 class UnrelateNode(Node):
     from_variable_name = None
     to_variable_name = None
@@ -320,6 +336,22 @@ class UnrelateNode(Node):
         self.to_variable_name = to_variable_name
         self.rel_id = rel_id
         self.phrase = phrase
+        
+
+class UnrelateUsingNode(Node):
+    from_variable_name = None
+    to_variable_name = None
+    rel_id = None
+    phrase = None
+    using_variable_name = None
+    
+    def __init__(self, from_variable_name, to_variable_name, rel_id, phrase,
+                 using_variable_name):
+        self.from_variable_name = from_variable_name
+        self.to_variable_name = to_variable_name
+        self.rel_id = rel_id
+        self.phrase = phrase
+        self.using_variable_name = using_variable_name
         
 
 class DeleteNode(Node):

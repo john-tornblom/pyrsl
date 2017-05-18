@@ -33,6 +33,71 @@ class TestRelate(RSLTestCase):
         b = xtuml.navigate_one(a).B[1]()
         self.assertTrue(b)
 
+    def test_relate_using(self):
+        self.metamodel.define_class('Assoc', [('one_side_ID', 'UNIQUE_ID'),
+                                              ('other_side_ID', 'UNIQUE_ID')])
+        self.metamodel.define_class('Class', [('ID', 'UNIQUE_ID')])
+        self.metamodel.define_association(rel_id='R1',
+                                          source_kind='Assoc',
+                                          target_kind='Class',
+                                          source_keys=['one_side_ID'],
+                                          target_keys=['ID'],
+                                          source_many=True,
+                                          target_many=False,
+                                          source_conditional=True,
+                                          target_conditional=False,
+                                          source_phrase='one',
+                                          target_phrase='other')
+        
+        self.metamodel.define_association(rel_id='R1',
+                                          source_kind='Assoc',
+                                          target_kind='Class',
+                                          source_keys=['other_side_ID'],
+                                          target_keys=['ID'],
+                                          source_many=True,
+                                          target_many=False,
+                                          source_conditional=True,
+                                          target_conditional=False,
+                                          source_phrase='other',
+                                          target_phrase='one')
+        
+        text = '''
+        .assign res = 0
+        .create object instance cls1 of Class
+        .create object instance cls2 of Class
+        .create object instance assoc of Assoc 
+        .relate cls1 to cls2 across R1.'other' using assoc
+        
+        .select one assoc related by cls1->Assoc[R1.'one']
+        .if (not_empty assoc)
+          .assign res = res + 1
+        .end if
+        
+        .select one assoc related by cls2->Assoc[R1.'other']
+        .if (not_empty assoc)
+          .assign res = res + 1
+        .end if
+        
+        .unrelate cls1 from cls2 across R1.'other' using assoc
+        .if (not_empty assoc)
+          .assign res = res + 1
+        .end if
+        
+        .select one assoc related by cls1->Assoc[R1.'one']
+        .if (empty assoc)
+          .assign res = res + 1
+        .end if
+        
+        .select one assoc related by cls2->Assoc[R1.'other']
+        .if (empty assoc)
+          .assign res = res + 1
+        .end if
+        
+        .exit res
+        '''
+        res = self.eval_text(text)
+        self.assertEqual(res, 5)
+
     def test_unrelate(self):
         self.metamodel.define_class('A', [('Id', 'unique_id'), ('B_Id', 'unique_id')])
         self.metamodel.define_class('B', [('Id', 'unique_id')])
