@@ -68,12 +68,12 @@ class TestRelate(RSLTestCase):
         .create object instance assoc of Assoc 
         .relate cls1 to cls2 across R1.'other' using assoc
         
-        .select one assoc related by cls1->Assoc[R1.'one']
+        .select one assoc related by cls1->Assoc[R1.'other']
         .if (not_empty assoc)
           .assign res = res + 1
         .end if
         
-        .select one assoc related by cls2->Assoc[R1.'other']
+        .select one assoc related by cls2->Assoc[R1.'one']
         .if (not_empty assoc)
           .assign res = res + 1
         .end if
@@ -83,12 +83,12 @@ class TestRelate(RSLTestCase):
           .assign res = res + 1
         .end if
         
-        .select one assoc related by cls1->Assoc[R1.'one']
+        .select one assoc related by cls1->Assoc[R1.'other']
         .if (empty assoc)
           .assign res = res + 1
         .end if
         
-        .select one assoc related by cls2->Assoc[R1.'other']
+        .select one assoc related by cls2->Assoc[R1.'one']
         .if (empty assoc)
           .assign res = res + 1
         .end if
@@ -157,7 +157,7 @@ class TestRelate(RSLTestCase):
         
         self.eval_text(text)
         a1 = self.metamodel.select_any('A', lambda sel: sel.Name == "First")
-        a2 = xtuml.navigate_one(a1).A[1, 'next']()
+        a2 = xtuml.navigate_one(a1).A[1, 'prev']()
         self.assertTrue(a2)
         self.assertEqual(a2.Name, 'Second')
 

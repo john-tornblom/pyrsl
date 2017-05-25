@@ -224,7 +224,7 @@ class TestSelect(RSLTestCase):
         
         text = '''
         .select any first_inst from instances of A where (selected.Name == "First")
-        .select one second_inst related by first_inst->A[R1.'next']
+        .select one second_inst related by first_inst->A[R1.'prev']
         .exit second_inst.Name
         '''
         rc = self.eval_text(text)
@@ -232,7 +232,7 @@ class TestSelect(RSLTestCase):
 
         text = '''
         .select any second_inst from instances of A where (selected.Name == "Second")
-        .select one first_inst related by second_inst->A[R1.'prev']
+        .select one first_inst related by second_inst->A[R1.'next']
         .exit first_inst.Name
         '''
         rc = self.eval_text(text)
