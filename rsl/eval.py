@@ -409,24 +409,28 @@ class EvalWalker(xtuml.Walker):
     def accept_RelateNode(self, node):
         from_inst = self.symtab.find_symbol(node.from_variable_name)
         to_inst = self.symtab.find_symbol(node.to_variable_name)
+        
         xtuml.relate(from_inst, to_inst, node.rel_id, node.phrase)
         
     def accept_RelateUsingNode(self, node):
         from_inst = self.symtab.find_symbol(node.from_variable_name)
         to_inst = self.symtab.find_symbol(node.to_variable_name)
         using_inst = self.symtab.find_symbol(node.using_variable_name)
+        
         xtuml.relate(from_inst, using_inst, node.rel_id, node.phrase)
         xtuml.relate(using_inst, to_inst, node.rel_id, node.phrase)
         
     def accept_UnrelateNode(self, node):
         from_inst = self.symtab.find_symbol(node.from_variable_name)
         to_inst = self.symtab.find_symbol(node.to_variable_name)
+        
         xtuml.unrelate(from_inst, to_inst, node.rel_id, node.phrase)
         
     def accept_UnrelateUsingNode(self, node):
         from_inst = self.symtab.find_symbol(node.from_variable_name)
         to_inst = self.symtab.find_symbol(node.to_variable_name)
         using_inst = self.symtab.find_symbol(node.using_variable_name)
+        
         xtuml.unrelate(from_inst, using_inst, node.rel_id, node.phrase)
         xtuml.unrelate(using_inst, to_inst, node.rel_id, node.phrase)
         
