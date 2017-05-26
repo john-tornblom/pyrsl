@@ -640,7 +640,7 @@ string_to_real(value: string)               Convert at string to a real
 integer_to_string(value: integer)           Convert an integer to a string
 real_to_string(value: real)                 Convert a real to a stirng
 boolean_to_string(value: boolean)           Convert a boolean to a string
-=========================================  ==========================================
+==========================================  ==========================================
 
 Fragment Attributes
 -------------------
