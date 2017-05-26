@@ -627,19 +627,19 @@ fragment. `<function_name>` is the name of the function being invoked.
 
 The language define a set of predefined functions.
 
-=========================================  ==========================================
-Function Signature                         Description
-=========================================  ==========================================
-get_env_var(name: string)                  Get the value of an environmental variable
-put_env_var(name: string, value: string)   Set the value of an environmental variable
-shell_command(command: string)             Execute a shell command
-file_read(filename: string)                Read text of a file
-file_writefilename: string, text: string)  Write test to a file
-string_to_integer(value: string)           Convert a string to an integer
-string_to_real(value: string)              Convert at string to a real
-integer_to_string(value: integer)          Convert an integer to a string
-real_to_string(value: real)                Convert a real to a stirng
-boolean_to_string(value: boolean)          Convert a boolean to a string
+==========================================  ==========================================
+Function Signature                          Description
+==========================================  ==========================================
+get_env_var(name: string)                   Get the value of an environmental variable
+put_env_var(name: string, value: string)    Set the value of an environmental variable
+shell_command(command: string)              Execute a shell command
+file_read(filename: string)                 Read text of a file
+file_write(filename: string, text: string)  Write test to a file
+string_to_integer(value: string)            Convert a string to an integer
+string_to_real(value: string)               Convert at string to a real
+integer_to_string(value: integer)           Convert an integer to a string
+real_to_string(value: real)                 Convert a real to a stirng
+boolean_to_string(value: boolean)           Convert a boolean to a string
 =========================================  ==========================================
 
 Fragment Attributes
