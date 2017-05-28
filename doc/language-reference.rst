@@ -1,963 +1,132 @@
 Language Reference
 ==================
+The Rule Specification Language (RSL) is a language that operates in two modes.
+One mode where lines of text encountered at input are staged onto a buffer (the
+buffer mode), and one mode that controls the buffer (the control mode). When
+operating in one mode, the other mode is inactive. The buffer mode is active by
+default. If the buffer mode encounters a line with the dot character (.) as the
+first non-whitespace character, the control mode is activated. When the control
+mode encounters a line break, the buffer mode is turned back on. The program
+terminates when all input has been processed.
 
-General Language Attributes
----------------------------
-Execution is sequential. All transient variables are implicitly declared upon
-the first assignment. Any subsequent assignment simply re-assign the same
-variable. A re-assignment of a variable to a different type is not allowed.
-A stack execution model is assumed. Variables are pushed on the stack as they
-are implicitly declared and are popped off the stack as they fall out of scope.
-Any variable implicitly declared inside of a block falls out of scope when the
-end of the block is encountered.
-
-White space is treated as a token delimiter. Statements are intended to be
-readable as a sentence so keywords are used in groups to provide verb phrases
-or prepositional phrases when combined with variables and model element
-references.
-
-Keywords and variables are case **insensitive**. Names can be made up of any
-alpha (a-z, A-Z) or numeric (0-9) characters or underscore (_) character. Names
-cannot begin with a numeric character. Names cannot conflict with keywords.
-Classes in the model are specified by using the class keyletters.
-
-Literal Text
-------------
-Literal text is plain ASCII text that is eventually written to files with the
-`emit to file` statement. Any line in the processed file which is not a control
-statement is treated as literal text. Any line beginning with a dot character
-(.) as the first non-white space character is a control statement, except those
-lines which begin with the dot dot character sequence (..).
-
-Lines 2-4 of the following rule are literal text lines. These lines are stored
-in a buffer than can be emitted to a file at any time by using the `emit to file`
-statement. The first line is a control statement used to comment the rule.
-
-.. code-block:: pyrsl
-   :linenos:
-   
-   .// comment the rule file
-   This is a literal text line
-   and so is this. Each of these lines are stored in a buffer that
-   can be emitted to a file using the .emit statement.
-       
-A literal text line with the dot dot character sequence as the first non-white
-space characters results in the dot character being emitted. A dot character
-anywhere else in the literal text line results in a dot character being emitted
-(i.e. no special treatment).
-
-Literal text can contain `Substitution Variables`_. Substitution variables are
-denoted with the `${<variable_name>}` character sequence. This means that the
-dollar sign character ($) is a special character which denotes the beginning of
-a substitution variable. The `$$` character sequence anywhere in a literal text
-line results in one dollar character being emitted.
-
-Newline characters at the end of a line of literal text are passed through to
-the emitted output. If you do not want a newline at the end of an emitted line
-(presumably due to control statement constraints), then place a backslash
-character (\\) as the last character of the literal text line. The `\\\\`
-character sequence as the last two characters of the literal text line results
-in one backslash character and one newline character as the last characters of
-an emitted line. The `\\\\\\` character sequence as the last three characters of
-a line of literal text results in one backslash character as the last character
-of an emitted line with no newline character.
-
-====================  =====================  ===================================== 
-Character             Position               To Generate Character at Position Use
-====================  =====================  =====================================
-.                     First Non-White Space  `..`
-$                     Any                    `$$`
-\\ (with new line)    Last                    `\\\\`
-\\ (without newline)  Last                    `\\\\\\`
-====================  =====================  =====================================
-
-Data Access Control Statements
-------------------------------
-Data access control statements include the following:
-
-* Instance selection statements allow for the selecting of instances from the
-  model. Instances are either returned in an instance reference set, in the
-  case of a `select many`, or as an instance reference, in the case of `select
-  one` and `select any`.
-
-* Instance set iteration statements allow for iteration over a set of instances
-  contained in an instance reference set. Class attribute access statements are
-  used to read and write attribute data of instances in the model.
-
-Instance Selection
-^^^^^^^^^^^^^^^^^^
-Instances may be selected from the model by using the key letters of the class
-directly, or by chaining through class keyletter/association pairs using an
-instance reference or instance reference set as a starting point.
-
-The following two statements are used to select instances based on the key
-letters alone:
-
-.. code-block:: pyrsl
-
-    .select any  <inst_ref_var>     from instances of <class_keyletters> [ where (<condition>) ]
-    .select many <inst_ref_set_var> from instances of <class_keyletters> [ where (<condition>) ]
-       
-The following instance selection statements make direct use of chaining through
-key letter/association pairs to select an instance or set of instances:
-
-.. code-block:: pyrsl
-
-    .select one  <inst_ref_var>     related by <inst_chain> [ where (<condition>) ]
-    .select any  <inst_ref_var>     related by <inst_chain> [ where (<condition>) ]
-    .select many <inst_ref_set_var> related by <inst_chain> [ where (<condition>) ]
-       
-`<inst_ref_var>` specifies an instance reference variable name used in the
-selection. After the select, the variable contains a reference to zero or one
-instances. Zero if an instance was not found, one if the instance was found.
-
-`<inst_ref_set_var>` specifies an instance reference set variable name used in
-the selection. After the select, the variable contains a reference to zero, one,
-or several instances.
-
-`<inst_chain>` is a string containing key letter/association number pairs
-separated by the `->` character sequence. `inst_chain` specifies an unbroken
-navigation from the instance reference variable or instance reference set
-variable to the destination instance.
-
-`<class_keyletters>` are the keyletters of a class in the model.
-
-`<condition>` specifies an expression with a boolean result. `<condition>`
-always takes the form of a where clause that discriminates on a attribute of
-the destination class using the `selected` keyword.
-
-**Examples**
-
-To select an aplication class in the BridgePoint metamodel named "Dog":
-
-.. code-block:: pyrsl
-
-    .select any class from instances of O_OBJ where (selected.Name == "Dog")
-
-To select the set of application classes in the BridgePoint metamodel:
-
-.. code-block:: pyrsl
-
-    .select many class_set from instances of O_OBJ
-
-To select the set of attributes related to an arbitrary class instance
-`class_inst` in the BridgePoint metamodel:
-
-.. code-block:: pyrsl
-
-    .select any class_inst from instances of O_OBJ
-    .select many attr_set related by class_inst->O_ATTR[R102]
-
-To select the set of associations in which the class instance `class_inst` is
-involved:
-
-.. code-block:: pyrsl
-
-    .select many rel_set related by class_inst->R_OIR[R201]->R_REL[R201]
-
-.. hint::
-   The navigation through the association R201 was in 2 steps.
-   First to the associative-link class and then to the other side of
-   the association. If you are wondering where to find association R201, 
-   please look in the BridgePoint metamodel.
-
-   Recent versions of the language allow navigation across association classes
-   without explicitly going via the association class, e.g.
-
-   .. code-block:: pyrsl
-
-      .select many rel_set related by class_inst->R_REL[R201]
-     
-Instance Reference and Instance Reference Set Variables
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-The resulting `<inst_ref_var>` or `<inst_ref_set_var>` is a transient variable
-which follows the implicit declaration rule. When the resulting `<inst_ref_var>`
-or `<inst_ref_set_var>` is being implicitly declared (used for the first time),
-the referred to class of the transient variable is set according to the result
-of the `select`. When the resulting `<inst_ref_var>` or `<inst_ref_set_var>` is
-being reassigned, the referred to class of the new selection must match that of
-the transient variable.
-
-Instance Chains
-^^^^^^^^^^^^^^^
-The related by form of the `select` statement uses an instance chain to specify
-a path through the related instances. An instance chain is simply a sequence of
-class key letter/association number pairs which specify the path from the source
-instance to the destination class. The result of a select is zero, one or more
-instances of the last class of the chain.
-
-The syntax of the instance chain places the focus on the classes of the chain
-(specified by the class keyletters) because the instances of the chain are class
-instances. The `[]` syntax is intended to indicate access into a table of that
-classes instances. The contents of the `[]` is a specification of which
-instances are being accessed, since the instances are accessed via an
-association, the contents of the `[]` is the association traversal specification.
-
-The association traversal specification can be specified as `R<number>` or 
-`R<number>.'<direction>'` where `R<number>` is the association number as it
-appears in the model. `<direction>` is a specification of the direction of the
-traversal for the association in terms of an association phrase. The
-`<direction>` is used when traversing a reflexive association, i.e., an
-association in which a class is related to itself. `<direction>` is needed so
-that the reflexive association can be traversed in each direction. Examples of
-reflexive associations in the BridgePoint metamodel are R103 (to specify order
-of attributes) and R112 (to specify order of association numbers).
-
-The following example selects the previous attribute instance given the current
-attribute instance:
-
-.. code-block:: pyrsl
-
-    .select one prev_attr related by curr_attr->O_ATTR[R103.'precedes']
-
-The navigation spec: `->O_ATTR[R103.'precedes']` use the association phrase
-to read the navigation from left to right, with the association phrase as the
-verb in the middle: start with the instance reference variable prev_attr, apply
-the association phrase, and end with the instance chain source instance
-reference variable name. The select statement navigation above reads prev_attr
-precedes curr_attr. Since we are looking for the attribute that precedes the
-current attribute we know that our select statement is properly formed.
-
-If we then wanted to get back to `curr_attr` from `prev_attr` we could
-write the following:
-
-.. code-block:: pyrsl
-
-    .select one next_attr related by prev_attr->O_ATTR[R103.'succeeds']
-
-The instance reference `next_attr` is the same instance as `curr_attr` from
-the previous `select` statement.
-
-.. warning::
-   In recent versions of the language, the phrases you specify in reflexive
-   navigations has been swapped to be in line with the Object Action Language
-   (OAL) used in BridgePoint.
-
-Chain Multiplicity & Conditionality
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-The multiplicity of an instance chain is zero or one if the starting instance
-variable has a multiplicity of zero or one, and all association traversals in
-the chain result have multiplicity zero or one. Otherwise, the multiplicity of
-the instance chain is zero, one, or several (many).
-
-The keyword `one` should only be used with an instance chain of multiplicity
-zero or one, whereas the keywords `any` and `many` can only be used with
-an instance chain of multiplicity zero, one, or many.
-
-The conditionality of an instance chain is unconditional if all association
-traversals in the chain are unconditional; otherwise, the instance chain is
-conditional. The conditionality determines how many instances are returned. If
-any conditional associations occur in the instance chain to the target, zero
-instances may be returned by the select statement. In this case the result of
-the select should always be checked for instances before being used.
-
-Where Clause
-^^^^^^^^^^^^
-The where clause `<condition>` is used to filter out a subset of the instances
-selected in the `select from instances of` or `select related by` statements.
-`<condition>` is applied separately to each instance in the source set. When
-`<condition>` is `true`, the matching instance or instances are
-placed in the instance reference or instance reference set variable. Instances
-for which <condition> is `false` are not included in the result.
-
-`<condition>` is a boolean expression. The current instance being selected is
-referred to by the selected keyword.
-
-**Examples**
-
-To select the set of application attributes named "ID" in the BridgePoint
-metamodel:
-
-.. code-block:: pyrsl
-
-    .select many attr_set from instances of O_ATTR where (selected.Name == "ID")
-
-To select all application attributes in classes with keyletters DOG:
-
-.. code-block:: pyrsl
-
-    .select many attr_set from instances of O_ATTR where ("${selected->O_OBJ[R102]}.Key_Lett" == "DOG")
+The following sections describe how the language works when operating in the
+control mode. For more information on the buffer mode, see `Buffer Mode`_.
 
 .. note::
-   The preceding example uses an instance substitution variable in a quoted
-   string and an instance chain within the substitution variable.
-
-Instance Set Iteration
-^^^^^^^^^^^^^^^^^^^^^^
-**The For Statement**
-
-Once a set of instances has been selected, iteration statements can be written
-to iterate over each of the instances in the set. The control statement which
-supports this is:
-
-.. code-block:: none
-
-    .for each <inst_ref_var> in <inst_ref_set_var>
-        <stmt_blck>
-    .end for
-
-`<inst_ref_var>` is an instance reference variable. Each time the for statement
-is evaluated, this variable is set to next instance in the set.
-
-`<inst_ref_set_var>` is an instance reference set that contains zero, one or
-more instances.
-
-`<stmt_blck>` is a block of any number of control statements.
-
-The statements in the for structure are executed once for each instance in the
-set. The iterations are sequential in a repeatable order, i.e., the order of the
-instances in a set are consistent from one execution to another.
-   
-**Examples**
-
-.. code-block:: pyrsl
-
-    Beginning of List of Class Names
-    .select many class_set from instances of O_OBJ
-    .for each class_inst in class_set
-        Class name is ${class_inst.Name}
-    .end for
-     End of List of Class Names
-
-The example above results in the name of each class being placed on a separate
-line in the output buffer. Each time the above example is executed, the order
-of the class names is guaranteed to be the same.
-
-
-.. warning::
-   Generelly, the order in which instances are created (and thus serialized)
-   determine the order in which they appear in sets. Consequently, the ordering
-   between consecutive executions is only preserved if thier input are the same.
-   This, however, may differ between implementations of the language.
-   
-The variable `<inst_ref_var>` is scoped within the `<stmt_blck>` , i.e., it
-goes out of scope after the `end for` statement. However, if the scope of 
-`<inst_ref_var>` needs to extend beyond the end, then define
-`<inst_ref_var>` prior to the for statement. In the previous example,
-`class_inst` is out of scope (and no longer on the stack) when the `End of List
-of Class Names` literal text line is reached.
-
-In the following example, `class_inst` is still in scope (and still on the stack)
-when the `End of List of Class Names` literal text line is reached.
-
-.. code-block:: pyrsl
-
-    Beginning of List of Class Names
-    .select any  class_inst from instances of O_OBJ
-    .select many class_set  from instances of O_OBJ
-    .for each class_inst in class_set
-        Class name is ${class_inst.Name}
-    .end for
-    Last Class name is ${class_inst.Name}
-
-The following statement is provided to break out of the iteration through the
-ordered set, presumably because you have found what you were looking for.
-
-.. code-block:: pyrsl
-
-    .break for
-
-.. hint::
-   It is sometimes desirable to declare an instance handle that is empty. This
-   is usually done with a `select` statement and a `where` clause that always
-   evaluates to `false`, e.g.
-
-   .. code-block:: pyrsl
-
-          .select any inst from instances of O_OBJ where (false)
-   
-**The While Statement**
-
-The `while` statement provides a general purpose iteration mechanism. This
-complements the other iteration mechanism, the `for each` statement. The `for
-each` statement is a specific purpose iteration mechanism to iterate through an
-instance reference set. The syntax of the `while` statement is as follows:
-
-.. code-block:: pyrsl
-
-    .while (<condition>)
-        .// Do something
-    .end while
-
-The statements between `while` and `end while` are executed in sequence
-until `<condition>` evaluates to `false`. The condition is checked before the
-first iteration.
-
-A `break while` statement is available, providing an alternative technique
-to end the iteration. The syntax of the `break while` statement is as follows:
-
-.. code-block:: pyrsl
-
-    .while (<condition>)
-        .// Do something
-        .break while
-        .// Do something more
-	.break
-    .end while
-       
-When executed, the `break while` statement causes control to be transferred to
-the statement after the `end while` corresponding to the innermost executing
-`while` statement. For example:
-   
-.. code-block:: pyrsl
-
-    .assign count = 1
-    .while (count < 10)             .// while 1
-        .while (1 == 1)             .// while 2
-            .if (<condition>)
-                .break while        .// break 2
-            .end if
-        .end while                  .// end while 2
-        .if (<condition2>)
-            .break while            .// break 1
-        .end if
-    .end while                      .// end while1 
-
-Execution of break 2 causes control to transfer to the statement following 
-end while 2, whereas execution of break 1 causes control to transfer to the
-statement following end while 1.
-
-Class Attribute Access
-^^^^^^^^^^^^^^^^^^^^^^
-Attribute access statements take the form of:
-
-.. code-block:: pyrsl
-
-    .assign transient = <inst_ref_var>.<attribute>
-
-where `<inst_ref_var>` is the instance reference variable that refers to an
-instance. `<attribute>` is the name of a valid attribute for the instance.
-
-
-Class Instance Creation
-^^^^^^^^^^^^^^^^^^^^^^^
-The `create` statement supports creation of instances in the model:
-
-.. code-block:: pyrsl
-
-    .create object instance <inst_ref_var> of <class_keyletters>
-
-where `<inst_ref_var>` is an instance reference variable name that refers to
-the to-be created instance. `<class_keyletters>` are the keyletters of a
-class.
-
-**Examples**
-
-To create an instance of O_OBJ metamodel class:
-
-.. code-block:: pyrsl
-
-    .create object instance class_inst of O_OBJ
-    .assign class_inst.Name = "foo"
-    .assign class_inst.Numb = 27
-    .assign class_inst.Key_Lett = "F"
-    .assign class_inst.Descrip = ""
-
-
-Relation Control Statements
----------------------------
-
-Assignment Control Statement
------------------------------
-The `assign` statement makes use of `Expressions`_ and have the following syntax:
-
-.. code-block:: pyrsl
-   
-   .assign <variable> = <expression>
-
-where `<variable>` is a data item, i.e., a class attribute, fragment attribute,
-or transient variable. `<expression>` is an expression, usually a calculation
-using class attribute access and literal values.
-
-When `<variable>` is a class attribute, the data type of `<expression>` must be
-compatible with the data type of `<variable>`.
-
-If `<variable>` is a transient variable, then the transient variable follows the
-implicit declaration rule. When a transient variable is being implicitly
-declared (assigned for the first time), the data type of the transient variable
-is set to be the same as the data type of `<expression>`. When a transient
-variable is being re-assigned, the data type of `<expression>` must be
-compatible with the data type of `<variable>`.
-
-======================  ========================  ============================================
-`<variable>` Data Type  `<expression>` Data Type  Note
-======================  ========================  ============================================
-boolean                 boolean
-integer                 integer
-real                    real
-integer                 real                      Truncates all digits after the decimal point
-real                    integer
-string                  string
-inst_ref<Object>        inst_ref<Object>
-inst_ref_set<Object>    inst_ref_set<Object>
-frag_ref                frag_ref
-======================  ========================  ============================================
-
-If `<variable>` is of data type `inst_ref<Object>`, `inst_ref_set<Object>`, or
-`frag_ref<Object>`, then `<expression>` may be one of the following:
-
-* Transient Variable
-  
-* Fragment Attribute
-
-**Examples**
-
-.. code-block:: pyrsl
-
-   .assign obj_inst = prev_obj_inst
-   .assign obj_set = next_obj_set
-   .assign attr_inst = base_attr_frag.base_attr_inst
-   .assign data_type_frag = attr_data_type_frag
-
-   
-Test Control Statements
------------------------
-
-Tests are supported through the use of the `if` statement:
-
-.. code-block:: none
-
-   .if (<condition>)
-      <stmt_blck>
-   [.elif (<condition>)
-       <stmt_blck>]
-   [.else
-       <stmt_blck>]
-   .end if
-      
-where `<condition>` is an expression with boolean result. `<stmt_blck>` is a
-block of rule language statements. Several `elif` constructs may be present in
-the same `if` construct.
-
-**Examples**
-
-.. code-block:: pyrsl
-
-   .// example 1
-   .if (class_inst.Numb < 100)
-      literal text...
-   .elif ((class_inst.Numb >= 200) && (class_inst.Numb < 300))
-      literal text...
-   .else
-      literal text...
-   .end if
-       
-   .// example 2
-   .if ("${class_inst.Descrip:PERSISTENCE}" == "TRUE")
-      source code for persistent classes ...
-   .elif ("${class_inst.Descrip:PERSISTENCE}" == "FALSE")
-      source code for non-persistent classes ...
-   .else
-     .print "Error in specification of persistence"
-     .print " Class `${class_inst.Name}'"
-     .exit 1
-   .end if
-   
-   .// example 3
-   .if ( p_operator == "NOT" )
-     .assign cond = "!${p_operand_rval.rval}"
-     .assign type = "boolean"
-   .elif ( p_operator == "EMPTY" )
-     .if ( p_operand_rval.var_card == "ONE" )
-       .assign cond = "((${p_operand_rval.var_name} == 0) ? true : false)"
-     .else
-       .invoke method = GetCollectionIsEmptyMethodName()
-       .assign cond = "${p_operand_rval.var_name}.${method.result}()"
-     .end if
-     .assign type = "boolean"
-   .elif ( p_operator == "NOT_EMPTY" )
-     .if ( p_operand_rval.var_card == "ONE" )
-       .assign cond = "((${p_operand_rval.var_name} != 0) ? true : false)"
-     .else
-       .invoke method = GetCollectionIsEmptyMethodName()
-       .assign cond = "!${p_operand_rval.var_name}.${method.result}()"
-     .end if
-     .assign type = "boolean"
-   .else 
-     .// Should never happen
-     .print "TRANSLATOR ERROR: Unknown 'rval_unary_op' operator: ${p_operator}"
-     .exit 100
-   .end if
-
-Function Control Statements
----------------------------
-Functions are supported in the language to allow reuse of blocks of language
-statements. Functions always return a fragment. A fragment can be thought of as
-a pseudo-instance that has at least one, and possibly more attributes containing
-data specified by the function. The intent of functions is to use them to build
-fragments which can be organized into larger fragments and eventually used to
-build a whole generated file.
-
-To define a function, use the `function` statement:
-
-.. code-block:: none
-
-   .function <function_name>
-      [.param <param_type> <param_name>
-       .param <param_type> <param_name>
-      ...]
-      [<stmt_blck>]
-   .end function    
-
-where `<function_name>` is the name of the function. The name of the function
-should be unique within the rule file, or any included rule files. `<param_type>`
-is the type of the parameter. Allowed types are:
-
-==============  ======================================
-Parameter Type  Actual Parameter Forms Allowed
-==============  ======================================
-boolean         Rvalue of type boolean
-integer         Rvalue of type integer
-real            Rvalue of type real
-string          Rvalue of type string
-inst_ref        `<transient_var>` of type inst_ref
-inst_ref_set    `<transient_var>` of type inst_set_ref
-frag_ref        `<transient_var>` of type frag_ref 
-==============  ======================================
-
-To invoke a function, use the `invoke` statement:
-
-.. code-block:: none
-		
-   .invoke [ <frag_ref_var> =] <function_name> (<actual_param>, <actual_param>...)
-
-where `<frag_ref_var>` is a transient variable which holds a reference to the
-fragment. `<function_name>` is the name of the function being invoked.
-`<actual_param>` is an actual parameter.
-
-The language define a set of predefined functions.
-
-==========================================  ==========================================
-Function Signature                          Description
-==========================================  ==========================================
-get_env_var(name: string)                   Get the value of an environmental variable
-put_env_var(name: string, value: string)    Set the value of an environmental variable
-shell_command(command: string)              Execute a shell command
-file_read(filename: string)                 Read text of a file
-file_write(filename: string, text: string)  Write test to a file
-string_to_integer(value: string)            Convert a string to an integer
-string_to_real(value: string)               Convert at string to a real
-integer_to_string(value: integer)           Convert an integer to a string
-real_to_string(value: real)                 Convert a real to a stirng
-boolean_to_string(value: boolean)           Convert a boolean to a string
-==========================================  ==========================================
-
-Fragment Attributes
--------------------
-
-Attributes may be defined for a fragment when the fragment is formed inside the
-function. The attribute body is always defined. After the invocation of a
-function, the body attribute contains the literal text lines within the function.
-
-Additional attributes are defined by declaring transient variables inside the
-function of the form:
-
-.. code-block:: pyrsl
-
-   .assign attr_<attribute_name> = <expression>
-
-where `<attribute_name>` is the name of the attribute. The name of the attribute
-should be selected to convey meaning to the caller of the function.
-
-For example:
-
-.. code-block:: pyrsl
-
-   .function GetAttributeData
-       .param inst_ref p_attr
-       .assign attr_used = TRUE
-       .assign attr_type = ""
-       .if ( not p_attr.Used )
-           .assign attr_used = FALSE )     
-       .else
-           .assign attr_type = "${p_attr.CppImplementationType}"
-           // $(p_attr.Name}
-       .end if
-   .end function
-
-specifies a function, that when called, results in the variables `type`, `used`,
-and `body` being available on the call site through
-`<frag_reg_var>.<attribute_name>`:
-
-.. code-block:: pyrsl
-
-   .select many attrs from instances of O_ATTR
-   .for each attr in attrs
-       .invoke attribute_data = GetAttributeData(attr)
-       .if (attribute_data.used)
-           ${attribute_data.body}
-           ${attribute_data.type} ${attr.Name};
-       .end if
-   .end for
-
-.. note::
-   Be careful to make sure the `attr_<attribute_name>` variables are in scope
-   when the `end function` statement is reached. For example:
-
-   .. code-block:: pyrsl
-
-      .function GetNewValueForValue
-          .param integer p_value
-          .if (p_value < 100)
-              .assign attr_new_value = 22
-          .else
-              .assign attr_new_value = 2000
-          .end if
-      .end function
-
-   results in the transient variable `attr_new_value` **not** becoming a
-   fragment attribute since it falls out of scope with the `if` statement and is
-   therefore not on the stack when the `end function` statement is encountered.
-
-   A correct solution is:
-
-   .. code-block:: pyrsl
-
-      .function GetNewValueForValue
-          .param integer p_value
-          .assign attr_new_value = 0
-          .if (p_value < 100)
-              .assign attr_new_value = 22
-          .else
-              .assign attr_new_value = 2000
-          .end if
-      .end function
-
-File Control Statements
------------------------
-File control statements are used to produce files based on the text accumulated
-in the buffer when the statement is reached.
-
-Emitting Text
-^^^^^^^^^^^^^
-All literal text is buffered as it is encountered in the rules. To output the
-contents of the buffer to a file, use:
-
-.. code-block:: pyrsl
-		
-   .emit to file <file_name>
-
-where `<file_name>` the filename represeneted by a string. The `emit` statement
-also clears the buffer's contents.
-
-For example:
-
-.. code-block:: pyrsl
-		
-   .emit to file "/source_code/$_{ss_inst.name}/$_{class_inst.name}.cpp"
-
-results in a file being emitted in a directory based on the subsystem name with
-a filename based on the class name.
-
-If an emitted file already exists, then the contents of the new file are compared
-to the existing file. If the files are the same, then the existing file is left
-undisturbed, so that modification times are left in-tact. If the files are
-different, then the existing file is replaced with the newly generated file.
-
-To clear the contents of the buffer without emitting the contents to a file, use
-the following statement:
-
-.. code-block:: pyrsl
-
-   .clear
-
-Comments
-^^^^^^^^
-To add a comment in a rule file, use the following statement:
-
-.. code-block:: pyrsl
-
-   .comment <user_comment>
-
-or
-
-.. code-block:: pyrsl
-
-    .// <user_comment>
-
-At least one white space character must follow the .comment keyword. A white
-space character does not need to follow the `.//` keyword.
-
-All text from the comment keyword to the end of the line is ignored.
-
-Include
-^^^^^^^
-To include another rule file, use the following statement:
-
-.. code-block:: pyrsl
-
-   .include <file_name>
-
-where `<file_name>` is the filename represented by a string.
-
-When a file is included, a marker is placed on the stack and the interpreter
-begins interpretation on the first line of the included file. When all lines in
-the included file have been processed, all variables pushed on the stack since
-the include marker was pushed are considered out of scope (and therefore popped
-from the stack). The interpreter then resumes interpretation on the line
-following the `include` statement.
-
-Handling Errors and Printing Information
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-To print a message to stderr from a rule, use the following statement:
-
-.. code-block:: pyrsl
-
-   .print <error_message>
-
-where `<error_message>` is a string.
-
-To stop the interpreter with integer value <exit_status> , use the following:
-
-.. code-block:: pyrsl
-		
-   .exit <exit_status>
-
-where `<exit_status>` is an integer.
-
-Rvalues
--------
-An rvalue is a specification of a literal value or the specification of a
-variable.
-
-Literals as Rvalues
-^^^^^^^^^^^^^^^^^^^
-Literal values can be entered for the each of the core data types. The table
-below uses example specifications to illustrate how the literal values are
-specified for each.
+   Keywords and names are case **insensitive**. Names can be made up of any
+   alpha (a-z, A-Z) or numeric (0-9) characters or underscore (_) character. Names
+   cannot begin with a numeric character, and cannot conflict with keywords.
+
+Basic Constructs
+----------------
+The following sections describe basic language constructs that share similarities
+with other general purposed programming languages.
+
+Core Types
+^^^^^^^^^^
+The RSL language define five core types; *boolean*, *integer*, *real*, *string*,
+and *unique_id*. The *boolean* type is limited to two values (*true* and *false*),
+whereas the other core types are unbounded. In practice however, all types are
+bounded. The exact ranges depend on the implementation. Generally, integers are
+represented by signed 64bit integers, reals by 64bit floating point numbers,
+unique_ids by 128bit unsigned integers, and strings are bounded by the amount of
+available RAM.
+
+.. note:: There are additional types that are used to hold references to
+	  instances. These types are further explained in `Model Interactions`_.
+
+Literal Values
+^^^^^^^^^^^^^^
+Literal values can be entered for four of the core types. The table below
+exemplifies how these literal values are specified for each core type.
 
 ====================  ==============================
-Core Data Type        Literal Specification Examples
+Core Type             Examples (separated by ,)
 ====================  ==============================
 boolean               true, false
 integer               0, 256, -1
-real                  0.0, 256.44
+real                  0.0, -256.44
 string                "Hello world"
-inst_ref<Object>      N/A
-inst_ref_set<Object>  N/A
-frag_ref              N/A
 ====================  ==============================
 
-Quoted Strings
-^^^^^^^^^^^^^^
-Quoted strings get special handling in the rule language. Each quoted string
-is treated as a literal text line and is run through the variable substituter.
-For example:
+.. tip::
+   Values of the core type unique_id can be created by reading the global
+   information fragment attribute *unique_num*. See `Global Information
+   Fragment`_ for more information.
+
+Transient Variables
+^^^^^^^^^^^^^^^^^^^
+All transient variables are implicitly declared upon the first assignment.
+Assignments are expressed using the *assign* keyword as exemplified below:
 
 .. code-block:: pyrsl
 
-   .assign name = class_inst.Name
+   .assign My_Boolean = true
+   .assign My_Integer = 42
+   .assign My_Real    = 3.14
+   .assign My_String  = "Hello world!"
 
-and
+Any subsequent assignment simply re-assign the same variable. A re-assignment
+of a variable to a different type is not allowed. A stack execution model is
+assumed. Variables are pushed onto the stack as they are implicitly declared
+and are popped off the stack as they fall out of scope. Any variable implicitly
+declared inside of a block falls out of scope when the end of the block is
+encountered.
+
+Comments
+^^^^^^^^
+Comments can be entered using the *comment* statement as exemplified below:
 
 .. code-block:: pyrsl
-		
-   .assign name = "${class_inst.Name}"
-       
-are equivalent. Treating quoted strings as literal text adds flexibility in
-concisely specifying the string value. For example, the following shows
-substitution variables used in the `if` statement and `emit` statement:
+
+   .comment My comment
+
+A shorter variant inspired by C-like languages is also available:
 
 .. code-block:: pyrsl
-		
-   .select many class_set from instances of O_OBJ
-   .for each class_inst in class_set
-       .if ("${class_inst.descrip:PERSISTENCE}" == "TRUE")
-           // Persistent implementation for class `${class_inst.Name}'
-       .end if
-       .emit to file "$_{class_inst.key_lett}.cpp"
-   .end for    
 
-Since the quoted strings get run through the literal text substituter, use $$ to
-yield one $ character. In addition, use "" to yield one " character.
+    .//My other comment
 
-Variables as Rvalues
-^^^^^^^^^^^^^^^^^^^^
-Variables of the following types may be used as values:
+At least one whitespace character must follow the *comment* keyword. A
+whitespace character does not need to follow the shorter variant. 
 
-* `<transient_variable>` of type boolean, integer, real, or string
-
-* `<inst_ref_var>.<attribute>` where `<attribute>` is of type boolean, integer,
-  real, or string
-
-* `<frag_ref_var>.<attribute>` where `<attribute>` is of type boolean, integer,
-  real, or string.
-    
 Expressions
------------
-The rule language supports simple and compound expressions.
+^^^^^^^^^^^
+Variables and values can be combined into expressions using operators. There are
+three kinds of expressions; *unary*, *binary*, and *compound* expressions. The
+following sections present operators that are valid for core types.
 
-Simple Expressions
-^^^^^^^^^^^^^^^^^^
-Simple expressions are single unary or binary operations:
+.. note:: There are additional operators available that are not valid for core
+	  types These operators are further explained in `Instances and Sets`_
+	  and `Iterating Sets of Instances`_
 
-.. code-block:: none
-		
-   (<unary_operator> <operand>)
-   (<operand> <binary_operator> <operand>)
+**Unary expressions**
 
-where `<unary_operator>` is a unary operator and `<binary_operator>` is a
-binary operator. `<operand>` is the operand, e.g., a literal value, class
-attribute, or transient variable.
+Unary expressions consist of one operator and one operand. Below is a table of
+unary operators that are valid for core types.
 
-**Examples**
+==============  =============  ================
+Unary Operator  Core Type(s)   Description
+==============  =============  ================
+*not*           any            Logical negation
+*-*             integer, real  Numeric negation
+==============  =============  ================
 
-.. code-block:: pyrsl
-
-   .if (empty class_inst)
-       .assign number_selected = cardinality class_set
-   .end if
-   .if (class_inst.Numb >= 100)
-       .assign attr_decl = "${attr_inst.Type} $cr{attr_inst.name};"
-   .end if
-
-Compound Expressions
-^^^^^^^^^^^^^^^^^^^^
-Simple expressions can be combined to form a compound expressions:
-
-.. code-block:: none
-
-    (<unary_operator> <expression>)
-    (<expression> <binary_operator> <operand>)
-    (<operand> <binary_operator> <expression>)
-    (<expression> <binary_operator> <expression>)
-
-where `<unary_operator>` is a unary operator, `<binary_operator>` is a binary
-operator. `<operand>` is an operand, e.g, a literal value, class attribute, or
-transient variable. `<expression>` is an either a simple or compound expression.
-
-Note the required use of the and operator to delimit expressions in a compound
-expression. This takes away the issues surrounding precedence and associativity
-of operators.
-
-**Examples**
+The following example demonstrates how to perform a numeric negation on an
+integer:
 
 .. code-block:: pyrsl
-		
-   .invoke allocation_strategy = GetAllocationStrategyForClass( class )
-   .if ( ( allocation_strategy.FixedBlock ) AND ( class.IsLocal ) )
-       .select any fixed_block_unit from instances of MA_FBU where ( ( "${selected.Type}" == "LocalAllocationType1") OR ("${selected.Type}" == "LocalAllocationType2"))
-   .end if
 
-Operations
-^^^^^^^^^^
-The following tables define the core unary, binary, and set operators.
+    .assign Positive_Integer = 42
+    .assign Negative_Integer = -Positive_Integer
 
-==============  ========================================================================
-Unary Operator  Description
-==============  ========================================================================
-`not`           Logical Negation
-`empty`         `inst_ref<Object>` or `inst_ref_set<Object>` test for empty set
-`not_empty`     `inst_ref<Object>` or `inst_ref_set<Object>` test for not empty set
-`first`         Test if the `inst_ref_set<Object>` cursor is on the first in the set
-`not_first`     Test if the `inst_ref_set<Object>` cursor is not on the first in the set
-`last`          Test if the `inst_ref_set<Object>` cursor is on the last in the set
-`not_last`      Test if the `inst_ref_set<Object>` cursor is not on the last in the set
-`cardinality`   Count the number of items in `inst_ref_set<Object>`
-==============  ========================================================================
+**Binary expressions**
+
+Binary expressions consist of one operator and two operand. Below is a table of
+binary operators valid for core types.
 
 ===============	 ==============================================================
-Binary Operator
+Binary Operator  Description
 ===============	 ==============================================================
 `and`            logical AND
 `or`             logical inclusive OR
@@ -974,102 +143,771 @@ Binary Operator
 `>`              greater-than
 ===============	 ==============================================================
 
-
-Substitution Variables
-----------------------
-Literal text lines can contain substitution variables which allow you to pull
-information out of the mode. and place it in a buffer so it can be emitted to
-text files. A substitution variable takes on the following form:
-
+The following example demonstrates how to perform a numeric addition of two
+integers, concatenation of two strings, and a greater-than comparison between
+two integers:
 
 .. code-block:: pyrsl
 
-   $<format>{<inst_ref_var>.<attribute>:<parse_keyword>}
+    .assign My_Addition = 42 + 5
+    .assign My_Concatination = "Hello " + "world"
+    .assign My_Comparison = 5 > My_Addition
+    
 
-or
 
+**Compound expressions**
 
-.. code-block:: pyrsl
-
-   $<format>{<inst_chain>.<attribute>:<parse_keyword>}
-
-or
-
-.. code-block:: pyrsl
-
-   $<format>{<frag_ref_var>.<attribute>}
-
-or
+Compound expressions consist of several operators and operands that are combined
+using matching parentheses that determine precedence. The following example
+demonstrate a series of string concatenations.
 
 .. code-block:: pyrsl
 
-   $<format>{<transient_var>}
+    .assign My_String = ("Hello" + (" " + "world")
 
-where
+In the example above, *" "* and *"world"* are concatenated first. Then, *"Hello"*
+and *" world"* are concatenated.
 
-`<format>` are string substitution format characters that specify how to format
-the string.
+If, Elif and Else
+^^^^^^^^^^^^^^^^^
+The keywords *if*, *elif* and *else* can be combined to form a statement that
+control execution of other statements based on the outcome of boolean
+expressions. The following example demonstrate one way on how the three keywords
+may be combined.
 
-`<inst_ref_var>` is a reference to an instance in the model.
+.. code-block:: pyrsl
 
-`<inst_chain>` is an instance chain which results in one instance.
+    .if (My_Control_Variable > 0)
+        .// Do something
+    .elif (My_Control_Variable < 0)
+        .// Do something else
+    .else
+        .// Do nothing
+    .end if
 
-`<frag_ref_var>` is a reference to a fragment which has been returned from a
-function.
+.. hint:: 
+   Any number of *elif* constructs may be present in the same statement, and the
+   *else* construct is optional.
 
-`<attribute>` is an attribute of the class referred to by `<inst_ref_var>` or
-attribute of the fragment referred to by `<frag_ref_var>`.
+While Loops
+^^^^^^^^^^^
+The *while* statement provides a general purpose iteration mechanism. The
+following example demonstrates how to compute the sum of all integers between
+one and ten.
 
-`<parse_keyword>` represents a keyword which is parsed to obtain data from the
-string on which the substitution occurs. See `Parse Keyword`_.
+.. code-block:: pyrsl
 
-`<transient_var>` is a transient variable.
+    .assign Sum = 0
+    .assign Counter = 0
+    .while (Counter < 10)
+        .assign Counter = Counter + 1
+        .assign Sum = Sum + Counter
+    .end while
 
-**Examples**
+The *break while* statement provide an alternative technique to end iterations.
+When executed, the *break while* statement causes control to be transferred to
+the statement after the *end while* statement corresponding to the innermost
+executing *while* loop. The following example performs the same computation as
+the previous example presented above, but using the *break while* statement to
+halt iteration.
+   
+.. code-block:: pyrsl
+
+    .assign Sum = 0
+    .assign Counter = 0
+    .while (true)
+        .if(Counter < 10
+            .assign Counter = Counter + 1
+            .assign Sum = Sum + Counter
+	.else
+	    .break while
+	.end if
+    .end while
+
+Quoted Strings
+^^^^^^^^^^^^^^
+Quoted strings get special handling in the language. Each quoted string is
+treated as a literal text line and is run through a variable substituter
+discussed in `Substitution Variables`_. This allows simple string concatenation
+without using binary expressions. The following example concatenates the
+variables *x* and *y* with a whitespace between them.
 
 .. code-block:: pyrsl
 		
-   ${class_inst.Name}
-   $_{ss_inst.Name}
-   ${dt_inst.Descrip:TYPE}
-   ${attr_inst->O_OBJ[R102].Key_Lett}
-   $_{rattr_inst->O_BATTR[R113]->O_ATTR[R106].Name}
+    .assign x = "Hello"
+    .assign y = "world"
+    .assign s = "${x} ${y}"
 
-Substitution Variable Format Characters
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-The `<format>` characters are needed to allow the legal names in models to be
-transformed into legal names in the generated file. For example, spaces are
-allowed in class names in models but are not allowed in class names in C++. If
-the class name from the model is going to be used as the class name in a
-generated C++ file, then the class name must be transformed into a legal C++
-name.
+.. note:: Since quoted strings get run through a literal text substituter, use
+	  $$ to yield one $ character. In addition, use "" to yield one "
+	  character. See `Substitution Variables`_ for more information.
+    
+Terminal Logging
+^^^^^^^^^^^^^^^^
+The *print* statement can be used to print string literals to the standard
+output.
 
-================  ================================================================
-Format Character  Format Action
-================  ================================================================
-u                 Upper - make all characters upper case
-c                 Capitalize - make the first character of each word capitalized
-                  and all other characters of a word lower case
-l                 Lower - make all characters lower case
-_                 Underscore - change all white space characters to underscore
-                  characters
-r                 Remove - remove all white space. **Note**: The removal of
-                  white space occurs after the capitalization has taken place in
-		  the case of the CR or RC combination.
-o                 cOrba - make the first word all lower case, make the first
-                  character of each following word capitalized and all other
-		  characters of the words lower case. Characters other than a-Z
-		  a-z 0-9 are ignored.
-t                 Translate - default user supplied translate format function.
-                  No translation is made.
-tnosplat          Built-in translate format function that removes \*'s (splats).
-                  This can be used to remove the \* character found on polymorphic
-		  events expressed in the BridgePoint metamodel.
-t<switch>         User-defined translate format function defined by `<switch>`.
-                  The user may define any number of custom translation formatters.
-================  ================================================================
+.. code-block:: pyrsl
 
-**Examples**
+    .print "Hello world"
+
+Since the print statement only accept string literals, variables must be quoted
+before being printed. The following example prints the number 42 to standard
+output.
+
+.. code-block:: pyrsl
+
+    .assign My_Integer = 42
+    .print "${My_Integer}"
+
+Program Termination
+^^^^^^^^^^^^^^^^^^^
+The *exit* statement can be used to terminate a program. Optionally, an integer
+based exit code may also be provided. For example:
+
+.. code-block:: pyrsl
+
+    .exit 1
+
+Model Interactions
+------------------
+The following sections describe language features that allow interaction with an
+xtUML model. Below is a class diagram that examples in the following sections
+use.
+
+.. code-block:: none
+		
+    -----------------                                ----------------------
+   | Class     {CLS} |                              | Other Class {O_CLS } | prev
+   |------------------ *            R1        0.. 1 |----------------------|------
+   | Number: integer |------------------------------| Name: string         | 0..1 |
+    -----------------                |               ----------------------       |
+                                     |                           0..1 | next   R2 |
+                           ---------------------                       -----------
+                          | Assoc Class {A_CLS} |
+                          |---------------------|
+			  | My_Boolean: boolean |
+                           ---------------------
+
+There are three classes in the example above; *Class*, *Other Class*, and *Assoc
+Class*. The text in the upper right corner within curly brackets on each class
+is called a *key letter* and is used as the class identifier in RSL. The three
+classes are associated to each other via the association *R1*. Furthermore, there
+is a reflexive association *R2* on *Other Class*. Reflexive associations require
+a phrase to distinguish the directions of the *links* (*next* and *prev* in the
+example above). At the end of each link is the *cardinality*. The cardinality
+specify how many instances may be connected to a link.
+
+The *Assoc Class* is a special kind of class called an association class. Such
+classes are used to add attributes to an association. The cardinality of links
+to association classes are not explicitly stated, they are implicitly assumed to
+be exactly one.
+
+.. note::
+   The BridgePoint editor allow its users to specify links to association classes
+   with the cardinality 1..*. Such association classes are rarely used, and
+   should be avoided. The same semantics may be obtained by introducing a fourth
+   class associated with the association class.
+
+Instances and Sets
+^^^^^^^^^^^^^^^^^^
+The introduction of instances and links into the language also brings new types.
+Specifically, the types *inst_ref* and *inst_ref_set*.
+
+The type *inst_ref* acts as a reference to an instance of a class in the model,
+and is used to access instance attributes. The following table lists unary
+operators that are valid for transient variables of the type *inst_ref*.
+
++----------------+-------------------------------------------------------------+
+| Unary Operator | Description                                                 |
++================+=============================================================+
+| empty          | Check if the *inst_ref* operand refers to an instance       |
++----------------+-------------------------------------------------------------+
+| not_empty      | Logical negation of the *empty* operator                    |
++----------------+----------------------+--------------------------------------+
+| cardinality    | Count the number of instances the *inst_ref* operand refers |
+|                | to (zero or one)                                            |
++----------------+-------------------------------------------------------------+
+
+The type *inst_ref_set* is used to holds references to several instances. The
+following table lists unary operators that are valid for transient variables of
+the type *inst_ref_set*.
+
++----------------+-------------------------------------------------------------+
+| Unary Operator | Description                                                 |
++================+=============================================================+
+| empty          | Check if the *inst_ref_set* operand contains any instance   |
+|                | reference                                                   |
++----------------+-------------------------------------------------------------+
+| not_empty      | Logical negation of the *empty* operator                    |
++----------------+----------------------+--------------------------------------+
+| cardinality    | Count the number of items the *inst_ref_set* operand refers |
+|                | to                                                          |
++----------------+-------------------------------------------------------------+
+
+There are also a number of binary operations that accept a mix of *inst_ref*
+and *inst_ref_set* operands. When any of the operands are of the type *inst_ref*,
+they are interpreted as an *inst_ref_set* that contains the refered to instance.
+
++-----------------+------------------------------------------------------------+
+| Binary Operator | Description                                                |
++=================+============================================================+
+| `|`             | Returns the union of both operands                         |
++-----------------+------------------------------------------------------------+
+| &               | Returns the intersection between both operand              |
++-----------------+------------------------------------------------------------+
+| `-`             | Returns a set of instance references that are in the left  |
+|                 | operand, but not in the right operand                      |
++-----------------+------------------------------------------------------------+
+| ==              | Check if the intersection between both operands is empty   |
++-----------------+------------------------------------------------------------+
+| !=              | Logical negation of ==                                     |
++-----------------+------------------------------------------------------------+
+
+.. note:: There are additional unary operators for sets that are only valid
+	  during set iteration. See `Iterating Sets of Instances`_ for more
+	  information.
+
+Selecting Instances
+^^^^^^^^^^^^^^^^^^^
+Instances may be selected from the model by using the key letter of the class.
+The following example demonstrates how to select any arbitrary instance of the
+class with the key letter *CLS*, and store a reference to the instance in a
+variable named *inst*.
+
+.. code-block:: pyrsl
+
+    .select any inst from instances of CLS
+
+It is also possible to select several instances of some class using the *many*
+keyword instead of *any*. The following example selects all instances of *CLS*
+and stores an instance set reference in a variable named *inst_set*.
+
+.. code-block:: pyrsl
+
+    .select many inst_set from instances of CLS
+
+Accessing Class Attributes
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+Class attributes may be accessed using the *dot* operator (.). The following
+example selects an arbitrary instance of *CLS*, and increment its *Number*
+attribute by one.
+
+.. code-block:: pyrsl
+
+    .select any inst from instances of CLS
+    .assign inst.Number = inst.Number + 1
+
+Iterating Sets of Instances
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The *for each* statement is used to iterate sets of instances. The following
+example computes the sum of all *CLS.Number* attributes.
+
+.. code-block:: pyrsl
+
+    .assign Sum = 0
+    .select many inst_set from instances of CLS
+    .for each inst in inst_set
+        .assign Sum = Sum + inst.Number
+    .end for
+
+During iteration, the following unary operators are supported.
+
+==============  ==============================================================
+Unary Operator  Description
+==============  ==============================================================
+first           Check if the *inst_ref_set* operand is on its first iteration
+not_first       Logical negation of *first*
+last            Check if the *inst_ref_set* operand is on its last iteration
+not_last        Logical negation of *last*
+==============  ==============================================================
+
+The following example demonstrates how to generate a comma-seperated list of
+*O_CLS* names.
+
+.. code-block:: pyrsl
+
+    .select many inst_set from instances of OCLS
+    .assign s = ""
+    .for each inst in inst_set
+        .assign s = s + inst.Name
+        .if (not_last inst_set)
+	    .assign s = s = ", "
+	.end if
+    .end for
+
+    
+Filtering Selections
+^^^^^^^^^^^^^^^^^^^^
+Instance selections can be filtered using the *where* keyword. The following
+example demonstrates how to select instances of *CLS* whose attribute *Number*
+is larger than 100.
+
+.. code-block:: pyrsl
+
+    .select many inst_set from instances of CLS where (selected.Number > 100)
+
+Navigating Instances
+^^^^^^^^^^^^^^^^^^^^
+Associations between classes may be navigated using the *related by* keyword.
+The *related by* form of the *select* statement uses an instance chain to specify
+a path through the related instances. An instance chain is simply a sequence of
+class key letter/association number pairs which specify the path from the source
+instance to the destination class. The result of a select is zero, one or more
+instances of the last class of the chain.
+
+The following example selects an arbitrary instance of *CLS* and navigates
+across *R1* to *O_CLS* via *A_CLS*.
+
+.. code-block:: pyrsl
+
+    .select any cls from instance of CLS
+    .select one other_cls related by cls->A_CLS[R1]->O_CLS[R1]
+
+.. tip::
+   The previous navigation through the association *R1* was in two steps. First
+   to the associative-link class and then to the other side of the association.
+   Recent versions of the language allow navigation across association classes
+   without explicitly going via the association class, e.g.
+
+   .. code-block:: pyrsl
+
+       .select any cls from instance of CLS
+       .select one other_cls related by cls->O_CLS[R1]
+   
+To navigate across reflexive association, a phrase indicating the direction must
+be provided. For example:
+
+.. code-block:: pyrsl
+
+    .select any other_cls from instance of O_CLS
+    .select one next related by other_cls->O_CLS[R2.'next']
+
+.. warning::
+   In recent versions of the language, the phrases you specify in reflexive
+   navigations has been swapped to be in line with the Object Action Language
+   (OAL) used in BridgePoint.
+
+The handle from which a navigation starts in may be an instance reference set.
+In such cases, each instance reference in the set is navigated automatically.
+The following example selects all *CLS* instances that are connected to a
+*O_CLS* across *R1*.
+
+.. code-block:: pyrsl
+
+    .select many assoc_set from instance of A_CLS
+    .select many cls_set related by assoc_set->CLS[R1]
+
+Creating Instances
+^^^^^^^^^^^^^^^^^^
+The *create object instance* statement is used to create new instances of a
+class. The following example creates an instance of *CLS* and assigns its
+*Number* attribute to five.
+
+.. code-block:: pyrsl
+
+    .create object instance cls of CLS
+    .assign cls.Number = 5
+
+Connecting Instances
+^^^^^^^^^^^^^^^^^^^^
+Instances can be connected and disconnected across associations using the
+*relate* and *unrelate* statements. The following example creates two instances
+of *O_CLS* and connects them across the reflexive association *R2*.
+
+.. code-block:: pyrsl
+
+    .create object instance inst1 of O_CLS
+    .create object instance inst2 of O_CLS
+    .relate inst1 to inst2 across R1.'other'
+
+The following example disconnects them again.
+
+.. code-block:: pyrsl
+
+    .unrelate inst1 to inst2 across R1.'other'
+
+Recent versions of the language allow connecting and disconnecting association
+classes in one single control statement. The following example creates one
+instance of *CLS*, *O_CLS* and *A_CLS* and then connects them to each other.
+
+.. code-block:: pyrsl
+
+    .create object instance cls of CLS
+    .create object instance other_cls of O_CLS
+    .create object instance assoc_cls of A_CLS
+
+    .relate cls to other_cls across R1 using assoc_cls
+
+The following example disconnects them again, and deletes the association
+instance.
+
+.. code-block:: pyrsl
+
+    .unrelate cls from other_cls across R1 using assoc_cls
+    .delete object instance assoc_cls
+
+.. note:: Disconnected association classes violates model integrity and must
+	  be deleted manually.
+   
+Deleting Instances
+^^^^^^^^^^^^^^^^^^
+The *delete object instance* statement is used to delete instances from the
+model. The following example selects an arbitrary instance of *CLS* and deletes
+it.
+
+.. code-block:: pyrsl
+
+    .select any inst from instances of CLS
+    .delete object instance inst
+
+When an instance is deleted, the instance is removed from the class extent, and
+is unrelated from existing associations. Note that it is up to the user to
+ensure model integrity, e.g. that the data is not violating association
+constraints.
+
+.. warning::
+   The *delete* statement **only** remove instances from the model, transient
+   references may still refer to them. Depending on the language implementation,
+   accessing such references may result in undefined behaviour. 
+
+Functions and Fragments
+-----------------------
+Functions allow reuse of blocks of control statements. All functions return a
+*fragment*. A fragment can be thought of as a pseudo-instance that has at least
+one, and possibly more attributes containing data specified by the function.
+The intent of functions is to use them to build fragments which can be organized
+into larger fragments and eventually used to build a whole generated file.
+
+.. note::
+   All functions have their own literal buffer and cannot modify any other
+   buffer when they operate in buffer mode.
+
+Defining Functions
+^^^^^^^^^^^^^^^^^^
+Functions are defined using the *function* statements, and parameters are
+defined using the *param* statement. In addition to the core types, three
+additional types can be used by parameters; *inst_ref*, *inst_ref_set* and
+*frag_ref*. The following example define a function with one parameter of each
+type.
+
+.. code-block:: pyrsl
+
+   .function
+       .param boolean      My_Boolean
+       .param integer      My_Integer
+       .param real         My_Real
+       .param unique_id    My_Unique_Id
+       .param inst_ref     My_Instance
+       .param inst_ref_set My_Set
+       .param frag_ref     My_Fragment
+   .end function
+
+
+Defining Fragment Attributes
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Attributes may be defined for a fragment when the fragment is formed inside the
+function. The attribute *body* is always defined. After the invocation of a
+function, the *body* attribute contains the literal text buffered within the
+function while operating in buffer mode.
+
+Additional attributes are defined by declaring transient variables inside the
+function with a name that starts with *attr_*. The following example defines a
+function name *Func* that return a fragment with two attributes; *body* and
+*data*.
+
+.. code-block:: pyrsl
+
+   .function Func
+       .assign attr_data = "My Data"
+   .end function
+   
+.. note::
+   Be careful to make sure the *attr_* variables are in scope when the *end
+   function* statement is reached. Consider the following example.
+
+   .. code-block:: pyrsl
+
+      .function Func
+          .param integer p_value
+          .if (p_value < 100)
+              .assign attr_data = "Some Data"
+          .else
+              .assign attr_data = "Some other data"
+          .end if
+      .end function
+
+   The example above results in the transient variable *attr_data* **not**
+   becoming a fragment attribute since it falls out of scope with the *if*
+   statement, and is therefore not on the stack when the *end function* statement
+   is encountered.
+
+   A correct solution is the following:
+
+   .. code-block:: pyrsl
+
+      .function Func
+          .param integer p_value
+	  .assign attr_data = ""
+          .if (p_value < 100)
+              .assign attr_data = "Some Data"
+          .else
+              .assign attr_data = "Some other data"
+          .end if
+      .end function
+      
+Invoking Functions
+^^^^^^^^^^^^^^^^^^
+Functions are invoked using the *invoke* statement. The following example
+invokes a function named *Func* that takes an integer as parameter, then stores
+the returned fragment into a transient variable named *Frag*.
+
+.. code-block:: pyrsl
+		
+   .invoke Frag = Func(4)
+
+.. tip:: The returning fragment may be omitted from the syntax as exemplified
+	 below.
+	 
+	 .. code-block:: pyrsl
+		
+	     .invoke Func(4)
+
+	 This may be useful when functions only modify the global scope, e.g.
+	 when modifying instances or emitting files to disk.
+   
+Available Builtin Functions
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The language define a set of builtin functions. The following two functions can
+be used to read and modify environmental variables in the operating system.
+
+.. code-block:: pyrsl
+
+   .function get_env_var
+       .param string name
+   .end function
+
+   .function put_env_var
+       .param string name
+       .param string value
+   .end function
+
+The following function can be used to invoke the operating system shell
+with an arbitrary command.
+
+.. code-block:: pyrsl
+
+   .function shell_command
+       .param string cmd
+   .end function
+
+The following two functions can be used to read and write files on disk.
+
+.. code-block:: pyrsl
+
+   .function file_read
+       .param string filename
+   .end function
+   
+   .function file_write
+       .param string filename
+       .param string text
+   .end function
+
+The following functions can be used to convert values of various core types.
+
+.. code-block:: pyrsl
+
+   .function string_to_integer
+       .param string value
+   .end function
+   
+   .function string_to_real
+       .param string value
+   .end function
+
+   .function integer_to_string
+       .param integer value
+   .end function
+   
+   .function real_to_string
+       .param real value
+   .end function
+   
+   .function boolean_to_string
+       .param boolean value
+   .end function
+
+Global Information Fragment
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+There is a special fragment named *info* that is always accessible.
+The word *info* is thus a keyword and cannot be used to name a transient
+variable.
+
+The following table lists all attributes accessible from the *info* fragment.
+
++----------------------+-------------------------------------------------------+
+| Attribute Name       | Description                                           |
++======================+=======================================================+
+| date                 | current date and timestamp                            |
++----------------------+-------------------------------------------------------+
+| user_id              | user id of the using running the program              |
++----------------------+-------------------------------------------------------+
+| arch_file_name       | basename of the rule file currently being executed    |
++----------------------+-------------------------------------------------------+
+| arch_file_line       | current line number of the executing file             |
++----------------------+-------------------------------------------------------+
+| arch_file_path       | full path to the executing file                       |
++----------------------+-------------------------------------------------------+
+| arch_folder_path     | full path to the folder containing the executing file |
++----------------------+-------------------------------------------------------+
+| interpreter_version  | the name and version of the RSL interpreter           |
++----------------------+-------------------------------------------------------+
+| interpreter_platform | the name of that platform on which the interpreter is |
+|                      | running                                               |
++----------------------+-------------------------------------------------------+
+| unique_num           | returns a unique_id each time it is accessed. For     |
+|                      | example the first time it is referenced, it may       |
+|                      | produce 1, the next time 2, the next time 3, and so   |
+|                      | on. The order of the  unique numbers generated is     |
+|                      | guaranteed to be exactly the same from one invocation |
+|                      | of the program to the next.                           |
++----------------------+-------------------------------------------------------+
+
+The following example creates a string that contains the current date and time.
+
+.. code-block:: pyrsl
+
+   .assign s = "Current date and time is: " + info.date
+
+Including Files
+---------------
+The *include* statement can be used to include files. The following example
+includes a file named *my_file.inc*.
+
+.. code-block:: pyrsl
+
+   .include "my_file.inc"
+
+When a file is included, a marker is placed on the stack and the execution
+continues on the first line of the included file. When all lines in the included
+file have been processed, all variables pushed onto the stack since the include
+marker was pushed are considered out of scope (and therefore popped from the
+stack). The execution then resumes on the line following the *include*
+statement.
+
+.. note:: Transient variables that are accessible just before a file is included
+	  are also accessible from the within included file.
+
+Emitting Buffered Text
+----------------------
+The *emit to file* statement can be used to output buffered text to disk.
+The following example emits the buffer to a file named *emit_data.txt* into a
+folder named *data* located in the current working directory.
+
+.. code-block:: pyrsl
+		
+   .emit to file "data/emit_data.txt"
+
+The *emit* statement also clears the buffer's contents.
+
+If an emitted file already exists, the contents of the new file are compared
+to the existing file. If the files are the same, then the existing file is left
+undisturbed, so that modification times are left intact. If the files are
+different, the existing file is replaced with the newly generated file.
+
+.. note:: Folders leading up to the filename are created automatically.
+
+To clear the contents of the buffer without emitting the contents to a file, the
+*clear* statement can be used as exemplified below.
+
+.. code-block:: pyrsl
+
+   .clear
+
+Buffer Mode
+-----------
+The following sections describe how the language behave in the buffer mode.
+Specifically, how to access variables defined in the control mode, how to
+transform strings using formatters and parse keywords, and how to escape
+special characters.
+
+Substitution Variables
+^^^^^^^^^^^^^^^^^^^^^^
+Literal text lines can contain substitution variables which allow you to access
+variables defined in the control mode and place its content in a buffer so it
+can be emitted to text files. The following example define a transient variable
+named *Data* in the control mode, and puts its value into the buffer surrounded.
+by the html tag *div*.
+
+.. code-block:: pyrsl
+
+    .assign Data = "Some text"
+    <div>${Data}</div>
+
+When emitted to a file, the above example would produce the following output.
+
+.. code-block:: html
+
+   <div>Some text</div>
+
+Parse Keywords
+^^^^^^^^^^^^^^
+A parse keyword is a piece of text placed in a string-based variable. Text that
+follows the parse keyword, up to the next line break character, can be extracted.
+
+.. code-block:: pyrsl
+
+    .assign Data = "VALUE: Hello world"
+    ${Data:VALUE}
+
+The example above produce the literal text *Hello world*.
+
+Transforming Substitution Variables
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Values held by a substitution variable can be transformed by a number of pre-
+defined format characters, e.g. converting all characters to upper-cased
+letters (the character *u*), or replacing whitespaces with underscore (using
+the underscore character).
+
+.. code-block:: pyrsl
+
+    .assign Data = "Some text"
+    <div>$u_{Data}</div>
+
+When the example above is executed, the following literal text is produced.
+
+.. code-block:: html
+
+   <div>SOME_TEXT</div>
+
+The table below list all pre-defined format characters available in the language.
+
++------------------+-----------------------------------------------------------+
+| Format Character | Transformation Function                                   |
++==================+===========================================================+
+| u                | Upper - make all characters upper case                    |
++------------------+-----------------------------------------------------------+
+| c                | Capitalize - make the first character of each word        |
+|                  | capitalized and all other characters of a word lowercase  |
++------------------+-----------------------------------------------------------+
+| l                | Lower - make all characters lower case                    |
++------------------+-----------------------------------------------------------+
+| _                | Underscore - change all whitespace characters to          |
+|                  | underscore characters                                     |
++------------------+-----------------------------------------------------------+
+| r                | Remove - remove all whitespace. **Note**: The removal of  |
+|                  | whitespace occurs after the capitalization has taken      |
+|                  | place in the case of the CR or RC combination.            |
++------------------+-----------------------------------------------------------+
+| o                | cOrba - make the first word all lower case, make the      |
+|                  | first character of each following word capitalized and    |
+|                  | all other characters of the words lower case. Characters  |
+|                  | other than a-Z a-z 0-9 are ignored.                       |
++------------------+-----------------------------------------------------------+
+
+The following table lists example input and output for various combinations of
+pre-defined format characters.
 
 ====================  ===========  ==============
 Input                 Format       Output
@@ -1084,27 +922,19 @@ Input                 Format       Output
 `ExamplE TExt`        `l_`         `example_text`
 `ExamplE TExt`        `lr`         `exampletext`
 `ExamplE@34 TExt`     `o`          `example34Text`
-`* ExamplE TExt *`    `_tnosplat`  `Example_Text`
 ====================  ===========  ==============
 
-Translate Format Character
-^^^^^^^^^^^^^^^^^^^^^^^^^^
-The $t format character allows the user to execute custom string transformations
-hat are not supplied by the interpreter. For example, most computer languages
-only allow ASCII to be used for program source text; if a model contains
-(non-ASCII) international characters, a user-supplied translate function could
-be added to change these strings to an ASCII string that can be used by the
-language compiler.
+Defining Custom Format Characters
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+It is possible for a user to define its own custom format characters. These
+format characters must start with the letter *t*. When using multiple format
+characters at the same time, the user-defined format character must be specified
+last. User-defined format characters are applied before any other pre-defined
+format characters (i.e., $ut{...} applies *t* first, then *u*). The default
+transformation function when nothing is supplied by the user leaves the string
+unchanged.
 
-When specifying multiple `<format>` characters, the $t character must be the
-last. All characters between the `t` and the `{` are assumed to be part of the
-`<switch>` used by the $t format. The $t substitution is applied before any
-other substitution (i.e., $ut{...} applies $t first, then $u ). The default
-translate function when nothing is supplied by the user returns the string
-unchanged. The supplied translate function also ignores all `<switch>` 's except
-nosplat.
-
-The following example demonstrate how this may be acchived in pyrsl:
+The following example demonstrate how to define a new format characters in pyrsl.
 
 .. code-block:: python
 
@@ -1126,102 +956,51 @@ The following example demonstrate how this may be acchived in pyrsl:
 
        return s[first_index:last_index]
 
-
    print('Running my custom version of gen_erate')
    rc = gen_erate.main()
    sys.exit(rc)
 
-The following example demonstrate how to use this new translation function
+The following example demonstrate how to use the format character defined above.
 
 .. code-block:: pyrsl
 
    .assign s = "'hello world'"
-   .print "$trmquot{s}"
+   $trmquot{s}
 
-Parse Keyword
-^^^^^^^^^^^^^
-A parse keyword is a piece of text placed in a string attribute of a class (such
-as a description) in the model. Rules may gain access to the string that follows
-the parse keyword, up to the next newline character, by using substitution
-variables of the following type:
+When the example above is executed, the value of *s* is transformed into *hello
+world*.
 
-.. code-block:: pyrsl
+Escaping Special Characters
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+A literal text line with the dot dot character sequence (..) as the first
+non-whitespace characters results in the dot character being emitted. A dot
+character anywhere else in the literal text line results in a dot character
+being emitted (i.e. no special treatment).
 
-   $format{<inst_ref_var>.<attribute>:<parse-keyword>}
+The dollar character ($) is used by the buffer mode to access variables defined
+in the control mode. Consequently, to stage a dollar character onto the buffer,
+the character sequence $$ shall be used.
 
-.. code-block:: pyrsl
+Newline characters at the end of a line of literal text are passed through to
+the emitted output. If you do not want a newline at the end of an emitted line
+(presumably due to control statement constraints), then place a backslash
+character (\\) as the last character of the literal text line. The `\\\\`
+character sequence as the last two characters of the literal text line results
+in one backslash character and one newline character as the last characters of
+an emitted line. The `\\\\\\` character sequence as the last three characters of
+a line of literal text results in one backslash character as the last character
+of an emitted line with no newline character.
 
-   $format{<inst_chain>.<attribute>:<parse-keyword>}
+The following table summerize the escaping rules presented above.
 
-For example, if an attribute description contains the following text and two
-parse keywords:
-
-.. code-block:: none
-
-   This attribute captures the name of the quick brown fox who jumped over the
-   lazy brown dog.
-   
-      TYPE: String
-      LENGTH: 64
-
-the data after TYPE: can be assigned to attr_type by using the following
-substitution:
-
-.. code-block:: pyrsl
-
-   .assign attr_type = "${attr_inst.Descrip:TYPE}"
-
-The data after LENGTH: can be obtained with the following substitution:
-
-.. code-block:: pyrsl
-
-   .assign attr_length = ${attr_inst.Descrip:LENGTH}
-
-.. note:: The above examples explicitly place architectural information into the
-	  application model. This has ramifications on the reusability of the
-	  models across different application-independent system architectures.
-	  Use with care!
-
-Information Substitution Variables
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-There are some special substitution variables available which can be used
-anywhere:
-
-.. code-block:: pyrsl
-
-   ${info.date}
-   ${info.user_id}
-   ${info.arch_file_name}
-   ${info.arch_file_line}
-   ${info.interpreter_version}
-   ${info.interpreter_platform}
-   ${info.unique_num}
-
-The word info is a keyword and cannot be used as a transient variable name.
-The first six are commonly used for information placed in the headers of
-generated files. The last is used to produce unique variable names within the
-generated code.
-
-`${info.date}` returns the current date and timestamp.
-
-`${info.user_id}` returns the user id of the user running pt_gen_file .
-
-`${info.arch_file_name}` returns the name of the rule file currently being
-executed.
-
-`${info.arch_file_line}` returns the current line number in the rule file.
-
-`${info.interpreter_version}` returns the version of pt_gen_file .
-
-`${info.interpreter_platform}` returns the platform on which pt_gen_file is
-running.
-
-`${info.unique_num}` returns a unique integer each time it is referenced. For
-example, the first time it is referenced, it may produce 1, the next time 2,
-the next time 3, and so on. The order of the unique numbers generated is
-guaranteed to be exactly the same from one invocation of the interpret to the
-next.
-
-
-
-
++-------------------------+----------------------+-------------------------+
+| Character               | Position             | To Generate at Position |
++=========================+======================+=========================+
+| .                       | First non-whitespace | ..                      |
++-------------------------+----------------------+-------------------------+
+| $                       | Any                  | $$                      |
++-------------------------+----------------------+-------------------------+
+| `\\` (with new line)    | Last                 | `\\\\`                  |
++-------------------------+----------------------+-------------------------+
+| `\\` (without new line) | Last                 | `\\\\\\`                |
++-------------------------+----------------------+-------------------------+
