@@ -347,8 +347,9 @@ the type *inst_ref_set*.
 +----------------+-------------------------------------------------------------+
 
 There are also a number of binary operations that accept a mix of *inst_ref*
-and *inst_ref_set* operands. When any of the operands are of the type *inst_ref*,
-they are interpreted as an *inst_ref_set* that contains the refered to instance.
+and *inst_ref_set* operands. When any of the operands are of the type
+*inst_ref*, they are interpreted as an *inst_ref_set* that contains the referred
+to instance.
 
 +-----------------+------------------------------------------------------------+
 | Binary Operator | Description                                                |
@@ -893,7 +894,7 @@ The table below list all pre-defined format characters available in the language
 | c                | Capitalize - make the first character of each word        |
 |                  | capitalized and all other characters of a word lowercase  |
 +------------------+-----------------------------------------------------------+
-| l                | Lower - make all characters lower case                    |
+| l                | Lower - make all characters lowercase                     |
 +------------------+-----------------------------------------------------------+
 | _                | Underscore - change all whitespace characters to          |
 |                  | underscore characters                                     |
@@ -902,9 +903,9 @@ The table below list all pre-defined format characters available in the language
 |                  | whitespace occurs after the capitalization has taken      |
 |                  | place in the case of the CR or RC combination.            |
 +------------------+-----------------------------------------------------------+
-| o                | cOrba - make the first word all lower case, make the      |
+| o                | cOrba - make the first word all lowercase, make the first |
 |                  | first character of each following word capitalized and    |
-|                  | all other characters of the words lower case. Characters  |
+|                  | all other characters of the words lowercase. Characters   |
 |                  | other than a-Z a-z 0-9 are ignored.                       |
 +------------------+-----------------------------------------------------------+
 
