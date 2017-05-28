@@ -1,0 +1,6 @@
+This is a language definition for text editors based on gtksourceview, e.g. 
+gedit and mousepad. To install the language definition, copy the file rsl.lang
+into a gtksourceview language specification folder. For example:
+
+$ mkdir -p ~/.local/share/gtksourceview-3.0/language-specs
+$ cp rsl.lang ~/.local/share/gtksourceview-3.0/language-specs/rsl.lang
