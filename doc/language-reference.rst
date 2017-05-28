@@ -1,5 +1,6 @@
 Language Reference
-==================
+##################
+
 The Rule Specification Language (RSL) is a language that operates in two modes.
 One mode where lines of text encountered at input are staged onto a buffer (the
 buffer mode), and one mode that controls the buffer (the control mode). When
@@ -18,12 +19,12 @@ control mode. For more information on the buffer mode, see `Buffer Mode`_.
    cannot begin with a numeric character, and cannot conflict with keywords.
 
 Basic Constructs
-----------------
+================
 The following sections describe basic language constructs that share similarities
 with other general purposed programming languages.
 
 Core Types
-^^^^^^^^^^
+----------
 The RSL language define five core types; *boolean*, *integer*, *real*, *string*,
 and *unique_id*. The *boolean* type is limited to two values (*true* and *false*),
 whereas the other core types are unbounded. In practice however, all types are
@@ -36,7 +37,7 @@ available RAM.
 	  instances. These types are further explained in `Model Interactions`_.
 
 Literal Values
-^^^^^^^^^^^^^^
+--------------
 Literal values can be entered for four of the core types. The table below
 exemplifies how these literal values are specified for each core type.
 
@@ -55,7 +56,7 @@ string                "Hello world"
    Fragment`_ for more information.
 
 Transient Variables
-^^^^^^^^^^^^^^^^^^^
+-------------------
 All transient variables are implicitly declared upon the first assignment.
 Assignments are expressed using the *assign* keyword as exemplified below:
 
@@ -74,7 +75,7 @@ declared inside of a block falls out of scope when the end of the block is
 encountered.
 
 Comments
-^^^^^^^^
+--------
 Comments can be entered using the *comment* statement as exemplified below:
 
 .. code-block:: pyrsl
@@ -91,7 +92,7 @@ At least one whitespace character must follow the *comment* keyword. A
 whitespace character does not need to follow the shorter variant. 
 
 Expressions
-^^^^^^^^^^^
+-----------
 Variables and values can be combined into expressions using operators. There are
 three kinds of expressions; *unary*, *binary*, and *compound* expressions. The
 following sections present operators that are valid for core types.
@@ -100,8 +101,8 @@ following sections present operators that are valid for core types.
 	  types These operators are further explained in `Instances and Sets`_
 	  and `Iterating Sets of Instances`_
 
-**Unary expressions**
-
+Unary expressions
+^^^^^^^^^^^^^^^^^
 Unary expressions consist of one operator and one operand. Below is a table of
 unary operators that are valid for core types.
 
@@ -120,8 +121,8 @@ integer:
     .assign Positive_Integer = 42
     .assign Negative_Integer = -Positive_Integer
 
-**Binary expressions**
-
+Binary expressions
+^^^^^^^^^^^^^^^^^^
 Binary expressions consist of one operator and two operand. Below is a table of
 binary operators valid for core types.
 
@@ -155,8 +156,8 @@ two integers:
     
 
 
-**Compound expressions**
-
+Compound expressions
+^^^^^^^^^^^^^^^^^^^^
 Compound expressions consist of several operators and operands that are combined
 using matching parentheses that determine precedence. The following example
 demonstrate a series of string concatenations.
@@ -169,7 +170,7 @@ In the example above, *" "* and *"world"* are concatenated first. Then, *"Hello"
 and *" world"* are concatenated.
 
 If, Elif and Else
-^^^^^^^^^^^^^^^^^
+-----------------
 The keywords *if*, *elif* and *else* can be combined to form a statement that
 control execution of other statements based on the outcome of boolean
 expressions. The following example demonstrate one way on how the three keywords
@@ -190,7 +191,7 @@ may be combined.
    *else* construct is optional.
 
 While Loops
-^^^^^^^^^^^
+-----------
 The *while* statement provides a general purpose iteration mechanism. The
 following example demonstrates how to compute the sum of all integers between
 one and ten.
@@ -225,7 +226,7 @@ halt iteration.
     .end while
 
 Quoted Strings
-^^^^^^^^^^^^^^
+--------------
 Quoted strings get special handling in the language. Each quoted string is
 treated as a literal text line and is run through a variable substituter
 discussed in `Substitution Variables`_. This allows simple string concatenation
@@ -243,7 +244,7 @@ variables *x* and *y* with a whitespace between them.
 	  character. See `Substitution Variables`_ for more information.
     
 Terminal Logging
-^^^^^^^^^^^^^^^^
+----------------
 The *print* statement can be used to print string literals to the standard
 output.
 
@@ -261,7 +262,7 @@ output.
     .print "${My_Integer}"
 
 Program Termination
-^^^^^^^^^^^^^^^^^^^
+-------------------
 The *exit* statement can be used to terminate a program. Optionally, an integer
 based exit code may also be provided. For example:
 
@@ -270,7 +271,7 @@ based exit code may also be provided. For example:
     .exit 1
 
 Model Interactions
-------------------
+==================
 The following sections describe language features that allow interaction with an
 xtUML model. Below is a class diagram that examples in the following sections
 use.
@@ -310,7 +311,7 @@ be exactly one.
    class associated with the association class.
 
 Instances and Sets
-^^^^^^^^^^^^^^^^^^
+------------------
 The introduction of instances and links into the language also brings new types.
 Specifically, the types *inst_ref* and *inst_ref_set*.
 
@@ -369,7 +370,7 @@ they are interpreted as an *inst_ref_set* that contains the refered to instance.
 	  information.
 
 Selecting Instances
-^^^^^^^^^^^^^^^^^^^
+-------------------
 Instances may be selected from the model by using the key letter of the class.
 The following example demonstrates how to select any arbitrary instance of the
 class with the key letter *CLS*, and store a reference to the instance in a
@@ -388,7 +389,7 @@ and stores an instance set reference in a variable named *inst_set*.
     .select many inst_set from instances of CLS
 
 Accessing Class Attributes
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+--------------------------
 Class attributes may be accessed using the *dot* operator (.). The following
 example selects an arbitrary instance of *CLS*, and increment its *Number*
 attribute by one.
@@ -399,7 +400,7 @@ attribute by one.
     .assign inst.Number = inst.Number + 1
 
 Iterating Sets of Instances
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+---------------------------
 The *for each* statement is used to iterate sets of instances. The following
 example computes the sum of all *CLS.Number* attributes.
 
@@ -438,7 +439,7 @@ The following example demonstrates how to generate a comma-seperated list of
 
     
 Filtering Selections
-^^^^^^^^^^^^^^^^^^^^
+--------------------
 Instance selections can be filtered using the *where* keyword. The following
 example demonstrates how to select instances of *CLS* whose attribute *Number*
 is larger than 100.
@@ -448,7 +449,7 @@ is larger than 100.
     .select many inst_set from instances of CLS where (selected.Number > 100)
 
 Navigating Instances
-^^^^^^^^^^^^^^^^^^^^
+--------------------
 Associations between classes may be navigated using the *related by* keyword.
 The *related by* form of the *select* statement uses an instance chain to specify
 a path through the related instances. An instance chain is simply a sequence of
@@ -499,7 +500,7 @@ The following example selects all *CLS* instances that are connected to a
     .select many cls_set related by assoc_set->CLS[R1]
 
 Creating Instances
-^^^^^^^^^^^^^^^^^^
+------------------
 The *create object instance* statement is used to create new instances of a
 class. The following example creates an instance of *CLS* and assigns its
 *Number* attribute to five.
@@ -510,7 +511,7 @@ class. The following example creates an instance of *CLS* and assigns its
     .assign cls.Number = 5
 
 Connecting Instances
-^^^^^^^^^^^^^^^^^^^^
+--------------------
 Instances can be connected and disconnected across associations using the
 *relate* and *unrelate* statements. The following example creates two instances
 of *O_CLS* and connects them across the reflexive association *R2*.
@@ -551,7 +552,7 @@ instance.
 	  be deleted manually.
    
 Deleting Instances
-^^^^^^^^^^^^^^^^^^
+------------------
 The *delete object instance* statement is used to delete instances from the
 model. The following example selects an arbitrary instance of *CLS* and deletes
 it.
@@ -572,7 +573,7 @@ constraints.
    accessing such references may result in undefined behaviour. 
 
 Functions and Fragments
------------------------
+=======================
 Functions allow reuse of blocks of control statements. All functions return a
 *fragment*. A fragment can be thought of as a pseudo-instance that has at least
 one, and possibly more attributes containing data specified by the function.
@@ -584,7 +585,7 @@ into larger fragments and eventually used to build a whole generated file.
    buffer when they operate in buffer mode.
 
 Defining Functions
-^^^^^^^^^^^^^^^^^^
+------------------
 Functions are defined using the *function* statements, and parameters are
 defined using the *param* statement. In addition to the core types, three
 additional types can be used by parameters; *inst_ref*, *inst_ref_set* and
@@ -605,7 +606,7 @@ type.
 
 
 Defining Fragment Attributes
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+----------------------------
 Attributes may be defined for a fragment when the fragment is formed inside the
 function. The attribute *body* is always defined. After the invocation of a
 function, the *body* attribute contains the literal text buffered within the
@@ -657,7 +658,7 @@ function name *Func* that return a fragment with two attributes; *body* and
       .end function
       
 Invoking Functions
-^^^^^^^^^^^^^^^^^^
+------------------
 Functions are invoked using the *invoke* statement. The following example
 invokes a function named *Func* that takes an integer as parameter, then stores
 the returned fragment into a transient variable named *Frag*.
@@ -677,7 +678,7 @@ the returned fragment into a transient variable named *Frag*.
 	 when modifying instances or emitting files to disk.
    
 Available Builtin Functions
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+---------------------------
 The language define a set of builtin functions. The following two functions can
 be used to read and modify environmental variables in the operating system.
 
@@ -739,7 +740,7 @@ The following functions can be used to convert values of various core types.
    .end function
 
 Global Information Fragment
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+---------------------------
 There is a special fragment named *info* that is always accessible.
 The word *info* is thus a keyword and cannot be used to name a transient
 variable.
@@ -781,7 +782,7 @@ The following example creates a string that contains the current date and time.
    .assign s = "Current date and time is: " + info.date
 
 Including Files
----------------
+===============
 The *include* statement can be used to include files. The following example
 includes a file named *my_file.inc*.
 
@@ -800,7 +801,7 @@ statement.
 	  are also accessible from the within included file.
 
 Emitting Buffered Text
-----------------------
+======================
 The *emit to file* statement can be used to output buffered text to disk.
 The following example emits the buffer to a file named *emit_data.txt* into a
 folder named *data* located in the current working directory.
@@ -826,14 +827,14 @@ To clear the contents of the buffer without emitting the contents to a file, the
    .clear
 
 Buffer Mode
------------
+===========
 The following sections describe how the language behave in the buffer mode.
 Specifically, how to access variables defined in the control mode, how to
 transform strings using formatters and parse keywords, and how to escape
 special characters.
 
 Substitution Variables
-^^^^^^^^^^^^^^^^^^^^^^
+----------------------
 Literal text lines can contain substitution variables which allow you to access
 variables defined in the control mode and place its content in a buffer so it
 can be emitted to text files. The following example define a transient variable
@@ -852,7 +853,7 @@ When emitted to a file, the above example would produce the following output.
    <div>Some text</div>
 
 Parse Keywords
-^^^^^^^^^^^^^^
+--------------
 A parse keyword is a piece of text placed in a string-based variable. Text that
 follows the parse keyword, up to the next line break character, can be extracted.
 
@@ -864,7 +865,7 @@ follows the parse keyword, up to the next line break character, can be extracted
 The example above produce the literal text *Hello world*.
 
 Transforming Substitution Variables
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------------
 Values held by a substitution variable can be transformed by a number of pre-
 defined format characters, e.g. converting all characters to upper-cased
 letters (the character *u*), or replacing whitespaces with underscore (using
@@ -925,7 +926,7 @@ Input                 Format       Output
 ====================  ===========  ==============
 
 Defining Custom Format Characters
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+---------------------------------
 It is possible for a user to define its own custom format characters. These
 format characters must start with the letter *t*. When using multiple format
 characters at the same time, the user-defined format character must be specified
@@ -971,7 +972,7 @@ When the example above is executed, the value of *s* is transformed into *hello
 world*.
 
 Escaping Special Characters
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+---------------------------
 A literal text line with the dot dot character sequence (..) as the first
 non-whitespace characters results in the dot character being emitted. A dot
 character anywhere else in the literal text line results in a dot character
