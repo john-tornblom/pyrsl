@@ -599,6 +599,7 @@ type.
        .param integer      My_Integer
        .param real         My_Real
        .param unique_id    My_Unique_Id
+       .param string       My_String
        .param inst_ref     My_Instance
        .param inst_ref_set My_Set
        .param frag_ref     My_Fragment
