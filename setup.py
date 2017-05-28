@@ -19,11 +19,6 @@ except ImportError:
     from distutils.command.build_py import build_py
 
 
-import ply
-import rsl
-import xtuml
-
-
 logger = logging.getLogger('setup')
 logging.basicConfig(level=logging.DEBUG)
 
@@ -31,6 +26,8 @@ logging.basicConfig(level=logging.DEBUG)
 class BuildCommand(build_py):
     
     def run(self):
+        import rsl
+
         rsl.parse_text('', '')
         build_py.run(self)
 
@@ -63,6 +60,8 @@ class BundleCommand(Command):
                     ('output=', 'o', 'Output path for the bundled pyz file')]
 
     def initialize_options(self):
+        import rsl
+        
         rsl.parse_text('', '')
         self.main = None
         self.output = 'gen_erate.pyz'
@@ -71,6 +70,10 @@ class BundleCommand(Command):
         pass
 
     def run(self):
+        import ply
+        import rsl
+        import xtuml
+
         logger.info('Using ply v%s', ply.__version__)
         logger.info('Using pyxtuml v%s', xtuml.version.release)
         logger.info('Using pyrsl v%s', rsl.version.release)
@@ -108,7 +111,7 @@ class BundleCommand(Command):
 
 
 opts = dict(name='pyrsl',
-            version=rsl.version.release,
+            version='0.7.0b1', # ensure that this is the same as in rsl.version
             description='Interpreter for the Rule Specification Language (RSL)',
             author='John Törnblom',
             author_email='john.tornblom@gmail.com',
