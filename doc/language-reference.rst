@@ -423,7 +423,7 @@ last            Check if the *inst_ref_set* operand is on its last iteration
 not_last        Logical negation of *last*
 ==============  ==============================================================
 
-The following example demonstrates how to generate a comma-seperated list of
+The following example demonstrates how to generate a comma-separated list of
 *O_CLS* names.
 
 .. code-block:: pyrsl
@@ -433,7 +433,7 @@ The following example demonstrates how to generate a comma-seperated list of
     .for each inst in inst_set
         .assign s = s + inst.Name
         .if (not_last inst_set)
-	    .assign s = s = ", "
+	    .assign s = s + ", "
 	.end if
     .end for
 
