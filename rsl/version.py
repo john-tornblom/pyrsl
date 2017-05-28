@@ -6,8 +6,8 @@ Keep version info in one single place
 
 
 name = 'pyrsl'
-date = '2016-09-03'
-version = '0.6'
-release = '0.6.0'
+date = '2017-05-28'
+version = '0.7'
+release = '0.7.0b1' #  # ensure that this is the same as in setup.py
 
 complete_string = '%s v%s (%s)' % (name, release, date)
