@@ -838,7 +838,7 @@ Substitution Variables
 Literal text lines can contain substitution variables which allow you to access
 variables defined in the control mode and place its content in a buffer so it
 can be emitted to text files. The following example define a transient variable
-named *Data* in the control mode, and puts its value into the buffer surrounded.
+named *Data* in the control mode, and puts its value into the buffer surrounded
 by the html tag *div*.
 
 .. code-block:: pyrsl
