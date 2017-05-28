@@ -106,12 +106,13 @@ Unary expressions
 Unary expressions consist of one operator and one operand. Below is a table of
 unary operators that are valid for core types.
 
-==============  =============  ================
-Unary Operator  Core Type(s)   Description
-==============  =============  ================
-*not*           any            Logical negation
-*-*             integer, real  Numeric negation
-==============  =============  ================
++----------------+---------------+------------------+
+| Unary Operator | Core Type(s)  | Description      |
++================+===============+==================+
+| not            | any           | Logical negation |
++----------------+---------------+------------------+
+| \-             | integer, real | Numeric negation |
++----------------+---------------+------------------+
 
 The following example demonstrates how to perform a numeric negation on an
 integer:
@@ -126,23 +127,36 @@ Binary expressions
 Binary expressions consist of one operator and two operand. Below is a table of
 binary operators valid for core types.
 
-===============	 ==============================================================
-Binary Operator  Description
-===============	 ==============================================================
-`and`            logical AND
-`or`             logical inclusive OR
-`+`              arithmetic addition (integer & real) or concatenation (string)
-`-`              arithmetic subtraction
-`*`              arithmetic multiplication
-`/`              quotient from arithmetic division
-`%`              remainder from arithmetic division
-`<`              less-than
-`<=`             less-than or equal-to
-`=`              equal-to
-`!=`             not-equal-to
-`>=`             greater-than or equal-to
-`>`              greater-than
-===============	 ==============================================================
++-----------------+--------------------------------------+
+| Binary Operator | Description                          |
++=================+======================================+
+| and             | logical AND                          |
++-----------------+--------------------------------------+
+| or              | logical inclusive OR                 |
++-----------------+--------------------------------------+
+| \+              | arithmetic addition (integer & real) |
+|                 | or concatenation (string)            |
++-----------------+--------------------------------------+
+| \-              | arithmetic subtraction               |
++-----------------+--------------------------------------+
+| \*              | arithmetic multiplication            |
++-----------------+--------------------------------------+
+| /               | quotient from arithmetic division    |
++-----------------+--------------------------------------+
+| %               | remainder from arithmetic division   |
++-----------------+--------------------------------------+
+| <               | less-than                            |
++-----------------+--------------------------------------+
+| <=              | less-than or equal-to                |
++-----------------+--------------------------------------+
+| =               | equal-to                             |
++-----------------+--------------------------------------+
+| !=              | not-equal-to                         |
++-----------------+--------------------------------------+
+| >=              | greater-than or equal-to             |
++-----------------+--------------------------------------+
+| >               | greater-than                         |
++-----------------+--------------------------------------+
 
 The following example demonstrates how to perform a numeric addition of two
 integers, concatenation of two strings, and a greater-than comparison between
@@ -351,20 +365,18 @@ and *inst_ref_set* operands. When any of the operands are of the type
 *inst_ref*, they are interpreted as an *inst_ref_set* that contains the referred
 to instance.
 
-+-----------------+------------------------------------------------------------+
-| Binary Operator | Description                                                |
-+=================+============================================================+
-| `|`             | Returns the union of both operands                         |
-+-----------------+------------------------------------------------------------+
-| &               | Returns the intersection between both operand              |
-+-----------------+------------------------------------------------------------+
-| `-`             | Returns a set of instance references that are in the left  |
-|                 | operand, but not in the right operand                      |
-+-----------------+------------------------------------------------------------+
-| ==              | Check if the intersection between both operands is empty   |
-+-----------------+------------------------------------------------------------+
-| !=              | Logical negation of ==                                     |
-+-----------------+------------------------------------------------------------+
++-----------------+-----------------------------------------------------------+
+| Binary Operator | Description                                               |
++=================+===========================================================+
+| \&              | Returns the intersection between both operand             |
++-----------------+-----------------------------------------------------------+
+| \-              | Returns a set of instance references that are in the left |
+|                 | operand, but not in the right operand                     |
++-----------------+-----------------------------------------------------------+
+| ==              | Check if the intersection between both operands is empty  |
++-----------------+-----------------------------------------------------------+
+| !=              | Logical negation of ==                                    |
++-----------------+-----------------------------------------------------------+
 
 .. note:: There are additional unary operators for sets that are only valid
 	  during set iteration. See `Iterating Sets of Instances`_ for more
@@ -415,14 +427,17 @@ example computes the sum of all *CLS.Number* attributes.
 
 During iteration, the following unary operators are supported.
 
-==============  ==============================================================
-Unary Operator  Description
-==============  ==============================================================
-first           Check if the *inst_ref_set* operand is on its first iteration
-not_first       Logical negation of *first*
-last            Check if the *inst_ref_set* operand is on its last iteration
-not_last        Logical negation of *last*
-==============  ==============================================================
++----------------+---------------------------------------------------------------+
+| Unary Operator | Description                                                   |
++================+===============================================================+
+| first          | Check if the *inst_ref_set* operand is on its first iteration |
++----------------+---------------------------------------------------------------+
+| not_first      | Logical negation of *first*                                   |
++----------------+---------------------------------------------------------------+
+| last           | Check if the *inst_ref_set* operand is on its last iteration  |
++----------------+---------------------------------------------------------------+
+| not_last       | Logical negation of *last*                                    |
++----------------+---------------------------------------------------------------+
 
 The following example demonstrates how to generate a comma-separated list of
 *O_CLS* names.
@@ -912,20 +927,29 @@ The table below list all pre-defined format characters available in the language
 The following table lists example input and output for various combinations of
 pre-defined format characters.
 
-====================  ===========  ==============
-Input                 Format       Output
-====================  ===========  ==============
-`Example Text`        `u`          `EXAMPLE TEXT`
-`Example Text`        `u_`         `EXAMPLE_TEXT`
-`Example Text`        `ur`         `EXAMPLETEXT`
-`ExamplE TExt`        `c`          `Example Text`
-`ExamplE TExt`        `c_`         `Example_Text`
-`ExamplE TExt`        `cr`         `ExampleText`
-`ExamplE TExt`        `l`          `example text`
-`ExamplE TExt`        `l_`         `example_text`
-`ExamplE TExt`        `lr`         `exampletext`
-`ExamplE@34 TExt`     `o`          `example34Text`
-====================  ===========  ==============
++------------------+--------+---------------+
+| Input            | Format | Output        |
++==================+========+===============+
+| Example Text     | u      | EXAMPLE TEXT  |
++------------------+--------+---------------+
+| Example Text     | u\_    | EXAMPLE_TEXT  |
++------------------+--------+---------------+
+| Example Text     | ur     | EXAMPLETEXT   |
++------------------+--------+---------------+
+| ExamplE TExt     | c      | Example Text  |
++------------------+--------+---------------+
+| ExamplE TExt     | c\_    | Example_Text  |
++------------------+--------+---------------+
+| ExamplE TExt     | cr     | ExampleText   |
++------------------+--------+---------------+
+| ExamplE TExt     | l      | example text  |
++------------------+--------+---------------+
+| ExamplE TExt     | l\_    | example_text  |
++------------------+--------+---------------+
+| ExamplE TExt     | lr     | exampletext   |
++------------------+--------+---------------+
+| ExamplE\@34 TExt | o      | example34Text |
++------------------+--------+---------------+
 
 Defining Custom Format Characters
 ---------------------------------
