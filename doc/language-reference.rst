@@ -428,7 +428,7 @@ The following example demonstrates how to generate a comma-seperated list of
 
 .. code-block:: pyrsl
 
-    .select many inst_set from instances of OCLS
+    .select many inst_set from instances of O_CLS
     .assign s = ""
     .for each inst in inst_set
         .assign s = s + inst.Name
