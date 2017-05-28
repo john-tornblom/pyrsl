@@ -339,7 +339,7 @@ operators that are valid for transient variables of the type *inst_ref*.
 | empty          | Check if the *inst_ref* operand refers to an instance       |
 +----------------+-------------------------------------------------------------+
 | not_empty      | Logical negation of the *empty* operator                    |
-+----------------+----------------------+--------------------------------------+
++----------------+-------------------------------------------------------------+
 | cardinality    | Count the number of instances the *inst_ref* operand refers |
 |                | to (zero or one)                                            |
 +----------------+-------------------------------------------------------------+
@@ -355,7 +355,7 @@ the type *inst_ref_set*.
 |                | reference                                                   |
 +----------------+-------------------------------------------------------------+
 | not_empty      | Logical negation of the *empty* operator                    |
-+----------------+----------------------+--------------------------------------+
++----------------+-------------------------------------------------------------+
 | cardinality    | Count the number of items the *inst_ref_set* operand refers |
 |                | to                                                          |
 +----------------+-------------------------------------------------------------+
@@ -899,7 +899,8 @@ When the example above is executed, the following literal text is produced.
 
    <div>SOME_TEXT</div>
 
-The table below list all pre-defined format characters available in the language.
+The table below list all pre-defined format characters available in the
+language.
 
 +------------------+-----------------------------------------------------------+
 | Format Character | Transformation Function                                   |
