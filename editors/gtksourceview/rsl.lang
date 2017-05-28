@@ -11,6 +11,7 @@
     <style id="error"              _name="Error"                 map-to="def:error"/>
     <style id="keyword"            _name="Keyword"               map-to="def:keyword"/>
     <style id="special-identifier" _name="Special Identifier"    map-to="def:identifier"/>
+    <style id="escaped-character"  _name="Escaped Character"     map-to="def:special-char"/>
     <style id="identifier"         _name="Identifier" />
     <style id="builtin"            _name="Builtin function"      map-to="def:builtin"/>
     <style id="boolean"            _name="Boolean value"         map-to="def:boolean"/>
@@ -106,6 +107,11 @@
       <keyword>real_to_string</keyword>
       <keyword>boolean_to_string</keyword>
     </context>
+
+    <context id="escape" style-ref="escaped-character">
+      <match>(\$\$)|(^[\s]*\.\.)|(\\\\\\$)|(\\\\$)|(\\$)</match>
+    </context>
+    
     <context id="string-data" style-ref="string">
       <match>[^\$]*</match>
     </context>
@@ -185,6 +191,7 @@
     
     <context id="rsl">
       <include>
+	<context ref="escape"/>
 	<context ref="statements"/>
 	<context ref="substitutions"/>
       </include>
