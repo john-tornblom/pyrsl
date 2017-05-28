@@ -106,12 +106,18 @@
       <keyword>real_to_string</keyword>
       <keyword>boolean_to_string</keyword>
     </context>
+    <context id="string-data" style-ref="string">
+      <match>[^\$]*</match>
+    </context>
     
-    <context id="strings" style-ref="string">
+    <context id="strings" end-at-line-end="true">
       <start>"</start>
       <end>"</end>
       <include>
+	<context sub-pattern="0" where="start" style-ref="string"/>
+	<context sub-pattern="0" where="end" style-ref="string"/>
 	<context ref="substitutions"/>
+	<context ref="string-data"/>
       </include>
     </context>
 
