@@ -113,7 +113,7 @@
     </context>
     
     <context id="string-data" style-ref="string">
-      <match>[^\$]*</match>
+      <match>[^\$"]*</match>
     </context>
     
     <context id="strings" end-at-line-end="true">
