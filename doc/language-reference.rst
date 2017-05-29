@@ -459,9 +459,10 @@ The following example demonstrates how to generate a comma-separated list of
     
 Filtering Selections
 --------------------
-Instance selections can be filtered using the *where* keyword. The following
-example demonstrates how to select instances of *CLS* whose attribute *Number*
-is larger than 100.
+Instance selections can be filtered using the *where* keyword. The *selected*
+keyword may be used inside a where-clause to access attributes on the instance
+currently being selected. The following example demonstrates how to select
+instances of *CLS* whose attribute *Number* is larger than 100.
 
 .. code-block:: pyrsl
 
