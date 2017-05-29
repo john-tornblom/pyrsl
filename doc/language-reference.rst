@@ -34,7 +34,8 @@ unique_ids by 128bit unsigned integers, and strings are bounded by the amount of
 available RAM.
 
 .. note:: There are additional types that are used to hold references to
-	  instances. These types are further explained in `Model Interactions`_.
+	  *instances* and *fragments*. These types are further explained in
+	  `Model Interactions`_ and `Functions and Fragments`_.
 
 Literal Values
 --------------
