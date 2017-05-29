@@ -980,7 +980,8 @@ format characters (i.e., $ut{...} applies *t* first, then *u*). The default
 transformation function when nothing is supplied by the user leaves the string
 unchanged.
 
-The following example demonstrate how to define a new format characters in pyrsl.
+The following example demonstrate how to define a new format character in pyrsl
+that remove quotes from strings.
 
 .. code-block:: python
 
