@@ -1,15 +1,14 @@
-'''
-Created on May 25, 2017
+# encoding: utf-8
+# Copyright (C) 2017 John Törnblom
 
-@author: john
-'''
+from pygments.lexer import RegexLexer
+from pygments.lexer import include
+from pygments.lexer import words
+from pygments.lexer import bygroups
 
-
-from pygments.lexer import RegexLexer, include, words, bygroups
 import pygments.token as tok
-
-
 import re
+
 
 class RSLLexer(RegexLexer):
     name = 'pyrsl'
@@ -97,6 +96,7 @@ class RSLLexer(RegexLexer):
             (r'[a-z_?][a-z_?0-9]*', tok.Name, '#pop'),
         ],
     }
+
 
 def setup(app):
     app.add_lexer("pyrsl", RSLLexer())
