@@ -124,7 +124,7 @@ integer:
 
 Binary expressions
 ^^^^^^^^^^^^^^^^^^
-Binary expressions consist of one operator and two operand. Below is a table of
+Binary expressions consist of one operator and two operands. Below is a table of
 binary operators valid for core types.
 
 +-----------------+--------------------------------------+
@@ -997,8 +997,8 @@ The following example demonstrate how to use the format character defined above.
    .assign s = "'hello world'"
    $trmquot{s}
 
-When the example above is executed, the value of *s* is transformed into *hello
-world*.
+When the example above is executed, the value of *s* is transformed from *'hello
+world'* into *hello world*.
 
 Escaping Special Characters
 ---------------------------
