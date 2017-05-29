@@ -623,7 +623,21 @@ type.
        .param frag_ref     My_Fragment
    .end function
 
+.. tip::
+   Recent versions of the language allow specifying the kind of class an
+   *inst_ref* or *inst_ref_set* may refer to. The kind of class is specified
+   using angle brackets as examplified below.
 
+   .. code-block:: pyrsl
+
+       .function Func
+           .param inst_ref<Key_Letter>     My_Instance
+           .param inst_ref_set<Key_Letter> My_Set
+       .end function
+
+   When the kind of class is specified for an *inst_ref* or *inst_ref_set*,
+   arguments are type checked accordingly.
+   
 Defining Fragment Attributes
 ----------------------------
 Attributes may be defined for a fragment when the fragment is formed inside the

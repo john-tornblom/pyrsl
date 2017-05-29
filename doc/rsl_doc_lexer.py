@@ -5,7 +5,7 @@ Created on May 25, 2017
 '''
 
 
-from pygments.lexer import RegexLexer, include, words
+from pygments.lexer import RegexLexer, include, words, bygroups
 import pygments.token as tok
 
 
@@ -52,9 +52,10 @@ class RSLLexer(RegexLexer):
                     'first', 'not_first', 'last', 'not_last', 'selected',
                     'relate', 'unrelate', 'across', 'using', 'delete'),
                    prefix=r'\b', suffix=r'\b'), tok.Keyword),
-            (words(('boolean', 'integer', 'real', 'string', 'unique_id',
-                    'inst_ref', 'inst_ref_set', 'frag_ref'),
+            (words(('boolean', 'integer', 'real', 'string', 'unique_id'),
                    prefix=r'\b', suffix=r'\b'), tok.Keyword.Type),
+            (words(('inst_ref', 'inst_ref_set', 'frag_ref'),
+                   prefix=r'\b', suffix=r'\b'), tok.Keyword.Type, 'kind'),
             (words(('get_env_var', 'put_env_var', 'shell_command',
                     'file_read', 'file_write', 'string_to_integer',
                     'string_to_real', 'integer_to_string', 'real_to_string',
@@ -77,6 +78,11 @@ class RSLLexer(RegexLexer):
         ],
         'class': [
             (r'[^\s\[]+', tok.Name.Class, '#pop'),
+        ],
+        'kind': [
+            (r'(<)([a-z_?][a-z_?0-9]*)(>)',
+             bygroups(tok.Generic.Bold, tok.Name.Class, tok.Generic), '#pop'),
+            (r'', tok.Generic, '#pop'),
         ],
         'string': [
             (r'\$', tok.Generic.Strong, 'substitution'),
