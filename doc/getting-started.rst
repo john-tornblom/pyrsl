@@ -28,6 +28,11 @@ pyrsl is also available from pypi:
     $ python -m rsl.gen_erate -h
 
 
+.. tip:: If you encounter performance issues when using pyrsl, consider the
+	 alternative python implementation `pypy <http://pypy.org>`__. Depending
+	 on the context in which pyrsl is in use, pypy may provide a significant
+	 speedup.
+
 Command Line Options
 ~~~~~~~~~~~~~~~~~~~~
 To remain backwards compatable with `the original RSL interpreter
