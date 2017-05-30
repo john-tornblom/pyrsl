@@ -166,7 +166,7 @@ two integers:
 .. code-block:: pyrsl
 
     .assign My_Addition = 42 + 5
-    .assign My_Concatination = "Hello " + "world"
+    .assign My_Concatenation = "Hello " + "world"
     .assign My_Comparison = 5 > My_Addition
     
 
