@@ -899,6 +899,18 @@ follows the parse keyword, up to the next line break character, can be extracted
 
 The example above produce the literal text *Hello world*.
 
+Navigating Associations Buffer Mode
+-----------------------------------
+The buffer mode supports navigation across one-to-one associations to access
+attributes. The following example demonstrates how to navigate from an instance
+of *CLS* across the association *R1* to access the attribute *Name* on the class
+*O_CLS*.
+
+.. code-block:: pyrsl
+
+    .assign select any cls from instances of CLS
+    ${cls->O_CLS[R1].Name}
+
 Transforming Substitution Variables
 -----------------------------------
 Values held by a substitution variable can be transformed by a number of pre-
