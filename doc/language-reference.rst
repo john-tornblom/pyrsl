@@ -322,7 +322,7 @@ be exactly one.
 .. note::
    The BridgePoint editor allow its users to specify links to association classes
    with the cardinality 1..*. Such association classes are rarely used, and
-   should be avoided. The same semantics may be obtained by introducing a fourth
+   should be avoided. The same semantics may be obtained by introducing a new
    class associated with the association class.
 
 Instances and Sets
