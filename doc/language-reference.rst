@@ -15,23 +15,24 @@ control mode. For more information on the buffer mode, see `Buffer Mode`_.
 
 .. note::
    Keywords and names are case **insensitive**. Names can be made up of any
-   alpha (a-z, A-Z) or numeric (0-9) characters or underscore (_) character. Names
-   cannot begin with a numeric character, and cannot conflict with keywords.
+   alpha (a-z, A-Z) or numeric (0-9) characters or underscore (_) character.
+   Names cannot begin with a numeric character, and cannot conflict with
+   keywords.
 
 Basic Constructs
 ================
-The following sections describe basic language constructs that share similarities
-with other general purposed programming languages.
+The following sections describe basic language constructs that share
+similarities with other general purposed programming languages.
 
 Core Types
 ----------
 The RSL language define five core types; *boolean*, *integer*, *real*, *string*,
-and *unique_id*. The *boolean* type is limited to two values (*true* and *false*),
-whereas the other core types are unbounded. In practice however, all types are
-bounded. The exact ranges depend on the implementation. Generally, integers are
-represented by signed 64bit integers, reals by 64bit floating point numbers,
-unique_ids by 128bit unsigned integers, and strings are bounded by the amount of
-available RAM.
+and *unique_id*. The *boolean* type is limited to two values (*true* and
+*false*), whereas the other core types are unbounded. In practice however, all
+types are bounded. The exact ranges depend on the implementation. Generally,
+integers are represented by signed 64bit integers, reals by 64bit floating point
+numbers, unique_ids by 128bit unsigned integers, and strings are bounded by the
+amount of available RAM.
 
 .. note:: There are additional types that are used to hold references to
 	  *instances* and *fragments*. These types are further explained in
@@ -179,10 +180,10 @@ demonstrate a series of string concatenations.
 
 .. code-block:: pyrsl
 
-    .assign My_String = ("Hello" + (" " + "world")
+    .assign My_String = ("Hello" + (" " + "world"))
 
-In the example above, *" "* and *"world"* are concatenated first. Then, *"Hello"*
-and *" world"* are concatenated.
+In the example above, *" "* and *"world"* are concatenated first. Then,
+*"Hello"* and *" world"* are concatenated.
 
 If, Elif and Else
 -----------------
@@ -293,26 +294,26 @@ use.
 
 .. code-block:: none
 		
-    -----------------                                ----------------------
-   | Class     {CLS} |                              | Other Class  {O_CLS} | prev
-   |------------------ *            R1        0.. 1 |----------------------|------
-   | Number: integer |------------------------------| Name: string         | 0..1 |
-    -----------------                |               ----------------------       |
-                                     |                           0..1 | next   R2 |
-                           ---------------------                       -----------
-                          | Assoc Class {A_CLS} |
-                          |---------------------|
-			  | My_Boolean: boolean |
-                           ---------------------
+    -----------------                             ----------------------
+   | Class     {CLS} |                           | Other Class  {O_CLS} | prev
+   |------------------ *         R1        0.. 1 |----------------------|------
+   | Number: integer |---------------------------| Name: string         | 0..1 |
+    -----------------             |               ----------------------       |
+                                  |                           0..1 | next   R2 |
+                         ---------------------                      -----------
+                        | Assoc Class {A_CLS} |
+                        |---------------------|
+                        | My_Boolean: boolean |
+                         ---------------------
 
 There are three classes in the example above; *Class*, *Other Class*, and *Assoc
 Class*. The text in the upper right corner within curly brackets on each class
 is called a *key letter* and is used as the class identifier in RSL. The three
-classes are associated to each other via the association *R1*. Furthermore, there
-is a reflexive association *R2* on *Other Class*. Reflexive associations require
-a phrase to distinguish the directions of the *links* (*next* and *prev* in the
-example above). At the end of each link is the *cardinality*. The cardinality
-specify how many instances may be connected to a link.
+classes are associated to each other via the association *R1*. Furthermore,
+there is a reflexive association *R2* on *Other Class*. Reflexive associations
+require a phrase to distinguish the directions of the *links* (*next* and *prev*
+in the example above). At the end of each link is the *cardinality*. The
+cardinality specify how many instances may be connected to a link.
 
 The *Assoc Class* is a special kind of class called an association class. Such
 classes are used to add attributes to an association. The cardinality of links
@@ -320,10 +321,10 @@ to association classes are not explicitly stated, they are implicitly assumed to
 be exactly one.
 
 .. note::
-   The BridgePoint editor allow its users to specify links to association classes
-   with the cardinality 1..*. Such association classes are rarely used, and
-   should be avoided. The same semantics may be obtained by introducing a new
-   class associated with the association class.
+   The BridgePoint editor allow its users to specify links to association
+   classes with the cardinality 1..*. Such association classes are rarely used,
+   and should be avoided. The same semantics may be obtained by introducing a
+   new class associated with the association class.
 
 Instances and Sets
 ------------------
@@ -471,11 +472,11 @@ instances of *CLS* whose attribute *Number* is larger than 100.
 Navigating Instances
 --------------------
 Associations between classes may be navigated using the *related by* keyword.
-The *related by* form of the *select* statement uses an instance chain to specify
-a path through the related instances. An instance chain is simply a sequence of
-class key letter/association number pairs which specify the path from the source
-instance to the destination class. The result of a select is zero, one or more
-instances of the last class of the chain.
+The *related by* form of the *select* statement uses an instance chain to
+specify a path through the related instances. An instance chain is simply a
+sequence of class key letter/association number pairs which specify the path
+from the source instance to the destination class. The result of a select is
+zero, one or more instances of the last class of the chain.
 
 The following example selects an arbitrary instance of *CLS* and navigates
 across *R1* to *O_CLS* via *A_CLS*.
@@ -675,8 +676,8 @@ function name *Func* that return a fragment with two attributes; *body* and
 
    The example above results in the transient variable *attr_data* **not**
    becoming a fragment attribute since it falls out of scope with the *if*
-   statement, and is therefore not on the stack when the *end function* statement
-   is encountered.
+   statement, and is therefore not on the stack when the *end function*
+   statement is encountered.
 
    A correct solution is the following:
 
@@ -890,7 +891,8 @@ When emitted to a file, the above example would produce the following output.
 Parse Keywords
 --------------
 A parse keyword is a piece of text placed in a string-based variable. Text that
-follows the parse keyword, up to the next line break character, can be extracted.
+follows the parse keyword, up to the next line break character, can be
+extracted.
 
 .. code-block:: pyrsl
 
