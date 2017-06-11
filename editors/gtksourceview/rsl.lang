@@ -44,7 +44,7 @@
       <keyword>delete</keyword>
       <keyword>relate</keyword>
       <keyword>unrelate</keyword>
-      <keyword>across</keyword>
+<!--      <keyword>across</keyword> -->
       <keyword>from</keyword>
       <keyword>using</keyword>
       <keyword>of</keyword>
@@ -153,6 +153,28 @@
       <match>\b[a-z][0-9a-z_]*\b</match>
     </context>
 
+    <context id="rel-ids" style-ref="association-id">
+      <match>r\d+</match>
+    </context>
+    
+    <context id="associations-rel" end-at-line-end="true">
+      <start>across</start>
+      <include>
+	<context sub-pattern="0" where="start" style-ref="keyword"/>
+	<context ref="rel-ids"/>
+	<context ref="phrases"/>
+      </include>
+    </context>
+
+    <context id="associations-nav" end-at-line-end="true">
+      <start>\[</start>
+      <end>\]</end>
+      <include>
+	<context ref="rel-ids"/>
+	<context ref="phrases"/>
+      </include>
+    </context>
+    
     <context id="statements" end-at-line-end="true">
       <start>^\s*\.</start>
       <include>
@@ -165,26 +187,18 @@
 	<context ref="strings"/>
 	<context ref="integers"/>
 	<context ref="reals"/>
-	<context ref="associations"/>
+	<context ref="associations-nav"/>
+	<context ref="associations-rel"/>
       </include>
     </context>
 
-    <context id="associations" style-ref="association-id" end-at-line-end="true">
-      <start>\[</start>
-      <end>\]</end>
-      <include>
-	<context sub-pattern="0" where="start" style-ref="keyword"/>
-	<context sub-pattern="0" where="end" style-ref="keyword"/>
-	<context ref="phrases"/>
-      </include>
-    </context>
     <context id="substitutions" end-at-line-end="true">
       <start>\$(([^\{]*)?\{)</start>
       <end>\}</end>
       <include>
 	<context sub-pattern="0" where="start" style-ref="preprocessor"/>
 	<context sub-pattern="0" where="end" style-ref="preprocessor"/>
-	<context ref="associations"/>
+	<context ref="associations-nav"/>
 	<context ref="identifiers"/>
       </include>
     </context>
