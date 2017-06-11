@@ -47,7 +47,7 @@
 <!--      <keyword>across</keyword> -->
       <keyword>from</keyword>
       <keyword>using</keyword>
-      <keyword>of</keyword>
+<!--      <keyword>of</keyword> -->
       <keyword>if</keyword>
       <keyword>to</keyword>
       <keyword>related</keyword>
@@ -175,7 +175,24 @@
 	<context ref="phrases"/>
       </include>
     </context>
-    
+
+    <context id="key-letters-nav" end-at-line-end="true">
+      <start>-&gt;</start>
+      <end>\b[a-z][0-9a-z_]*\b</end>
+      <include>
+	<context sub-pattern="0" where="end" style-ref="type"/>
+      </include>
+    </context>
+
+    <context id="key-letters-create" end-at-line-end="true">
+      <start>of</start>
+      <end>\b[a-z][0-9a-z_]*\b</end>
+      <include>
+	<context sub-pattern="0" where="start" style-ref="keyword"/>
+	<context sub-pattern="0" where="end" style-ref="type"/>
+      </include>
+    </context>
+	
     <context id="statements" end-at-line-end="true">
       <start>^\s*\.</start>
       <include>
@@ -190,6 +207,8 @@
 	<context ref="reals"/>
 	<context ref="associations-nav"/>
 	<context ref="associations-rel"/>
+	<context ref="key-letters-create"/>
+	<context ref="key-letters-nav"/>
       </include>
     </context>
 
