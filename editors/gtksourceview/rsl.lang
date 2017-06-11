@@ -127,7 +127,7 @@
       </include>
     </context>
 
-    <context id="phrases" style-ref="string">
+    <context id="phrases" style-ref="string" end-at-line-end="true">
       <start>'</start>
       <end>'</end>
     </context>
@@ -169,7 +169,7 @@
       </include>
     </context>
 
-    <context id="associations" style-ref="association-id">
+    <context id="associations" style-ref="association-id" end-at-line-end="true">
       <start>\[</start>
       <end>\]</end>
       <include>
@@ -178,7 +178,7 @@
 	<context ref="phrases"/>
       </include>
     </context>
-    <context id="substitutions">
+    <context id="substitutions" end-at-line-end="true">
       <start>\$(([^\{]*)?\{)</start>
       <end>\}</end>
       <include>
