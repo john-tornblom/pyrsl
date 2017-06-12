@@ -159,7 +159,7 @@
     </context>
     
     <context id="associations-rel" end-at-line-end="true">
-      <start>across</start>
+      <start>\bacross\b</start>
       <include>
 	<context sub-pattern="0" where="start" style-ref="keyword"/>
 	<context ref="rel-ids"/>
@@ -185,7 +185,7 @@
     </context>
 
     <context id="key-letters-create" end-at-line-end="true">
-      <start>of</start>
+      <start>\bof\b</start>
       <end>\b[a-z][0-9a-z_]*\b</end>
       <include>
 	<context sub-pattern="0" where="start" style-ref="keyword"/>
