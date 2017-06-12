@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <language id="rsl" name="Rule Specification Language" version="2.0" _section="Other">
   <metadata>
-    <property name="globs">*.arc</property>
+    <property name="globs">*.arc;*.mark;*.marking</property>
   </metadata>
 
   <styles>
