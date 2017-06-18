@@ -569,8 +569,8 @@ instance.
     .unrelate cls from other_cls across R1 using assoc_cls
     .delete object instance assoc_cls
 
-.. note:: Disconnected association classes violates model integrity and must
-	  be deleted manually.
+.. note:: Disconnected instances of association classes violates model
+	  integrity and must be deleted manually.
    
 Deleting Instances
 ------------------
