@@ -497,8 +497,8 @@ across *R1* to *O_CLS* via *A_CLS*.
        .select any cls from instance of CLS
        .select one other_cls related by cls->O_CLS[R1]
    
-To navigate across reflexive association, a phrase indicating the direction must
-be provided. For example:
+To navigate across reflexive associations, a phrase indicating the direction
+must be provided. For example:
 
 .. code-block:: pyrsl
 
@@ -547,7 +547,7 @@ The following example disconnects them again.
 
 .. code-block:: pyrsl
 
-    .unrelate inst1 to inst2 across R1.'other'
+    .unrelate inst1 from inst2 across R1.'other'
 
 Recent versions of the language allow connecting and disconnecting association
 classes in one single control statement. The following example creates one
