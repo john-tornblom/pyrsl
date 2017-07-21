@@ -118,7 +118,7 @@ opts = dict(name='pyrsl',
             url='https://github.com/xtuml/pyrsl',
             license='GPLv3',
             classifiers=[
-                'Development Status :: 4 - Beta',
+                'Development Status :: 5 - Production/Stable',
                 'Intended Audience :: Developers',
                 'Topic :: Software Development :: Interpreters',
                 'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
