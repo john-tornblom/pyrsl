@@ -1,3 +1,2 @@
 ply
-pyxtuml>=0.9
-
+pyxtuml>=1.0,<2.0
