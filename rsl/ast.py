@@ -6,6 +6,7 @@ Abstract syntax tree node definitions for the rule-specification language (RSL).
 
 
 class Node(object):
+    filename = None
     lineno = 0
     
     def __str__(self):
