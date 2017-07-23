@@ -373,10 +373,6 @@ class DeleteNode(Node):
     def __init__(self, variable_name):
         self.variable_name = variable_name
 
-    @property
-    def children(self):
-        return (self.variable_name,)
-
 
 class WhereNode(Node):
     expr = None
