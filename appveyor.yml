@@ -10,8 +10,7 @@ init:
   - "%PYTHON%/python --version"
 
 install:
-  - "%PYTHON%/python -m pip install ply"
-  - "%PYTHON%/python -m pip install pyxtuml"
+  - "%PYTHON%/python -m pip install -r requirements.txt"
   - "%PYTHON%/python -m pip install py2exe_py2"
 
 before_test:
