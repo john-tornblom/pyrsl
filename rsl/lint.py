@@ -14,6 +14,19 @@ import rsl
 logger = logging.getLogger('rsl.lint')
 
 
+def find_link(metaclass, key_letter, rel_id, phrase):
+    key_letter = key_letter.upper()
+    for link in metaclass.links.values():
+        if link.kind.upper() != key_letter:
+            continue
+        
+        if link.rel_id != rel_id:
+            continue
+    
+        if link.phrase == phrase:
+            return link
+
+
 class Linter(xtuml.Visitor):
     count = 0
     
@@ -65,10 +78,10 @@ class Linter(xtuml.Visitor):
             except xtuml.UnknownClassException as e:
                 continue
                 
-            link = metaclass.find_link(nav.key_letter,
-                                       nav.relation.rel_id,
-                                       nav.relation.phrase)
-            if not link:
+            link = find_link(metaclass, nav.key_letter, nav.relation.rel_id,
+                             nav.relation.phrase)
+            
+            if link is None:
                 if nav.relation.phrase:
                     phrase = ".'%s'" % nav.relation.phrase
                 else:
