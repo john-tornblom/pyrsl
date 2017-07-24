@@ -609,12 +609,12 @@ Defining Functions
 Functions are defined using the *function* statements, and parameters are
 defined using the *param* statement. In addition to the core types, three
 additional types can be used by parameters; *inst_ref*, *inst_ref_set* and
-*frag_ref*. The following example define a function with one parameter of each
+*frag_ref*. The following example define a function f with one parameter of each
 type.
 
 .. code-block:: pyrsl
 
-   .function
+   .function f
        .param boolean      My_Boolean
        .param integer      My_Integer
        .param real         My_Real
