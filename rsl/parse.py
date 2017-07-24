@@ -441,7 +441,7 @@ class RSLParser(object):
         return t
     
     def t_control_TYPE(self, t):
-        r"(?i)(boolean|integer|real|string|inst_ref|inst_ref_set|frag_ref)(?=\s)"
+        r"(?i)(boolean|integer|real|string|unique_id|inst_ref|inst_ref_set|frag_ref)(?=\s)"
         t.endlexpos = t.lexpos + len(t.value)
         return t
 
