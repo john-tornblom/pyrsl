@@ -53,7 +53,7 @@ string                "Hello world"
 ====================  ==============================
 
 .. tip::
-   Values of the core type unique_id can be created by reading the global
+   Values of the core type *unique_id* can be created by reading the global
    information fragment attribute *unique_num*. See `Global Information
    Fragment`_ for more information.
 
@@ -100,7 +100,7 @@ three kinds of expressions; *unary*, *binary*, and *compound* expressions. The
 following sections present operators that are valid for core types.
 
 .. note:: There are additional operators available that are not valid for core
-	  types These operators are further explained in `Instances and Sets`_
+	  types. These operators are further explained in `Instances and Sets`_
 	  and `Iterating Sets of Instances`_
 
 Unary expressions
@@ -289,14 +289,13 @@ based exit code may also be provided. For example:
 Model Interactions
 ==================
 The following sections describe language features that allow interaction with an
-xtUML model. Below is a class diagram that examples in the following sections
-use.
+xtUML model. Below is a class diagram used by examples in these sections.
 
 .. code-block:: none
 		
     -----------------                             ----------------------
    | Class     {CLS} |                           | Other Class  {O_CLS} | prev
-   |------------------ *         R1        0.. 1 |----------------------|------
+   |------------------ *         R1         0..1 |----------------------|------
    | Number: integer |---------------------------| Name: string         | 0..1 |
     -----------------             |               ----------------------       |
                                   |                           0..1 | next   R2 |
