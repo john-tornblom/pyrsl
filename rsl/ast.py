@@ -90,7 +90,7 @@ class ParseKeywordNode(Node):
         return (self.expr, self.keyword)
 
 #
-# FUnction related nodes
+# Function related nodes
 #
 
 class FunctionNode(Node):
