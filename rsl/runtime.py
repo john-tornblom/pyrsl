@@ -93,7 +93,12 @@ class Fragment(xtuml.Class):
         self.__dict__.update(kwargs)
         xtuml.Class.__init__(self)
 
+    def __str__(self):
+        return str(self.__dict__)
 
+    __repr__ = __str__
+
+    
 class Runtime(object):
     bridges = dict()
     string_formatters = dict()
