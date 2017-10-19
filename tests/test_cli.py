@@ -5,9 +5,15 @@ import unittest
 import tempfile
 import sys
 import os
-import StringIO
 import logging
 
+try:
+    # python2
+    from StringIO import StringIO
+except ImportError:
+    # python3
+    from io import StringIO
+    
 import rsl
 
 
@@ -16,7 +22,7 @@ class TestCommandLineInterface(unittest.TestCase):
     def setUp(self):
         self.temp_files = set()
         logger = logging.getLogger()
-        self.log = logging.StreamHandler(StringIO.StringIO())
+        self.log = logging.StreamHandler(StringIO())
         logger.addHandler(self.log)
         
     def tearDown(self):
