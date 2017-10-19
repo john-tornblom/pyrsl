@@ -13,6 +13,7 @@ import xtuml
 
 from . import symtab
 from . import parse
+from . import runtime
 
 logger = logging.getLogger(__name__)
 
@@ -71,7 +72,11 @@ class EvalWalker(xtuml.Walker):
         self.runtime.define_function(node.name, lambda *args: _(node, *args))
     
     def accept_ParameterListNode(self, node, args):
-        for param, arg in zip (node.parameters, args):
+        args = list(args)
+        if len(args) != len(node.parameters):
+            raise runtime.RuntimeException('wrong number of arguments')
+        
+        for param, arg in zip(node.parameters, args):
             self.accept(param, arg=arg)
 
     def accept_ParameterNode(self, node, arg):

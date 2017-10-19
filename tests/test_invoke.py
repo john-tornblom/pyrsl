@@ -108,6 +108,34 @@ class TestInvoke(RSLTestCase):
         self.assertEqual(1, rc)
 
     @evaluate_docstring
+    def test_missing_parameter(self, rc):
+        '''
+        .function f
+            .param integer x
+            .param integer y
+            .param integer z
+            .exit x
+        .end function
+        .invoke f(1)
+        .exit 0
+        '''
+        self.assertIsInstance(rc, RuntimeException)
+
+    @evaluate_docstring
+    def test_superfluous_argument(self, rc):
+        '''
+        .function f
+            .param integer x
+            .param integer y
+            .param integer z
+            .exit x
+        .end function
+        .invoke f(1,2,3,4)
+        .exit 0
+        '''
+        self.assertIsInstance(rc, RuntimeException)
+        
+    @evaluate_docstring
     def test_invoke_with_return_value(self, rc):
         '''
         .function f
