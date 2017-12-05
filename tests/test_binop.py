@@ -253,4 +253,32 @@ class TestBinaryOperation(RSLTestCase):
         '''
         rc = self.eval_text(text)
         self.assertEqual(0, rc)
-        
+
+    def test_short_circuit_or(self):
+        self.metamodel.define_class('A', [('Name', 'string')])
+
+        text = '''
+        .create object instance a1 of A
+        .assign a1.Name = "A1"
+
+        .select any a2 from instances of A where ( false )
+        .assign cond = ( ( empty a2 ) or ( a2.Name == "a2" ) )
+        .exit cond
+        '''
+        rc = self.eval_text(text)
+        self.assertEqual(True, rc)
+
+    def test_short_circuit_and(self):
+        self.metamodel.define_class('A', [('Name', 'string')])
+
+        text = '''
+        .create object instance a1 of A
+        .assign a1.Name = "A1"
+
+        .select any a2 from instances of A where ( false )
+        .assign cond = ( ( not_empty a2 ) and ( a2.Name == "a2" ) )
+        .exit cond
+        '''
+        rc = self.eval_text(text)
+        self.assertEqual(False, rc)
+

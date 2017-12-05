@@ -253,6 +253,12 @@ class EvalWalker(xtuml.Walker):
         }
 
         lhs = self.accept(node.left).fget()
+
+        if node.sign == 'or' and lhs == True:
+            return property(lambda: True)
+        elif node.sign == 'and' and lhs == False:
+            return property(lambda: False)
+
         rhs = self.accept(node.right).fget()
         
         if node.sign in ['|', '&']:
