@@ -94,6 +94,21 @@ class TestInvoke(RSLTestCase):
         self.assertEqual(2, rc)
         
     @evaluate_docstring
+    def test_invoke_with_comments_between_parameters(self, rc):
+        '''
+        .function f .// integer
+            .param integer x
+            .// some comment
+            .param integer y
+            .// begin body
+            .exit x + y
+        .end function
+        .invoke f(1, 2)
+        .exit 0
+        '''
+        self.assertEqual(3, rc)
+        
+    @evaluate_docstring
     def test_parameter_order(self, rc):
         '''
         .function f
