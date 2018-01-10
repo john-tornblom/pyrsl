@@ -170,10 +170,11 @@ two integers:
     .assign My_Concatenation = "Hello " + "world"
     .assign My_Comparison = 5 > My_Addition
     
-.. note:: The *and* and *or* operators have short-circuit semantics. If the left
-    operand of an *and* operation evaluates to *false*, the right operand is not
-    evaluated. Likewise if the left operand of an *or* operation evaluates to
-    *true*, the right operand is not evaluated.
+.. note:: In recent versions of the language, the *and* and *or* operators have
+	  short-circuit semantics. If the left operand of an *and* operation
+	  evaluates to *false*, the right operand is not evaluated. Likewise if
+	  the left operand of an *or* operation evaluates to *true*, the right
+	  operand is not evaluated.
 
 Compound expressions
 ^^^^^^^^^^^^^^^^^^^^
