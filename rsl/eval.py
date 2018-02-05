@@ -260,6 +260,9 @@ class EvalWalker(xtuml.Walker):
             
         if self.runtime.is_set(lhs):
             rhs = self.runtime.cast_to_set(rhs)
+
+        if self.runtime.is_set(rhs):
+            lhs = self.runtime.cast_to_set(lhs)
             
         value = ops[node.sign](lhs, rhs)
         
