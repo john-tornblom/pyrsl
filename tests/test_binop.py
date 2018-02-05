@@ -281,4 +281,44 @@ class TestBinaryOperation(RSLTestCase):
         '''
         rc = self.eval_text(text)
         self.assertEqual(False, rc)
+        
+    def test_instance_set_minus_instance_set(self):
+        self.metamodel.define_class('A', [('Name', 'string')])
+
+        text = '''
+        .create object instance a1 of A
+        .create object instance a2 of A
+        .assign a1.Name = "A1"
+        .assign a2.Name = "A2"
+        .select many an_set from instances of A
+        .select many a0_set from instances of A where (false)
+
+        .if ((cardinality (an_set - a0_set)) != 2)
+          .exit 1
+        .end if
+
+        .if ((cardinality (a0_set - an_set)) != 0)
+          .exit 2
+        .end if
+
+        .if ((cardinality (an_set - a1)) != 1)
+          .exit 3
+        .end if
+
+        .if ((cardinality (a1 - an_set)) != 0)
+          .exit 4
+        .end if
+
+        .if ((cardinality (a0_set - a1)) != 0)
+          .exit 5
+        .end if
+
+        .if ((cardinality (a1 - a0_set)) != 1)
+          .exit 6
+        .end if
+
+        .exit 0
+        '''
+        rc = self.eval_text(text)
+        self.assertEqual(0, rc)
 
