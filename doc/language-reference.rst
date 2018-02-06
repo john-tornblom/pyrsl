@@ -380,6 +380,9 @@ to instance.
 | \-              | Returns a set of instance references that are in the left |
 |                 | operand, but not in the right operand                     |
 +-----------------+-----------------------------------------------------------+
+| \^              | Returns a set of instance references that are in the left |
+|                 | operand or in the right operand, but not in both          |
++-----------------+-----------------------------------------------------------+
 | ==              | Check if the intersection between both operands is empty  |
 +-----------------+-----------------------------------------------------------+
 | !=              | Logical negation of ==                                    |

@@ -188,6 +188,26 @@ class TestBinaryOperation(RSLTestCase):
         '''
         rc = self.eval_text(text)
         self.assertEqual(3, rc)
+
+    def test_caret(self):
+        self.metamodel.define_class('A', [('Name', 'string')])
+
+        text = '''
+        .create object instance a1 of A
+        .create object instance a2 of A
+        .create object instance a3 of A
+        .assign a1.Name = "A1"
+        .assign a2.Name = "A2"
+        .assign a3.Name = "A3"
+        
+        .select many a23_set from instances of A where (selected.Name != "A1")
+        .select many a13_set from instances of A where (selected.Name != "A2")
+        
+        .assign a_set = a23_set ^ a13_set
+        .exit cardinality a_set .// should not contain a3
+        '''
+        rc = self.eval_text(text)
+        self.assertEqual(2, rc)
         
     def test_ampesand(self):
         self.metamodel.define_class('A', [('Name', 'string')])

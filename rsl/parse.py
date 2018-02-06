@@ -101,6 +101,7 @@ class RSLParser(object):
               'UMINUS',
               'SLASH',
               'AMPERSAND',
+              'CARET',
               'PROCENT',
               'STAR',
               'PLUS',
@@ -659,6 +660,11 @@ class RSLParser(object):
     
     def t_AMPERSAND(self, t):
         r"\&"
+        t.endlexpos = t.lexpos + len(t.value)
+        return t
+
+    def t_CARET(self, t):
+        r"\^"
         t.endlexpos = t.lexpos + len(t.value)
         return t
     
@@ -1377,6 +1383,10 @@ class RSLParser(object):
         """bop : PROCENT"""
         p[0] = p[1]
         
+    def p_bop_16(self, p):
+        """bop : CARET"""
+        p[0] = p[1]
+
     def p_literal_1(self, p):
         """literal : LITERAL literalbody NEWLINE"""
         p[0] = p[2]

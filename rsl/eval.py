@@ -241,6 +241,7 @@ class EvalWalker(xtuml.Walker):
             '+':   lambda lhs, rhs: (lhs + rhs),
             '-':   lambda lhs, rhs: (lhs - rhs),
             '*':   lambda lhs, rhs: (lhs * rhs),
+            '^':   lambda lhs, rhs: (lhs ^ rhs),
             '%':   lambda lhs, rhs: (lhs % rhs),
             '/':   lambda lhs, rhs: (lhs / rhs),
             '<':   lambda lhs, rhs: (lhs < rhs),
@@ -262,7 +263,7 @@ class EvalWalker(xtuml.Walker):
 
         rhs = self.accept(node.right).fget()
         
-        if node.sign in ['|', '&'] and self.runtime.is_instance(lhs):
+        if node.sign in ['|', '&', '^'] and self.runtime.is_instance(lhs):
             lhs = self.runtime.cast_to_set(lhs)
             
         if self.runtime.is_set(lhs):
