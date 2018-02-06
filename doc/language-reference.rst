@@ -913,7 +913,7 @@ of *CLS* across the association *R1* to access the attribute *Name* on the class
 
 .. code-block:: pyrsl
 
-    .assign select any cls from instances of CLS
+    .select any cls from instances of CLS
     ${cls->O_CLS[R1].Name}
 
 Transforming Substitution Variables
