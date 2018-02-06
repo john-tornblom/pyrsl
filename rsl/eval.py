@@ -241,6 +241,7 @@ class EvalWalker(xtuml.Walker):
             '+':   lambda lhs, rhs: (lhs + rhs),
             '-':   lambda lhs, rhs: (lhs - rhs),
             '*':   lambda lhs, rhs: (lhs * rhs),
+            '%':   lambda lhs, rhs: (lhs % rhs),
             '/':   lambda lhs, rhs: (lhs / rhs),
             '<':   lambda lhs, rhs: (lhs < rhs),
             '<=':  lambda lhs, rhs: (lhs <= rhs),

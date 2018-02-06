@@ -101,6 +101,7 @@ class RSLParser(object):
               'UMINUS',
               'SLASH',
               'AMPERSAND',
+              'PROCENT',
               'STAR',
               'PLUS',
               'MINUS',
@@ -1371,7 +1372,11 @@ class RSLParser(object):
     def p_bop_14(self, p):
         """bop : AMPERSAND"""
         p[0] = p[1]
-            
+
+    def p_bop_15(self, p):
+        """bop : PROCENT"""
+        p[0] = p[1]
+        
     def p_literal_1(self, p):
         """literal : LITERAL literalbody NEWLINE"""
         p[0] = p[2]

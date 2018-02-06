@@ -149,7 +149,15 @@ class TestBinaryOperation(RSLTestCase):
         .exit x
         '''
         self.assertTrue(rc)
-        
+
+    @evaluate_docstring
+    def test_procent(self, rc):
+        '''
+        .assign x = 5 % 3
+        .exit x
+        '''
+        self.assertEqual(rc, 2)
+
     def test_pipe(self):
         self.metamodel.define_class('A', [('Name', 'string')])
 
