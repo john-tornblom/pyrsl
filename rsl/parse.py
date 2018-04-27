@@ -202,6 +202,7 @@ class RSLParser(object):
     def t_control_COMMENT(self, t):
         r"(\.//|(?i)\.comment)[^\n]*\n"
         t.endlexpos = t.lexpos + len(t.value)
+        t.lexer.lineno += t.value.count('\n')
         t.type = 'NEWLINE'
         t.lexer.begin('INITIAL')
         return t
