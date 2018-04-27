@@ -87,7 +87,7 @@ class TestInvoke(RSLTestCase):
             .param integer x .// some comment
             .// begin body
             .exit x + 1
-        .end function
+        .end function .//
         .invoke f(1)
         .exit 0
         '''

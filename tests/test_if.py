@@ -26,6 +26,18 @@ class TestIf(RSLTestCase):
         .exit 1
         '''
         self.assertEqual(1, rc)
+
+    @evaluate_docstring
+    def test_if_with_comments(self, rc):
+        '''
+        .if ( 0 == 0 ) .//
+            .exit 1    .//
+        .elif (0 == 1) .//
+            .exit 2    .//
+        .end if        .//
+        .exit 0
+        '''
+        self.assertEqual(1, rc)
         
     @evaluate_docstring
     def test_elif_first(self, rc):

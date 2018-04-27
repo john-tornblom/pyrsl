@@ -221,7 +221,7 @@ class RSLParser(object):
     def t_pc_ENDFUNCTION(self, t):
         r"(?i)\.end[\s]+function"
         t.endlexpos = t.lexpos + len(t.value)
-        t.lexer.begin('pc')
+        t.lexer.begin('control')
         return t
     
     def t_pc_INVOKE(self, t):
@@ -287,7 +287,7 @@ class RSLParser(object):
     def t_pc_ENDIF(self, t):
         r"(?i)\.end[\s]+if"
         t.endlexpos = t.lexpos + len(t.value)
-        t.lexer.begin('pc')
+        t.lexer.begin('control')
         return t
     
     def t_pc_FOR(self, t):
@@ -305,7 +305,7 @@ class RSLParser(object):
     def t_pc_ENDFOR(self, t):
         r"(?i)\.end[\s]+for"
         t.endlexpos = t.lexpos + len(t.value)
-        t.lexer.begin('pc')
+        t.lexer.begin('control')
         return t
     
     def t_pc_WHILE(self, t):
@@ -323,7 +323,7 @@ class RSLParser(object):
     def t_pc_ENDWHILE(self, t):
         r"(?i)\.end[\s]+while"
         t.endlexpos = t.lexpos + len(t.value)
-        t.lexer.begin('pc')
+        t.lexer.begin('control')
         return t
     
     def t_pc_INCLUDE(self, t):
