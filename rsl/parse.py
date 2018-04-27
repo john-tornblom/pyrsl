@@ -1037,14 +1037,11 @@ class RSLParser(object):
     def p_endiffer_1(self, p):
         """endiffer : ENDIF lineabreak"""
     
-    
     def p_endwhiler_1(self, p):
         """endwhiler : ENDWHILE lineabreak"""
     
-    
     def p_endforrer_1(self, p):
         """endforrer : ENDFOR lineabreak"""
-    
     
     def p_condition_1(self, p):
         """condition : LPAREN expr RPAREN"""
