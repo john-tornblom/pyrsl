@@ -299,7 +299,7 @@ class RSLParser(object):
     def t_pc_BREAKFOR(self, t):
         r"(?i)\.break[\s]+for"
         t.endlexpos = t.lexpos + len(t.value)
-        t.lexer.begin('pc')
+        t.lexer.begin('control')
         return t
     
     def t_pc_ENDFOR(self, t):
@@ -317,7 +317,7 @@ class RSLParser(object):
     def t_pc_BREAKWHILE(self, t):
         r"(?i)\.break[\s]+while"
         t.endlexpos = t.lexpos + len(t.value)
-        t.lexer.begin('pc')
+        t.lexer.begin('control')
         return t
     
     def t_pc_ENDWHILE(self, t):
