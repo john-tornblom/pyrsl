@@ -78,6 +78,7 @@
     <context id="types" style-ref="type">
       <keyword>boolean</keyword>
       <keyword>integer</keyword>
+      <keyword>unique_id</keyword>
       <keyword>real</keyword>
       <keyword>string</keyword>
       <keyword>inst_ref</keyword>
