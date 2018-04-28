@@ -165,6 +165,7 @@
 	<context sub-pattern="0" where="start" style-ref="keyword"/>
 	<context ref="rel-ids"/>
 	<context ref="phrases"/>
+	<context ref="keywords"/>
       </include>
     </context>
 
