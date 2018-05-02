@@ -111,7 +111,7 @@ class BundleCommand(Command):
 
 
 opts = dict(name='pyrsl',
-            version='2.0.0', # ensure that this is the same as in rsl.version
+            version='2.0.1', # ensure that this is the same as in rsl.version
             description='Interpreter for the Rule Specification Language (RSL)',
             author='John Törnblom',
             author_email='john.tornblom@gmail.com',
@@ -123,7 +123,8 @@ opts = dict(name='pyrsl',
                 'Topic :: Software Development :: Interpreters',
                 'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
                 'Programming Language :: Python :: 2.7',
-                'Programming Language :: Python :: 3.4'],
+                'Programming Language :: Python :: 3.5',
+                'Programming Language :: Python :: 3.6'],
             keywords='rsl xtuml bridgepoint',
             packages=['rsl'],
             data_files = [('share/gtksourceview-3.0/language-specs',
