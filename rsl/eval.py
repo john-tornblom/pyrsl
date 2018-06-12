@@ -362,7 +362,8 @@ class EvalWalker(xtuml.Walker):
         
     def accept_SelectManyInstanceNode(self, node):
         where = self.accept(node.where)
-        value = self.runtime.select_many_from(node.key_letter, where)
+        order_by = self.accept(node.ordered_by)
+        value = self.runtime.select_many_from(node.key_letter, where, order_by)
         
         self.symtab.install_symbol(node.variable_name, value)
         
@@ -389,7 +390,8 @@ class EvalWalker(xtuml.Walker):
     def accept_SelectManyNode(self, node):
         inst_set = iter(self.accept(node.instance_chain).fget())
         where = self.accept(node.where)
-        value = self.runtime.select_many_in(inst_set, where)
+        order_by = self.accept(node.ordered_by)
+        value = self.runtime.select_many_in(inst_set, where, order_by)
         
         self.symtab.install_symbol(node.variable_name, value)
         
@@ -408,6 +410,13 @@ class EvalWalker(xtuml.Walker):
             return value
             
         return lambda selected: where(node.expr, selected)
+
+    def accept_OrderedByNode(self, node):
+        if len(node.attributes):
+            if node.reverse:
+                return xtuml.reverse_order_by(*node.attributes)
+            else:
+                return xtuml.order_by(*node.attributes)
         
     def accept_InstanceChainNode(self, node):
         inst = self.accept(node.variable).fget()

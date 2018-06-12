@@ -475,6 +475,27 @@ instances of *CLS* whose attribute *Number* is larger than 100.
 
     .select many inst_set from instances of CLS where (selected.Number > 100)
 
+Ordering Selections
+-------------------
+Instance selections returned by *select many* statement may be ordered by one or
+more instance attributes. The *ordered_by* keyword sorts the resulting set in
+ascending order and the *reverse_ordered_by* keyword sorts the resulting set in
+descending order. If multiple attributes are specified, the set will be sorted
+by the first attribute and then within each value of this, by the second
+attribute and so on. The following example demonstrates how to select all the
+instances of *PERSON* and order them by age first, then alphanumerically by name.
+
+.. code-block:: pyrsl
+
+    .select many people from instances of PERSON ordered_by ( age, name )
+
+The following example demonstrates how to select all the instances of *INVOICE*
+and order them by greatest value.
+
+.. code-block:: pyrsl
+
+    .select many invoices from instances of INVOICE reverse_ordered_by ( value )
+
 Navigating Instances
 --------------------
 Associations between classes may be navigated using the *related by* keyword.
