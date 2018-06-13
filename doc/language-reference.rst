@@ -487,14 +487,14 @@ instances of *PERSON* and order them by age first, then alphanumerically by name
 
 .. code-block:: pyrsl
 
-    .select many people from instances of PERSON ordered_by ( age, name )
+    .select many people from instances of PERSON ordered_by (age, name)
 
 The following example demonstrates how to select all the instances of *INVOICE*
 and order them by greatest value.
 
 .. code-block:: pyrsl
 
-    .select many invoices from instances of INVOICE reverse_ordered_by ( value )
+    .select many invoices from instances of INVOICE reverse_ordered_by (value)
 
 Navigating Instances
 --------------------

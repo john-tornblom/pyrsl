@@ -87,15 +87,15 @@ class TestSelect(RSLTestCase):
 
     def test_select_many_ordered_by(self):
         self.metamodel.define_class('A', [('color', 'string'), ('num', 'integer')])
-        self.metamodel.new('A', color='red',    num=0 )
-        self.metamodel.new('A', color='orange', num=1 )
-        self.metamodel.new('A', color='yellow', num=0 )
-        self.metamodel.new('A', color='green',  num=1 )
-        self.metamodel.new('A', color='blue',   num=0 )
-        self.metamodel.new('A', color='purple', num=1 )
+        self.metamodel.new('A', color='red',    num=0)
+        self.metamodel.new('A', color='orange', num=1)
+        self.metamodel.new('A', color='yellow', num=0)
+        self.metamodel.new('A', color='green',  num=1)
+        self.metamodel.new('A', color='blue',   num=0)
+        self.metamodel.new('A', color='purple', num=1)
 
         text = '''
-        .select many as from instances of A ordered_by ( num, color )
+        .select many as from instances of A ordered_by (num, color)
         .assign colors = ""
         .for each a in as
           .assign colors = "${colors} ${a.color}"
@@ -108,15 +108,15 @@ class TestSelect(RSLTestCase):
 
     def test_select_many_reverse_ordered_by(self):
         self.metamodel.define_class('A', [('color', 'string'), ('num', 'integer')])
-        self.metamodel.new('A', color='red',    num=0 )
-        self.metamodel.new('A', color='orange', num=1 )
-        self.metamodel.new('A', color='yellow', num=0 )
-        self.metamodel.new('A', color='green',  num=1 )
-        self.metamodel.new('A', color='blue',   num=0 )
-        self.metamodel.new('A', color='purple', num=1 )
+        self.metamodel.new('A', color='red',    num=0)
+        self.metamodel.new('A', color='orange', num=1)
+        self.metamodel.new('A', color='yellow', num=0)
+        self.metamodel.new('A', color='green',  num=1)
+        self.metamodel.new('A', color='blue',   num=0)
+        self.metamodel.new('A', color='purple', num=1)
 
         text = '''
-        .select many as from instances of A reverse_ordered_by ( num, color )
+        .select many as from instances of A reverse_ordered_by (num, color)
         .assign colors = ""
         .for each a in as
           .assign colors = "${colors} ${a.color}"
