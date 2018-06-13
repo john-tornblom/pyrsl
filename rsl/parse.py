@@ -53,8 +53,8 @@ class RSLParser(object):
               'ENDIF',
               'COMMENT',
               'WHERE',
-              'ORDERED_BY',
-              'REVERSE_ORDERED_BY',
+              'ORDER_BY',
+              'REVERSE_ORDER_BY',
               'ENDFUNCTION',
               'FROMINSTOF',
               'TEXT',
@@ -408,12 +408,12 @@ class RSLParser(object):
         t.endlexpos = t.lexpos + len(t.value)
         return t
     
-    def t_control_ORDERED_BY(self, t):
+    def t_control_ORDER_BY(self, t):
         r"(?i)ordered_by(?=[\s\(])"
         t.endlexpos = t.lexpos + len(t.value)
         return t
 
-    def t_control_REVERSE_ORDERED_BY(self, t):
+    def t_control_REVERSE_ORDER_BY(self, t):
         r"(?i)reverse_ordered_by(?=[\s\(])"
         t.endlexpos = t.lexpos + len(t.value)
         return t
@@ -887,7 +887,7 @@ class RSLParser(object):
         p[0].lineno = p.lineno(0)
     
     def p_selectstatement_3(self, p):
-        """selectstatement : SELECTMANY inst_ref_set_var RELATEDBY inst_chain whereclause orderedby"""
+        """selectstatement : SELECTMANY inst_ref_set_var RELATEDBY inst_chain whereclause orderby"""
         p[0] = ast.SelectManyNode(p[2], p[4], p[5], p[6])
         p[0].filename = self.filename
         p[0].lineno = p.lineno(0)
@@ -899,7 +899,7 @@ class RSLParser(object):
         p[0].lineno = p.lineno(0)
     
     def p_selectstatement_5(self, p):
-        """selectstatement : SELECTMANY inst_ref_set_var FROMINSTOF obj_keyletters whereclause orderedby"""
+        """selectstatement : SELECTMANY inst_ref_set_var FROMINSTOF obj_keyletters whereclause orderby"""
         p[0] = ast.SelectManyInstanceNode(p[2], p[4], p[5], p[6])
         p[0].filename = self.filename
         p[0].lineno = p.lineno(0)
@@ -964,22 +964,22 @@ class RSLParser(object):
         p[0].filename = self.filename
         p[0].lineno = p.lineno(0)
 
-    def p_orderedby_1(self, p):
-        """orderedby : """
-        p[0] = ast.OrderedByNode()
+    def p_orderby_1(self, p):
+        """orderby : """
+        p[0] = ast.OrderByNode()
         p[0].filename = self.filename
         p[0].lineno = p.lineno(0)
         
-    def p_orderedby_2(self, p):
-        """orderedby : ORDERED_BY LPAREN orderattrs RPAREN"""
-        p[0] = ast.OrderedByNode()
+    def p_orderby_2(self, p):
+        """orderby : ORDER_BY LPAREN orderattrs RPAREN"""
+        p[0] = ast.OrderByNode()
         p[0].filename = self.filename
         p[0].lineno = p.lineno(0)
         p[0].attributes += p[3]
 
-    def p_orderedby_3(self, p):
-        """orderedby : REVERSE_ORDERED_BY LPAREN orderattrs RPAREN"""
-        p[0] = ast.OrderedByNode(True)
+    def p_orderby_3(self, p):
+        """orderby : REVERSE_ORDER_BY LPAREN orderattrs RPAREN"""
+        p[0] = ast.OrderByNode(True)
         p[0].filename = self.filename
         p[0].lineno = p.lineno(0)
         p[0].attributes += p[3]

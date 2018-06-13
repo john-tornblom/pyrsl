@@ -279,13 +279,13 @@ class Runtime(object):
     def select_any_from(self, key_letter, where_cond):
         return self.metamodel.select_any(key_letter, where_cond)
          
-    def select_many_from(self, key_letter, where_cond, ordered_by):
-        return self.metamodel.select_many(key_letter, where_cond, ordered_by)
+    def select_many_from(self, key_letter, where_cond, order_by):
+        return self.metamodel.select_many(key_letter, where_cond, order_by)
 
     @staticmethod
-    def select_many_in(inst_set, where_cond, ordered_by):
+    def select_many_in(inst_set, where_cond, order_by):
         s = filter(where_cond, inst_set)
-        return xtuml.QuerySet(s, ordered_by)
+        return xtuml.QuerySet(s, order_by)
 
     @staticmethod
     def select_any_in(inst_set, where_cond):
