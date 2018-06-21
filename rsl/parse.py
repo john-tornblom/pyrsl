@@ -857,7 +857,7 @@ class RSLParser(object):
         p[0].lineno = p.lineno(0)
     
     def p_delete_statement(self, p):
-        '''statement : DELETEOBJ inst_ref_var lineabreak'''
+        """statement : DELETEOBJ inst_ref_var lineabreak"""
         p[0] = ast.DeleteNode(p[2])
         p[0].filename = self.filename
         p[0].lineno = p.lineno(0)
@@ -893,49 +893,49 @@ class RSLParser(object):
         p[0].lineno = p.lineno(0)
         
     def p_relate_statement_1(self, p):
-        '''statement : RELATE inst_ref_var TO inst_ref_var ACROSS WORD lineabreak'''
+        """statement : RELATE inst_ref_var TO inst_ref_var ACROSS WORD lineabreak"""
         p[0] = ast.RelateNode(p[2],  p[4], p[6], '')
         p[0].filename = self.filename
         p[0].lineno = p.lineno(0)
         
     def p_relate_statement_2(self, p):
-        '''statement : RELATE inst_ref_var TO inst_ref_var ACROSS WORD DOT PHRASE lineabreak'''
+        """statement : RELATE inst_ref_var TO inst_ref_var ACROSS WORD DOT PHRASE lineabreak"""
         p[0] = ast.RelateNode(p[2], p[4], p[6], p[8])
         p[0].filename = self.filename
         p[0].lineno = p.lineno(0)
         
     def p_relate_using_statement_1(self, p):
-        '''statement : RELATE inst_ref_var TO inst_ref_var ACROSS WORD USING inst_ref_var lineabreak'''
+        """statement : RELATE inst_ref_var TO inst_ref_var ACROSS WORD USING inst_ref_var lineabreak"""
         p[0] = ast.RelateUsingNode(p[2], p[4], p[6], '', p[8])
         p[0].filename = self.filename
         p[0].lineno = p.lineno(0)
         
     def p_relate_using_statement_2(self, p):
-        '''statement : RELATE inst_ref_var TO inst_ref_var ACROSS WORD DOT PHRASE USING inst_ref_var lineabreak'''
+        """statement : RELATE inst_ref_var TO inst_ref_var ACROSS WORD DOT PHRASE USING inst_ref_var lineabreak"""
         p[0] = ast.RelateUsingNode(p[2], p[4], p[6], p[8], p[10])
         p[0].filename = self.filename
         p[0].lineno = p.lineno(0)
         
     def p_unrelate_statement_1(self, p):
-        '''statement : UNRELATE inst_ref_var FROM inst_ref_var ACROSS WORD lineabreak'''
+        """statement : UNRELATE inst_ref_var FROM inst_ref_var ACROSS WORD lineabreak"""
         p[0] = ast.UnrelateNode(p[2], p[4], p[6], '')
         p[0].filename = self.filename
         p[0].lineno = p.lineno(0)
         
     def p_unrelate_statement_2(self, p):
-        '''statement : UNRELATE inst_ref_var FROM inst_ref_var ACROSS WORD DOT PHRASE lineabreak'''
+        """statement : UNRELATE inst_ref_var FROM inst_ref_var ACROSS WORD DOT PHRASE lineabreak"""
         p[0] = ast.UnrelateNode(p[2], p[4], p[6], p[8])
         p[0].filename = self.filename
         p[0].lineno = p.lineno(0)
     
     def p_unrelate_statement_using_1(self, p):
-        '''statement : UNRELATE inst_ref_var FROM inst_ref_var ACROSS WORD USING inst_ref_var lineabreak'''
+        """statement : UNRELATE inst_ref_var FROM inst_ref_var ACROSS WORD USING inst_ref_var lineabreak"""
         p[0] = ast.UnrelateUsingNode(p[2], p[4], p[6], '', p[8])
         p[0].filename = self.filename
         p[0].lineno = p.lineno(0)
         
     def p_unrelate_statement_using_2(self, p):
-        '''statement : UNRELATE inst_ref_var FROM inst_ref_var ACROSS WORD DOT PHRASE USING inst_ref_var lineabreak'''
+        """statement : UNRELATE inst_ref_var FROM inst_ref_var ACROSS WORD DOT PHRASE USING inst_ref_var lineabreak"""
         p[0] = ast.UnrelateUsingNode(p[2], p[4], p[6], p[8], p[10])
         p[0].filename = self.filename
         p[0].lineno = p.lineno(0)
