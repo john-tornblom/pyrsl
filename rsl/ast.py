@@ -53,7 +53,7 @@ class LiteralNode(Node):
 
 class SubstitutionVariableNode(Node):
     expr = None
-    formats = list() 
+    formats = None
     
     def __init__(self, fmt, expr):
         self.formats = fmt
@@ -131,7 +131,7 @@ class ParameterTypeNode(Node):
 
 
 class ParameterListNode(Node):
-    parameters = list()
+    parameters = None
     
     def __init__(self):
         self.parameters = list()
@@ -142,7 +142,7 @@ class ParameterListNode(Node):
 
 
 class ArgumentListNode(Node):
-    arguments = list()
+    arguments = None
     
     def __init__(self):
         self.arguments = list()
@@ -153,7 +153,7 @@ class ArgumentListNode(Node):
         
 
 class StatementListNode(Node):
-    statements = list()
+    statements = None
     
     def __init__(self):
         self.statements = list()
@@ -388,7 +388,7 @@ class WhereNode(Node):
 
 class InstanceChainNode(Node):
     variable = None
-    navigations = list()
+    navigations = None
     
     def __init__(self, variable):
         self.variable = variable
@@ -583,7 +583,7 @@ class FieldAssignmentNode(Node):
         
 
 class StringBodyNode(Node):
-    values = list()
+    values = None
     
     def __init__(self):
         self.values = list()
