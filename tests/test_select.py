@@ -243,6 +243,45 @@ class TestSelect(RSLTestCase):
         rc = self.eval_text(text)
         self.assertEqual(3, rc)
 
+    def test_select_many_navigation_ordered_by(self):
+        self.metamodel.define_class('A', [('Id', 'unique_id')])
+        self.metamodel.define_class('B', [('Id', 'unique_id'), 
+                                          ('A_Id', 'unique_id'),
+                                          ('color', 'string'),
+                                          ('num', 'integer')])
+        
+        self.metamodel.define_association(rel_id='R1',
+                                          source_kind='B',
+                                          target_kind='A',
+                                          source_keys=['A_Id'],
+                                          target_keys=['Id'],
+                                          source_many=True,
+                                          target_many=False,
+                                          source_conditional=True,
+                                          target_conditional=False,
+                                          source_phrase='',
+                                          target_phrase='')
+
+        a = self.metamodel.new('A')
+        xtuml.relate(a, self.metamodel.new('B', color='red',    num=0), 1)
+        xtuml.relate(a, self.metamodel.new('B', color='orange', num=1), 1)
+        xtuml.relate(a, self.metamodel.new('B', color='yellow', num=0), 1)
+        xtuml.relate(a, self.metamodel.new('B', color='green',  num=1), 1)
+        xtuml.relate(a, self.metamodel.new('B', color='blue',   num=0), 1)
+        xtuml.relate(a, self.metamodel.new('B', color='purple', num=1), 1)
+
+        text = '''
+        .select any a from instances of A
+        .select many bs related by a->B[R1] ordered_by (num, color)
+        .assign colors = ""
+        .for each b in bs
+          .assign colors = "${colors} ${b.color}"
+        .end for
+        .exit colors
+        '''
+        rc = self.eval_text(text)
+        self.assertEqual(rc, ' blue red yellow green orange purple')
+     
     def test_select_one_reflexive_navigation(self):
         self.metamodel.define_class('A', [('Id', 'unique_id'),
                                           ('Next_Id', 'unique_id'),
