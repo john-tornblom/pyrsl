@@ -298,6 +298,7 @@ class Runtime(object):
 
     @staticmethod
     def select_one_in(inst_set, where_cond):
+        inst_set = xtuml.QuerySet(inst_set)
         cardinality = Runtime.cardinality(inst_set)
         if cardinality > 1:
             raise RuntimeException('select one from a set with cardinality %d' % 

@@ -5,6 +5,9 @@ import xtuml
 
 from utils import RSLTestCase
 
+from rsl.parse import ParseException
+from rsl.runtime import RuntimeException
+
 
 class TestSelect(RSLTestCase):
 
@@ -85,6 +88,10 @@ class TestSelect(RSLTestCase):
             self.assertEqual(i, rc)
             self.metamodel.new('A')
 
+    def test_select_one_from_instances(self):
+        self.assertRaises(ParseException, self.eval_text,
+                          '.select one a from instances of A')
+        
     def test_select_many_ordered_by(self):
         self.metamodel.define_class('A', [('color', 'string'), ('num', 'integer')])
         self.metamodel.new('A', color='red',    num=0)
@@ -243,6 +250,45 @@ class TestSelect(RSLTestCase):
         rc = self.eval_text(text)
         self.assertEqual(3, rc)
 
+
+    def test_select_one_from_many_navigation(self):
+        '''
+        |===================|                |======================|
+        |         A         |                |         B            |
+        |-------------------| 1           *  |----------------------|
+        | Id: unique_id {I} | -------------- | Id: unique_id    {I} |
+        |===================|       R1       | A_Id: unique_id {R1} |
+                                             |======================|
+        '''
+        self.metamodel.define_class('A', [('Id', 'unique_id')])
+        self.metamodel.define_class('B', [('Id', 'unique_id'),
+                                          ('A_Id', 'unique_id')])
+        
+        self.metamodel.define_association(rel_id='R1',
+                                          source_kind='B',
+                                          target_kind='A',
+                                          source_keys=['A_Id'],
+                                          target_keys=['Id'],
+                                          source_many=True,
+                                          target_many=False,
+                                          source_conditional=True,
+                                          target_conditional=False,
+                                          source_phrase='',
+                                          target_phrase='')
+        
+        a = self.metamodel.new('A')
+        xtuml.relate(a, self.metamodel.new('B'), 1)
+        xtuml.relate(a, self.metamodel.new('B'), 1)
+        xtuml.relate(a, self.metamodel.new('B'), 1)
+
+        text = '''
+        .select any a from instances of A
+        .select one b related by a->B[R1]
+        '''
+
+        rc = self.eval_text(text)
+        self.assertIsInstance(rc, RuntimeException)
+        
     def test_select_many_navigation_ordered_by(self):
         '''
         |===================|                |======================|
