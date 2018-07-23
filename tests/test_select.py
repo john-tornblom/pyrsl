@@ -244,6 +244,16 @@ class TestSelect(RSLTestCase):
         self.assertEqual(3, rc)
 
     def test_select_many_navigation_ordered_by(self):
+        '''
+        |===================|                |======================|
+        |         A         |                |         B            |
+        |-------------------| 1           *  |----------------------|
+        | Id: unique_id {I} | -------------- | Id: unique_id    {I} |
+        |===================|       R1       | A_Id: unique_id {R1} |
+                                             | color: string        |
+                                             | num: integer         |
+                                             |======================|
+        '''
         self.metamodel.define_class('A', [('Id', 'unique_id')])
         self.metamodel.define_class('B', [('Id', 'unique_id'), 
                                           ('A_Id', 'unique_id'),
