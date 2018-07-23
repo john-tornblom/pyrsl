@@ -12,7 +12,7 @@ class RSLTestCase(unittest.TestCase):
     includes = None
     
     def setUp(self):
-        id_generator = xtuml.IntegerGenerator()
+        id_generator = rsl.UniqueIdGenerator()
         self.metamodel = xtuml.MetaModel(id_generator)
         self.runtime = rsl.runtime.Runtime(self.metamodel)
         self.includes = ['./']

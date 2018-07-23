@@ -2,6 +2,7 @@
 # Copyright (C) 2015 John Törnblom
 
 from utils import RSLTestCase
+from utils import evaluate_docstring
 
 from rsl.runtime import RuntimeException
 
@@ -127,6 +128,29 @@ class TestTypeSystem(RSLTestCase):
         rc = self.eval_text(text)
         self.assertIsInstance(rc, RuntimeException)
         
+    def test_invoke_unique_id(self):
+        self.metamodel.define_class('My_Class', [('ID', 'unique_id')])
+        inst = self.metamodel.new('My_Class')
         
-        
-        
+        text = '''
+            .function f
+                .param unique_id my_id
+                .exit my_id
+            .end function
+            .select any inst from instances of My_Class
+            .invoke res = f(inst.ID)
+            .exit -1
+        '''
+        rc = self.eval_text(text)
+        self.assertEqual(rc, inst.ID)
+
+    @evaluate_docstring
+    def test_invoke_invalid_unique_id(self, rc):
+        '''
+        .function f
+            .param unique_id my_id
+            .exit my_id
+        .end function
+        .invoke res = f(1)
+        '''
+        self.assertIsInstance(rc, RuntimeException)

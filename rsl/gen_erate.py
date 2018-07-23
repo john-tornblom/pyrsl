@@ -219,7 +219,7 @@ def main(argv=None):
         
     logging.basicConfig(stream=sys.stdout, level=loglevel)
     
-    id_generator = xtuml.IntegerGenerator()
+    id_generator = rsl.UniqueIdGenerator()
     metamodel = xtuml.MetaModel(id_generator)
     loader = xtuml.ModelLoader()
     

@@ -98,7 +98,18 @@ class Fragment(xtuml.Class):
 
     __repr__ = __str__
 
-    
+
+class UniqueId(int):
+    pass
+
+
+class UniqueIdGenerator(xtuml.IdGenerator):
+    _current = UniqueId(0)
+
+    def readfunc(self):
+        return UniqueId(self._current + 1)
+
+
 class Runtime(object):
     bridges = dict()
     string_formatters = dict()
@@ -367,6 +378,7 @@ class Runtime(object):
         
     def type_name(self, ty):
         if   issubclass(ty, bool): return 'boolean'
+        elif issubclass(ty, UniqueId): return 'unique_id'
         elif issubclass(ty, int): return 'integer'
         elif issubclass(ty, float): return 'real'
         elif issubclass(ty, str): return 'string'
@@ -374,7 +386,6 @@ class Runtime(object):
         elif issubclass(ty, xtuml.Class): return 'inst_ref'
         elif issubclass(ty, type(None)): return 'inst_ref'
         elif issubclass(ty, xtuml.QuerySet): return 'inst_ref_set'
-        elif issubclass(ty, type(self.metamodel.id_generator.peek())): return 'unique_id'
         else: raise RuntimeException("Unknown type '%s'" % ty.__name__)
         
     def type_kind(self, value):
