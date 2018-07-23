@@ -5,6 +5,7 @@ import unittest
 import tempfile
 import sys
 import os
+import stat
 import logging
 
 try:
@@ -232,6 +233,27 @@ class TestCommandLineInterface(unittest.TestCase):
             self.assertIn('test_diff -arch', s)
             self.assertIn('Hello file', s)
         
+    def test_force(self):
+        emit = self.temp_file(mode='r')
+        script = self.temp_file(mode='w')
+        script.file.write('Hello file\n')
+        script.file.write('.emit to file "%s"\n' % emit.name.replace('\\', '/'))
+        script.file.flush()
+        
+        os.chmod(emit.name, stat.S_IRUSR)
+
+        argv = ['test_force', 
+                '-arch', script.name,
+                '-nopersist']
+
+        self.assertRaises(SystemExit, rsl.main, argv)
+        argv.append('-force')
+        rsl.main(argv)
+        
+        with open(emit.name, 'r') as f:
+            s = f.read()
+            self.assertIn('Hello file', s)
+
 
 if __name__ == "__main__":
     unittest.main()
