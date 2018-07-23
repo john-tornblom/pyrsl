@@ -168,6 +168,14 @@ class TestFormat(RSLTestCase):
         .exit "$o{x}"
         '''
         self.assertEqual("example34Text", rc)
+
+    @evaluate_docstring
+    def test_no_linebreak(self, rc):
+        '''
+        .assign x = "foo\nbar"
+        .exit "$tnonl{x}"
+        '''
+        self.assertEqual("foo bar", rc)
         
     @evaluate_docstring
     def test_chain(self, rc):
