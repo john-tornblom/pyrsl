@@ -97,6 +97,18 @@ Hello world!
         with open("/tmp/RSLTestCase") as f:
             self.assertEqual(f.read(), "")
 
+    @evaluate_docstring
+    def test_emit_to_folder(self, rc):
+        '''Hello
+        .emit to file "/tmp/Some_Test/Folder/RSLTestCase"
+        '''
+        with open("/tmp/Some_Test/Folder/RSLTestCase") as f:
+            self.assertEqual(f.read(), "Hello\n")
+
+        os.remove("/tmp/Some_Test/Folder/RSLTestCase")
+        os.rmdir("/tmp/Some_Test/Folder")
+        os.rmdir("/tmp/Some_Test")
+        
     def test_supress_emit(self):
         self.runtime.emit = 'never'
         code = '''
