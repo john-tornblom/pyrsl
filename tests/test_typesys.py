@@ -55,6 +55,22 @@ class TestTypeSystem(RSLTestCase):
         self.assertIsInstance(f('real'), RuntimeException)
         self.assertIsInstance(f('string'), RuntimeException)
 
+    def test_invoke_unknown_type(self):
+        self.metamodel.define_class('My_Class', [('Number', 'integer')])
+        inst = self.metamodel.new('My_Class')
+        inst.Number = object()
+        text = '''
+            .function f
+                .param integer my_int
+                .exit my_int
+            .end function
+            .select any inst from instances of My_Class
+            .invoke res = f(inst.Number)
+            .exit -1
+        '''
+        rc = self.eval_text(text)
+        self.assertIsInstance(rc, RuntimeException)
+        
     def test_invoke_instref_with_kind(self):
         self.metamodel.define_class('My_Class1', [('Name', 'string')])
         self.metamodel.define_class('My_Class2', [('Name', 'string')])
