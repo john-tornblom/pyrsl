@@ -285,7 +285,10 @@ class Runtime(object):
     @staticmethod
     def select_many_in(inst_set, where_cond, order_by):
         s = filter(where_cond, inst_set)
-        return xtuml.QuerySet(s, order_by)
+        if order_by:
+            s = order_by(s)
+        
+        return xtuml.QuerySet(s)
 
     @staticmethod
     def select_any_in(inst_set, where_cond):
