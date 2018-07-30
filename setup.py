@@ -111,7 +111,7 @@ class BundleCommand(Command):
 
 
 opts = dict(name='pyrsl',
-            version='2.0.1', # ensure that this is the same as in rsl.version
+            version='2.1.0', # ensure that this is the same as in rsl.version
             description='Interpreter for the Rule Specification Language (RSL)',
             author='John Törnblom',
             author_email='john.tornblom@gmail.com',
