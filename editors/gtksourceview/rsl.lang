@@ -73,6 +73,8 @@
       <keyword>invoke</keyword>
       <keyword>in</keyword>
       <keyword>while</keyword>
+      <keyword>ordered_by</keyword>
+      <keyword>reverse_ordered_by</keyword>
     </context>
 
     <context id="types" style-ref="type">
