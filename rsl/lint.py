@@ -61,24 +61,32 @@ class Linter(xtuml.Visitor):
         '''
         Check cardinality of select one statements
         '''
+        prev = list()
         for nav in node.instance_chain.navigations:
+            candidates = list()
+
             for assoc in self.m.associations:
                 if assoc.rel_id != nav.relation.rel_id:
                     continue
 
-                if assoc.target_link.kind == nav.key_letter:
-                    link = assoc.target_link
-                    
-                elif assoc.source_link.kind == nav.key_letter:
-                    link = assoc.source_link
-
-                else:
-                    continue
+                if (assoc.target_link.kind == nav.key_letter and
+                    assoc.target_link.phrase == nav.relation.phrase and
+                    (assoc.source_link.kind in prev or not prev)):
+                    candidates.append(assoc.target_link)
                 
-                if link is not None and link.many:
-                    self.warn(node, 'select one navigation yields a set')
-                    return
-            
+                if (assoc.source_link.kind == nav.key_letter and
+                    assoc.source_link.phrase == nav.relation.phrase and
+                    (assoc.target_link.kind in prev or not prev)):
+                    candidates.append(assoc.source_link)
+                    
+            if not candidates:
+                return
+
+            prev = list(filter(lambda link: not link.many, candidates))
+            if not prev:
+                self.warn(node, 'select one navigation yields a set')
+                return
+
     def enter_SelectAnyInstanceNode(self, node):
         self.check_key_letter(node, node.key_letter)
             
