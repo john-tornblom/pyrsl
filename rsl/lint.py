@@ -65,6 +65,7 @@ class Linter(xtuml.Visitor):
         for nav in node.instance_chain.navigations:
             
             one_targets = list()
+            found = False
             for assoc in self.m.associations:
                 if assoc.rel_id != nav.relation.rel_id:
                     continue
@@ -82,18 +83,22 @@ class Linter(xtuml.Visitor):
                 else:
                     continue
 
+                found = True
                 if target.many:
                     continue
                 
                 if source in prev_targets or not prev_targets:
                     one_targets.append(target)
 
+            # skip navigations across unknown associations
+            if not found:
+                return
+            
             if not one_targets:
                 self.warn(node, 'select one navigation yields a set')
                 return
             else:
                 prev_targets = one_targets
-                
 
     def enter_SelectAnyInstanceNode(self, node):
         self.check_key_letter(node, node.key_letter)
