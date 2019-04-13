@@ -16,7 +16,7 @@ import rsl.version
 complete_usage = '''
 USAGE: 
 
-   %s  [-arch <string>] ... [-import <string>] ... [-include <string>] ... [-d <integer>] ... [-diff <string>] [-emit <string>] [-priority <integer>] [-lVHs] [-lSCs] [-l2b] [-l2s] [-l3b] [-l3s] [-nopersist] [-force] [-integrity] [-e <string>] [-t <string>] [-v <string>] [-qim] [-q] [-l] [-f <string>] [-# <integer>] [//] [-version] [-h]
+   %s  [-arch <string>] ... [-import <string>] ... [-include <string>] ... [-d <integer>] ... [-diff <string>] [-emit <string>] [-priority <integer>] [-lVHs] [-lSCs] [-l2b] [-l2s] [-l3b] [-l3s] [-nopersist] [-dumpsql <file>] [-force] [-integrity] [-e <string>] [-t <string>] [-v <string>] [-qim] [-q] [-l] [-f <string>] [-# <integer>] [//] [-version] [-h]
 
 
 Where: 
@@ -82,6 +82,9 @@ Where:
    -nopersist
      Disable persistence
 
+   -dumpsql <file>
+     (value required)  Dump the instance population as SQL insert statements
+
    -force
      make read-only emit files writable
 
@@ -127,7 +130,7 @@ Where:
 
 brief_usage = '''
 Brief USAGE: 
-   %s  [-arch <string>] ... [-import <string>] ... [-include <string>] ... [-d <integer>] ... [-diff <string>] [-emit <string>] [-priority <integer>] [-lVHs] [-lSCs] [-l2b] [-l2s] [-l3b] [-l3s] [-nopersist] [-force] [-integrity] [-e <string>] [-t <string>] [-v <string>] [-qim] [-q] [-l] [-f <string>] [-# <integer>] [//] [-version] [-h]
+   %s  [-arch <string>] ... [-import <string>] ... [-include <string>] ... [-d <integer>] ... [-diff <string>] [-emit <string>] [-priority <integer>] [-lVHs] [-lSCs] [-l2b] [-l2s] [-l3b] [-l3s] [-nopersist] [-dumpsql <file>] [-force] [-integrity] [-e <string>] [-t <string>] [-v <string>] [-qim] [-q] [-l] [-f <string>] [-# <integer>] [//] [-version] [-h]
 
 For complete USAGE and HELP type: 
    %s -h
@@ -138,6 +141,7 @@ def main(argv=None):
     loglevel = logging.INFO
     database_filename = 'mcdbms.gen'
     enable_persistance = True
+    dump_sql_file = ''
     force_overwrite = False
     emit_when = 'change'
     diff_filename = None
@@ -182,6 +186,10 @@ def main(argv=None):
         elif argv[i] == '-nopersist':
             enable_persistance = False
             
+        elif argv[i] == '-dumpsql':
+            i += 1
+            dump_sql_file = argv[i]
+
         elif argv[i] == '-v':
             i += 1
             loglevel = logging.DEBUG
@@ -257,6 +265,9 @@ def main(argv=None):
         
     if enable_persistance:
         xtuml.persist_database(metamodel, database_filename)
+
+    if dump_sql_file != '':
+        xtuml.persist_instances(metamodel, dump_sql_file)
 
     return errors
 

@@ -47,6 +47,7 @@ in the original RSL interpreter:
   -emit       Chose when to emit, i.e. never, on change, or always.
   -force      Make read-only emit files writable.
   -integrity  check the model for integrity violations upon program exit
+  -dumpsql    Output the instance population to textual SQL upon program exit
 
 For more information, see the help text by appending -h to the command line
 when executing gen_erate.

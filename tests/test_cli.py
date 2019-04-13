@@ -254,6 +254,30 @@ class TestCommandLineInterface(unittest.TestCase):
             s = f.read()
             self.assertIn('Hello file', s)
 
+    def test_dumpsql(self):
+        dump = self.temp_file(mode='r')
+        schema = self.temp_file(mode='w')
+        schema.file.write('CREATE TABLE Person (Name STRING, Age INTEGER);\n')
+        schema.file.flush()
+
+        script = self.temp_file(mode='w')
+        script.file.write('.create object instance person1 of Person\n')
+        script.file.write('.assign person1.Name = "Levi"\n')
+        script.file.write('.assign person1.Age = 24\n')
+        script.file.flush()
+
+        argv = ['test_dumpsql',
+                '-nopersist',
+                '-dumpsql', dump.name,
+                '-import', schema.name,
+                '-arch', script.name]
+
+        self.assertEqual(0, rsl.main(argv))
+
+        with open(dump.name, 'r') as f:
+            s = f.read()
+            self.assertIn('INSERT INTO Person', s)
+
 
 if __name__ == "__main__":
     unittest.main()
