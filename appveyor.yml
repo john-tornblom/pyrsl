@@ -1,5 +1,3 @@
-build: off
-
 environment:
   matrix:
     - PYTHON: "C:\\Python27"
@@ -13,7 +11,7 @@ install:
   - "%PYTHON%/python -m pip install -r requirements.txt"
   - "%PYTHON%/python -m pip install py2exe_py2"
 
-before_test:
+build_script:
   - "%PYTHON%/python setup.py build"
 
 test_script:
