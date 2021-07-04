@@ -34,6 +34,16 @@ class TestFormat(RSLTestCase):
         self.assertEqual("Hello", rc)
 
     @evaluate_docstring
+    def test_cr_euqlas_rc(self, rc):
+        '''
+        .// The removal of whitespace occurs after the capitalization
+        .// has taken place in the case of the CR or RC combination.
+        .assign x = "hello world"
+        .exit "$cr{x} $rc{x}"
+        '''
+        self.assertEqual("HelloWorld HelloWorld", rc)
+
+    @evaluate_docstring
     def test_capitalize_with_underscore(self, rc):
         '''
         .assign x = "test_something_else"

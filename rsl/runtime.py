@@ -115,6 +115,15 @@ class Runtime(object):
         
     def format_string(self, expr, fmt):
 
+        def swap_rc_with_cr(formats):
+            '''
+            The removal of whitespace should occur after the capitalization
+            has taken place in the case of the CR or RC combination.
+            '''
+            for i in range(len(formats) - 1):
+                if formats[i].lower() == 'r' and formats[i+1].lower() == 'c':
+                    formats[i], formats[i+1] = formats[i+1], formats[i]
+
         def apply_formats(s, formats):
             for formatter in formats:
                 try:
@@ -125,6 +134,8 @@ class Runtime(object):
             return s
 
         s = '%s' % expr
+
+        swap_rc_with_cr(fmt)
         
         s = apply_formats(s, [f for f in fmt if f[0] == 't'])
         s = apply_formats(s, [f for f in fmt if f[0] != 't'])
