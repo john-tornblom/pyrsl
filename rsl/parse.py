@@ -9,6 +9,7 @@ Heavily inspired by:
 
 
 import os
+import re
 import logging
 
 from ply import lex
@@ -133,6 +134,7 @@ class RSLParser(object):
                              optimize=1,
                              module=self,
                              outputdir=os.path.dirname(__file__),
+                             reflags=re.IGNORECASE | re.MULTILINE,
                              lextab="rsl.__rsl_lextab")
         
         self.parser = yacc.yacc(debuglog=logger,
@@ -164,18 +166,18 @@ class RSLParser(object):
         return t
     
     def t_LITERAL(self, t):
-        r"(?m)^[\s]*(?=\.\.)"
+        r"^[\s]*(?=\.\.)"
         t.lexer.begin('literal')
         t.lexer.lexpos += 1
         return t
     
     def t_pc(self, t):
-        r"(?m)^[\s]*(?=[\.])"
+        r"^[\s]*(?=[\.])"
         t.lexer.lineno += t.value.count('\n')
         t.lexer.begin('pc')
     
     def t_LITERAL_2(self, t):
-        r"(?m)^[\s]*(?=[^\.\n])"
+        r"^[\s]*(?=[^\.\n])"
         t.lexer.begin('literal')
         t.lexer.lineno += t.value.count('\n')
         t.type = 'LITERAL'
@@ -196,13 +198,13 @@ class RSLParser(object):
         t.endlexpos = t.lexpos + len(t.value)
 
     def t_pc_COMMENT(self, t):
-        r"(\.//|(?i)\.comment)[^\n]*\n"
+        r"(\.//|\.comment)[^\n]*\n"
         t.endlexpos = t.lexpos + len(t.value)
         t.lexer.lineno += t.value.count('\n')
         t.lexer.begin('INITIAL')
         
     def t_control_COMMENT(self, t):
-        r"(\.//|(?i)\.comment)[^\n]*\n"
+        r"(\.//|\.comment)[^\n]*\n"
         t.endlexpos = t.lexpos + len(t.value)
         t.lexer.lineno += t.value.count('\n')
         t.type = 'NEWLINE'
@@ -210,175 +212,175 @@ class RSLParser(object):
         return t
 
     def t_pc_FUNCTION(self, t):
-        r"(?i)\.function"
+        r"\.function"
         t.endlexpos = t.lexpos + len(t.value)
         t.lexer.begin('control')
         return t
     
     def t_pc_PARAM(self, t):
-        r"(?i)\.param"
+        r"\.param"
         t.endlexpos = t.lexpos + len(t.value)
         t.lexer.begin('control')
         return t
     
     def t_pc_ENDFUNCTION(self, t):
-        r"(?i)\.end[\s]+function"
+        r"\.end[\s]+function"
         t.endlexpos = t.lexpos + len(t.value)
         t.lexer.begin('control')
         return t
     
     def t_pc_INVOKE(self, t):
-        r"(?i)\.invoke"
+        r"\.invoke"
         t.endlexpos = t.lexpos + len(t.value)
         t.lexer.begin('control')
         return t
     
     def t_pc_CLEARTOK(self, t):
-        r"(?i)\.clear"
+        r"\.clear"
         t.endlexpos = t.lexpos + len(t.value)
         t.lexer.begin('control')
         return t
     
     def t_pc_SELECTONE(self, t):
-        r"(?i)\.select[\s]+one"
+        r"\.select[\s]+one"
         t.endlexpos = t.lexpos + len(t.value)
         t.lexer.begin('control')
         return t
     
     def t_pc_SELECTANY(self, t):
-        r"(?i)\.select[\s]+any"
+        r"\.select[\s]+any"
         t.endlexpos = t.lexpos + len(t.value)
         t.lexer.begin('control')
         return t
     
     def t_pc_SELECTMANY(self, t):
-        r"(?i)\.select[\s]+many"
+        r"\.select[\s]+many"
         t.endlexpos = t.lexpos + len(t.value)
         t.lexer.begin('control')
         return t
     
     def t_pc_RELATE(self, t):
-        r"(?i)\.relate"
+        r"\.relate"
         t.endlexpos = t.lexpos + len(t.value)
         t.lexer.begin('control')
         return t
     
     def t_pc_UNRELATE(self, t):
-        r"(?i)\.unrelate"
+        r"\.unrelate"
         t.endlexpos = t.lexpos + len(t.value)
         t.lexer.begin('control')
         return t
     
     def t_pc_IF(self, t):
-        r"(?i)\.if"
+        r"\.if"
         t.endlexpos = t.lexpos + len(t.value)
         t.lexer.begin('control')
         return t
     
     def t_pc_ELIF(self, t):
-        r"(?i)\.elif"
+        r"\.elif"
         t.endlexpos = t.lexpos + len(t.value)
         t.lexer.begin('control')
         return t
     
     def t_pc_ELSE(self, t):
-        r"(?i)\.else"
+        r"\.else"
         t.endlexpos = t.lexpos + len(t.value)
         t.lexer.begin('control')
         return t
     
     def t_pc_ENDIF(self, t):
-        r"(?i)\.end[\s]+if"
+        r"\.end[\s]+if"
         t.endlexpos = t.lexpos + len(t.value)
         t.lexer.begin('control')
         return t
     
     def t_pc_FOR(self, t):
-        r"(?i)\.for[\s]+each"
+        r"\.for[\s]+each"
         t.endlexpos = t.lexpos + len(t.value)
         t.lexer.begin('control')
         return t
     
     def t_pc_BREAKFOR(self, t):
-        r"(?i)\.break[\s]+for"
+        r"\.break[\s]+for"
         t.endlexpos = t.lexpos + len(t.value)
         t.lexer.begin('control')
         return t
     
     def t_pc_ENDFOR(self, t):
-        r"(?i)\.end[\s]+for"
+        r"\.end[\s]+for"
         t.endlexpos = t.lexpos + len(t.value)
         t.lexer.begin('control')
         return t
     
     def t_pc_WHILE(self, t):
-        r"(?i)\.while"
+        r"\.while"
         t.endlexpos = t.lexpos + len(t.value)
         t.lexer.begin('control')
         return t
     
     def t_pc_BREAKWHILE(self, t):
-        r"(?i)\.break[\s]+while"
+        r"\.break[\s]+while"
         t.endlexpos = t.lexpos + len(t.value)
         t.lexer.begin('control')
         return t
     
     def t_pc_ENDWHILE(self, t):
-        r"(?i)\.end[\s]+while"
+        r"\.end[\s]+while"
         t.endlexpos = t.lexpos + len(t.value)
         t.lexer.begin('control')
         return t
     
     def t_pc_INCLUDE(self, t):
-        r"(?i)\.include"
+        r"\.include"
         t.endlexpos = t.lexpos + len(t.value)
         t.lexer.begin('control')
         return t
     
     def t_pc_ASSIGN(self, t):
-        r"(?i)\.assign"
+        r"\.assign"
         t.endlexpos = t.lexpos + len(t.value)
         t.lexer.begin('control')
         return t
     
     def t_pc_PRINTTOK(self, t):
-        r"(?i)\.print"
+        r"\.print"
         t.endlexpos = t.lexpos + len(t.value)
         t.lexer.begin('control')
         return t
     
     def t_pc_EXITTOK(self, t):
-        r"(?i)\.exit"
+        r"\.exit"
         t.endlexpos = t.lexpos + len(t.value)
         t.lexer.begin('control')
         return t
     
     def t_pc_EMIT(self, t):
-        r"(?i)\.emit[\s]+to[\s]+file"
+        r"\.emit[\s]+to[\s]+file"
         t.endlexpos = t.lexpos + len(t.value)
         t.lexer.begin('control')
         return t
     
     def t_pc_ALXLATE(self, t):
-        r"(?i)\.al_xlate"
+        r"\.al_xlate"
         t.endlexpos = t.lexpos + len(t.value)
         t.lexer.begin('control')
         return t
     
     def t_pc_SPECIALWHERE(self, t):
-        r"(?i)\.special_where"
+        r"\.special_where"
         t.endlexpos = t.lexpos + len(t.value)
         t.lexer.begin('control')
         return t
     
     def t_pc_CREATEOBJ(self, t):
-        r"(?i)\.create[\s]+object[\s]+instance"
+        r"\.create[\s]+object[\s]+instance"
         t.endlexpos = t.lexpos + len(t.value)
         t.lexer.begin('control')
         return t
     
     def t_pc_DELETEOBJ(self, t):
-        r"(?i)\.delete[\s]+object[\s]+instance"
+        r"\.delete[\s]+object[\s]+instance"
         t.endlexpos = t.lexpos + len(t.value)
         t.lexer.begin('control')
         return t
@@ -389,83 +391,83 @@ class RSLParser(object):
                                                                      t.lineno))
     
     def t_control_TO(self, t):
-        r"(?i)to(?=\s)"
+        r"to(?=\s)"
         t.endlexpos = t.lexpos + len(t.value)
         return t
     
     def t_control_ACROSS(self, t):
-        r"(?i)across(?=[\s])"
+        r"across(?=[\s])"
         t.endlexpos = t.lexpos + len(t.value)
         return t
     
     def t_control_USING(self, t):
-        r"(?i)using(?=\s)"
+        r"using(?=\s)"
         t.endlexpos = t.lexpos + len(t.value)
         return t
     
     def t_control_WHERE(self, t):
-        r"(?i)where(?=[\s\(])"
+        r"where(?=[\s\(])"
         t.endlexpos = t.lexpos + len(t.value)
         return t
     
     def t_control_ORDER_BY(self, t):
-        r"(?i)ordered_by(?=[\s\(])"
+        r"ordered_by(?=[\s\(])"
         t.endlexpos = t.lexpos + len(t.value)
         return t
 
     def t_control_REVERSE_ORDER_BY(self, t):
-        r"(?i)reverse_ordered_by(?=[\s\(])"
+        r"reverse_ordered_by(?=[\s\(])"
         t.endlexpos = t.lexpos + len(t.value)
         return t
 
     def t_control_RELATEDBY(self, t):
-        r"(?i)related[\s]+by(?=\s)"
+        r"related[\s]+by(?=\s)"
         t.endlexpos = t.lexpos + len(t.value)
         return t
     
     def t_control_FROMINSTOF(self, t):
-        r"(?i)from[\s]+instances[\s]+of(?=\s)"
+        r"from[\s]+instances[\s]+of(?=\s)"
         t.endlexpos = t.lexpos + len(t.value)
         return t
     
     def t_control_FROM(self, t):
-        r"(?i)from(?=[\s])"
+        r"from(?=[\s])"
         t.endlexpos = t.lexpos + len(t.value)
         return t
     
     def t_control_IN(self, t):
-        r"(?i)in(?=\s)"
+        r"in(?=\s)"
         t.endlexpos = t.lexpos + len(t.value)
         return t
     
     def t_control_OF(self, t):
-        r"(?i)of(?=\s)"
+        r"of(?=\s)"
         t.endlexpos = t.lexpos + len(t.value)
         return t
     
     def t_control_TYPE(self, t):
-        r"(?i)(boolean|integer|real|string|unique_id|inst_ref|inst_ref_set|frag_ref)(?=\s)"
+        r"(boolean|integer|real|string|unique_id|inst_ref|inst_ref_set|frag_ref)(?=\s)"
         t.endlexpos = t.lexpos + len(t.value)
         return t
 
     def t_control_TYPE2(self, t):
-        r"(?i)(inst_ref|inst_ref_set|frag_ref)(?=<[^>]+>\s)"
+        r"(inst_ref|inst_ref_set|frag_ref)(?=<[^>]+>\s)"
         t.endlexpos = t.lexpos + len(t.value)
         t.type = 'TYPE'
         return t
     
     def t_control_AND(self, t):
-        r"(?i)and(?=[\s\(])"
+        r"and(?=[\s\(])"
         t.endlexpos = t.lexpos + len(t.value)
         return t
     
     def t_control_OR(self, t):
-        r"(?i)or(?=[\s\(])"
+        r"or(?=[\s\(])"
         t.endlexpos = t.lexpos + len(t.value)
         return t
     
     def t_control_UOP(self, t):
-        r"(?i)(not_empty|not_first|not_last|not|empty|first|last|cardinality)(?=\s)"
+        r"(not_empty|not_first|not_last|not|empty|first|last|cardinality)(?=\s)"
         t.endlexpos = t.lexpos + len(t.value)
         return t
     
@@ -522,7 +524,7 @@ class RSLParser(object):
         return t
     
     def t_psv_FORMAT(self, t):
-        r"(?i)([oclru_]|t[^\{]*)"
+        r"([oclru_]|t[^\{]*)"
         t.endlexpos = t.lexpos + len(t.value)
         return t
     
