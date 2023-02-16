@@ -245,7 +245,7 @@ class Runtime(object):
             
         filename = os.path.normpath(filename)
         if os.path.exists(filename):
-            with open(filename, 'rU') as f:
+            with open(filename, 'r') as f:
                 org = f.read()
         
         if self.emit == 'never':

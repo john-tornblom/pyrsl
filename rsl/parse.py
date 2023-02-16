@@ -145,7 +145,7 @@ class RSLParser(object):
                                 tabmodule='rsl.__rsl_parsetab')
 
     def filename_input(self, filename):
-        with open(filename, 'rU') as f:
+        with open(filename, 'r') as f:
             return self.text_input(f.read(), filename)
     
     def text_input(self, text, filename=''):
